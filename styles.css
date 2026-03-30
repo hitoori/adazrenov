@@ -362,11 +362,21 @@ button {
   position: relative;
 }
 
+.hero-gallery-bg {
+  position: absolute;
+  inset: 18px 0 -20px;
+  background: var(--surface-alt);
+  border-radius: var(--radius-lg);
+  z-index: 0;
+}
+
 .hero-gallery-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: 220px 200px;
-  gap: 16px;
+  grid-template-rows: 240px 240px;
+  gap: 18px;
 }
 
 .hero-g {
@@ -377,7 +387,19 @@ button {
 
 .hero-g1 {
   grid-column: span 2;
-  min-height: 280px;
+  min-height: 260px;
+}
+
+.hero-g2 {
+  align-self: end;
+}
+
+.hero-g3 {
+  align-self: start;
+}
+
+.hero-g4 {
+  align-self: stretch;
 }
 
 .hero-g img {
@@ -390,30 +412,6 @@ button {
   transform: scale(1.04);
 }
 
-.hero-quote-card {
-  position: absolute;
-  bottom: -26px;
-  right: 24px;
-  max-width: 320px;
-  padding: 22px;
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  border: 1px solid rgba(21, 32, 51, 0.08);
-  box-shadow: var(--shadow-soft);
-}
-
-.hero-quote-card p {
-  margin: 0 0 12px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.hero-quote-meta {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  color: var(--muted);
-}
 
 .hero-simple {
   padding: 108px 0 84px;
@@ -1528,12 +1526,11 @@ button {
   }
 
   .hero-gallery-grid {
-    grid-template-rows: auto;
+    grid-template-rows: repeat(2, minmax(180px, 1fr));
   }
 
-  .hero-quote-card {
-    position: static;
-    margin-top: 6px;
+  .hero-gallery-bg {
+    inset: 0;
   }
 }
 
