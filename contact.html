@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact | ADAZ RENOV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body data-page="contact">
+    <div class="site-header"></div>
+
+    <main>
+      <section class="hero-simple">
+        <div class="container">
+          <div class="hero-card reveal">
+            <span class="eyebrow">Contact</span>
+            <h1>Parlons de votre projet</h1>
+            <p>
+              Une question ? Un projet a realiser ? Notre equipe est a votre ecoute pour vous
+              accompagner, vous conseiller et vous proposer un devis detaille.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-muted" style="padding-bottom: 40px;">
+        <div class="container cards-4">
+          <article class="card contact-card reveal">
+            <div class="icon-badge">TL</div>
+            <h3>Telephone</h3>
+            <p><a href="tel:+33123456789">01 23 45 67 89</a><br>06 12 34 56 78</p>
+          </article>
+          <article class="card contact-card reveal">
+            <div class="icon-badge">EM</div>
+            <h3>Email</h3>
+            <p><a href="mailto:contact@adazrenov.fr">contact@adazrenov.fr</a><br>devis@adazrenov.fr</p>
+          </article>
+          <article class="card contact-card reveal">
+            <div class="icon-badge">AD</div>
+            <h3>Adresse</h3>
+            <p>123 Rue de la Renovation<br>75001 Paris, France</p>
+          </article>
+          <article class="card contact-card reveal">
+            <div class="icon-badge">HR</div>
+            <h3>Horaires</h3>
+            <p>Lun - Ven: 8h00 - 18h00<br>Sam: 9h00 - 13h00</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top: 20px;">
+        <div class="container contact-grid">
+          <div class="card form-shell reveal">
+            <span class="eyebrow">Demande de devis</span>
+            <h2 style="margin: 18px 0 10px;">Parlez-nous de votre projet</h2>
+            <p class="muted" style="margin-bottom: 26px;">
+              Remplissez le formulaire ci-dessous et nous vous repondrons dans les plus brefs delais.
+            </p>
+
+            <div id="contact-success" class="success-card" hidden>
+              <strong>Message envoye !</strong>
+              Merci pour votre demande. Nous vous contacterons tres prochainement.
+            </div>
+
+            <form id="contact-form">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="name">Nom complet *</label>
+                  <input id="name" name="name" type="text" placeholder="Jean Dupont" required>
+                </div>
+                <div class="field">
+                  <label for="phone">Telephone *</label>
+                  <input id="phone" name="phone" type="tel" placeholder="06 12 34 56 78" required>
+                </div>
+                <div class="field full">
+                  <label for="email">Email *</label>
+                  <input id="email" name="email" type="email" placeholder="jean.dupont@email.com" required>
+                </div>
+                <div class="field full">
+                  <label for="subject">Type de projet *</label>
+                  <select id="subject" name="subject" required>
+                    <option value="">Selectionnez un service</option>
+                    <option>Renovation interieure</option>
+                    <option>Renovation exterieure</option>
+                    <option>Construction generale</option>
+                    <option>Amenagement cuisine</option>
+                    <option>Amenagement salle de bain</option>
+                    <option>Autre demande</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label for="message">Message *</label>
+                  <textarea id="message" name="message" rows="6" placeholder="Decrivez votre projet en quelques mots..." required></textarea>
+                </div>
+              </div>
+              <div style="margin-top: 22px;">
+                <button class="button" type="submit">Envoyer ma demande</button>
+              </div>
+              <p class="form-footnote">
+                En soumettant ce formulaire, vous acceptez que vos donnees soient utilisees pour
+                vous recontacter. Vos informations ne seront jamais partagees avec des tiers.
+              </p>
+            </form>
+          </div>
+
+          <div style="display:grid; gap: 24px;">
+            <div class="card value-card reveal">
+              <h3>Pourquoi nous choisir ?</h3>
+              <ul class="feature-list">
+                <li><span class="check">&#10003;</span><span><strong>Devis gratuit et sans engagement</strong><br>Nous etudions votre projet et vous proposons un devis detaille gratuitement.</span></li>
+                <li><span class="check">&#10003;</span><span><strong>Reponse rapide</strong><br>Nous nous engageons a vous repondre sous 24 heures ouvrees.</span></li>
+                <li><span class="check">&#10003;</span><span><strong>Accompagnement personnalise</strong><br>Un interlocuteur dedie vous accompagne tout au long du projet.</span></li>
+              </ul>
+            </div>
+            <div class="card map-card reveal">
+              <div class="map-surface">
+                <div>
+                  <div class="icon-badge" style="margin: 0 auto 18px;">MP</div>
+                  <h3>Notre showroom</h3>
+                  <p class="muted">123 Rue de la Renovation<br>75001 Paris, France</p>
+                  <div style="margin-top: 20px;">
+                    <a class="button small light" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">Voir sur la carte</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-muted">
+        <div class="container" style="max-width: 860px;">
+          <div class="section-head reveal">
+            <h2>Questions frequentes</h2>
+            <p>Retrouvez les reponses aux questions les plus courantes.</p>
+          </div>
+          <div class="faq-list">
+            <article class="card faq-card reveal">
+              <h3>Quel est le delai pour recevoir un devis ?</h3>
+              <p>Nous nous engageons a vous envoyer un devis detaille sous 48 heures apres notre premiere rencontre ou visite technique.</p>
+            </article>
+            <article class="card faq-card reveal">
+              <h3>Intervenez-vous partout en France ?</h3>
+              <p>Nous intervenons principalement en Ile-de-France et dans les grandes villes francaises. Contactez-nous pour verifier notre zone d'intervention.</p>
+            </article>
+            <article class="card faq-card reveal">
+              <h3>Quelles garanties proposez-vous ?</h3>
+              <p>Tous nos travaux sont couverts par une garantie decennale. Nous sommes egalement assures en responsabilite civile professionnelle.</p>
+            </article>
+            <article class="card faq-card reveal">
+              <h3>Proposez-vous un financement ?</h3>
+              <p>Oui, nous travaillons avec des partenaires financiers pour vous proposer des solutions adaptees a votre budget.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-shell section-primary reveal" style="text-align:center;">
+            <h2>Besoin d'aide ?</h2>
+            <p class="muted-on-dark">Notre equipe est disponible pour repondre a toutes vos questions.</p>
+            <div class="hero-actions" style="justify-content:center;">
+              <a class="button secondary" href="tel:+33123456789">01 23 45 67 89</a>
+              <a class="button light" href="mailto:contact@adazrenov.fr">contact@adazrenov.fr</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="site-footer"></div>
+  </body>
+</html>

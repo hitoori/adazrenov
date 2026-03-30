@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IA Travaux | ADAZ RENOV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body data-page="ai">
+    <div class="site-header"></div>
+
+    <main>
+      <section class="hero-simple">
+        <div class="container">
+          <div class="hero-card reveal">
+            <div class="ai-hero-grid">
+              <div>
+                <span class="eyebrow">IA Travaux</span>
+                <h1>Des outils IA concus pour la renovation et la construction</h1>
+                <p>
+                  Six experiences intelligentes a tester: analyser une photo, filtrer des produits,
+                  discuter avec un bot travaux, estimer budget/delai, generer des idees design et
+                  planifier un phasage chantier.
+                </p>
+                <div class="shortcut-row" aria-label="Acces rapide aux outils IA">
+                  <a class="shortcut-pill" href="#outil-photo">Analyse photo</a>
+                  <a class="shortcut-pill" href="#outil-materiaux">Conseils materiaux</a>
+                  <a class="shortcut-pill" href="#outil-chat">Chatbot</a>
+                  <a class="shortcut-pill" href="#outil-estimateur">Estimateur</a>
+                  <a class="shortcut-pill" href="#outil-idees">Ideateur</a>
+                  <a class="shortcut-pill" href="#outil-plan">Planificateur</a>
+                </div>
+              </div>
+              <div class="hero-side-card">
+                <h3>Ce que vous pouvez faire ici</h3>
+                <ul class="feature-list">
+                  <li><span class="check">&#10003;</span><span>Pre-analyser une photo de chantier</span></li>
+                  <li><span class="check">&#10003;</span><span>Recevoir des recommandations de materiaux</span></li>
+                  <li><span class="check">&#10003;</span><span>Discuter avec un assistant travaux</span></li>
+                  <li><span class="check">&#10003;</span><span>Estimer budget et duree d'un projet</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-muted">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="eyebrow">6 outils</span>
+            <h2>Un espace IA utile pour generer plus de conversions</h2>
+            <p>
+              Cette page aide vos clients a mieux se projeter dans leur chantier et vous apporte
+              des demandes plus claires et mieux qualifiees.
+            </p>
+          </div>
+          <div class="cards-4">
+            <article class="card value-card reveal">
+              <div class="icon-badge">01</div>
+              <h3>Analyse photo IA</h3>
+              <p>Le visiteur charge une image et obtient une premiere lecture du chantier.</p>
+            </article>
+            <article class="card value-card reveal">
+              <div class="icon-badge">02</div>
+              <h3>Conseiller materiaux</h3>
+              <p>Des recommandations produits adaptees au budget, a la performance et au style.</p>
+            </article>
+            <article class="card value-card reveal">
+              <div class="icon-badge">03</div>
+              <h3>Chatbot construction</h3>
+              <p>Des reponses rapides sur les delais, les garanties, les zones et le catalogue.</p>
+            </article>
+            <article class="card value-card reveal">
+              <div class="icon-badge">04</div>
+              <h3>Estimateur IA</h3>
+              <p>Un intervalle indicatif de prix et de duree avant la visite technique.</p>
+            </article>
+            <article class="card value-card reveal">
+              <div class="icon-badge">05</div>
+              <h3>Ideateur design IA</h3>
+              <p>3 pistes de style avec palette harmonisee selon la piece et l'ambiance voulue.</p>
+            </article>
+            <article class="card value-card reveal">
+              <div class="icon-badge">06</div>
+              <h3>Planificateur IA</h3>
+              <p>Un mini-plan de phases travaux avec priorites et delais indicatifs.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="outil-photo">
+        <div class="container tool-grid">
+          <article class="tool-panel reveal">
+            <h3>Analyse photo IA pour travaux</h3>
+            <p>
+              Uploadez une photo, indiquez la zone concernee et recevez une pre-analyse des
+              priorites, des risques visibles et des services a activer.
+            </p>
+            <form id="ai-photo-form" class="tool-form">
+              <div class="tool-upload">
+                <label for="ai-photo-file"><strong>Photo du chantier</strong></label>
+                <input id="ai-photo-file" name="photo" type="file" accept="image/*" required>
+                <span>Image utilisee uniquement dans cette page de demo, localement dans le navigateur.</span>
+              </div>
+              <div id="ai-photo-preview-wrap" class="tool-preview" hidden>
+                <img id="ai-photo-preview" alt="Apercu du chantier">
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-project-type">Zone a analyser</label>
+                  <select id="ai-project-type" name="project_type" required>
+                    <option value="cuisine">Cuisine</option>
+                    <option value="salle-de-bain">Salle de bain</option>
+                    <option value="facade">Facade</option>
+                    <option value="toiture">Toiture</option>
+                    <option value="fenetres">Fenetres</option>
+                    <option value="autre">Autre zone</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-objective">Objectif</label>
+                  <select id="ai-objective" name="objective" required>
+                    <option value="diagnostic">Diagnostic</option>
+                    <option value="rafraichissement">Rafraichissement rapide</option>
+                    <option value="renovation">Renovation complete</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-urgency">Urgence</label>
+                  <select id="ai-urgency" name="urgency" required>
+                    <option value="basse">Basse</option>
+                    <option value="normale">Normale</option>
+                    <option value="haute">Haute</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-surface">Surface approximative (m2)</label>
+                  <input id="ai-surface" name="surface" type="number" min="1" placeholder="35">
+                </div>
+              </div>
+              <fieldset class="tool-checks">
+                <legend>Symptomes visibles</legend>
+                <div class="tool-check-grid">
+                  <label class="tool-check-option"><input type="checkbox" name="issues" value="humidite"> Humidite / moisissure</label>
+                  <label class="tool-check-option"><input type="checkbox" name="issues" value="fissures"> Fissures / structure</label>
+                  <label class="tool-check-option"><input type="checkbox" name="issues" value="energie"> Inconfort thermique</label>
+                  <label class="tool-check-option"><input type="checkbox" name="issues" value="finition"> Finitions abimees</label>
+                  <label class="tool-check-option"><input type="checkbox" name="issues" value="circulation"> Implantation peu pratique</label>
+                  <label class="tool-check-option"><input type="checkbox" name="issues" value="vieillissement"> Materiaux vieillissants</label>
+                </div>
+              </fieldset>
+              <button class="button" type="submit">Lancer l'analyse IA</button>
+              <p class="subtle-note">La version actuelle utilise une logique intelligente cote site et reste prete pour une connexion a une IA reelle.</p>
+            </form>
+          </article>
+
+          <div id="ai-photo-result" class="reveal" hidden></div>
+        </div>
+      </section>
+
+      <section class="section section-muted" id="outil-materiaux">
+        <div class="container tool-grid">
+          <article class="tool-panel reveal">
+            <h3>Recommandateur IA de materiaux</h3>
+            <p>
+              Orientez le visiteur vers les produits les plus pertinents selon le besoin, la
+              priorite technique, le budget et le niveau de finition.
+            </p>
+            <form id="ai-material-form" class="tool-form">
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-zone">Zone du projet</label>
+                  <select id="ai-zone" name="zone" required>
+                    <option value="fenetres">Fenetres</option>
+                    <option value="portes">Portes</option>
+                    <option value="interieur">Interieur</option>
+                    <option value="cuisine">Cuisine</option>
+                    <option value="salle-de-bain">Salle de bain</option>
+                    <option value="facade">Facade</option>
+                    <option value="toiture">Toiture</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-priority">Priorite</label>
+                  <select id="ai-priority" name="priority" required>
+                    <option value="budget">Budget</option>
+                    <option value="isolation">Isolation</option>
+                    <option value="design">Design</option>
+                    <option value="durabilite">Durabilite</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-budget">Budget</label>
+                  <select id="ai-budget" name="budget" required>
+                    <option value="eco">Essentiel</option>
+                    <option value="moyen">Moyen</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-finish">Niveau de finition</label>
+                  <select id="ai-finish" name="finish" required>
+                    <option value="essentiel">Essentiel</option>
+                    <option value="equilibre">Equilibre</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </div>
+              </div>
+              <button class="button" type="submit">Recommander les bons produits</button>
+            </form>
+          </article>
+
+          <div id="ai-material-result" class="reveal" hidden></div>
+        </div>
+      </section>
+
+      <section class="section" id="outil-chat">
+        <div class="container tool-grid">
+          <article class="chat-shell reveal">
+            <h3>Chatbot construction ADAZ RENOV</h3>
+            <p>
+              Posez une question sur les devis, delais, produits, garanties ou services. Cet
+              assistant est specialise sur l'univers chantier du site.
+            </p>
+            <div id="ai-chat-log" class="chat-log" aria-live="polite">
+              <div class="chat-message assistant">
+                <p>Bonjour, je suis l'assistant travaux ADAZ RENOV. Je peux vous aider sur les devis, les delais, les garanties, les produits et les services.</p>
+              </div>
+            </div>
+            <div class="chat-quick-row">
+              <button class="tag" type="button" data-chat-question="Combien de temps prend une renovation de salle de bain ?">Delai salle de bain</button>
+              <button class="tag" type="button" data-chat-question="Quelles garanties proposez-vous ?">Garanties</button>
+              <button class="tag" type="button" data-chat-question="Avez-vous des fenetres pour l'isolation thermique ?">Fenetres et isolation</button>
+              <button class="tag" type="button" data-chat-question="Travaillez-vous a Paris ?">Zone d'intervention</button>
+            </div>
+            <form id="ai-chat-form" class="chat-form">
+              <input id="ai-chat-input" type="text" placeholder="Ex: combien coute une renovation complete de 70 m2 ?">
+              <button class="button small" type="submit">Envoyer</button>
+            </form>
+          </article>
+
+          <article class="tool-panel reveal" id="outil-estimateur">
+            <h3>Estimateur IA budget &amp; duree</h3>
+            <p>
+              Donnez quelques informations sur votre projet et obtenez un premier intervalle de
+              prix ainsi qu'une duree probable de chantier.
+            </p>
+            <form id="ai-estimator-form" class="tool-form">
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-work-type">Type de chantier</label>
+                  <select id="ai-work-type" name="work_type" required>
+                    <option value="interieur">Renovation interieure</option>
+                    <option value="salle-de-bain">Salle de bain</option>
+                    <option value="cuisine">Cuisine sur mesure</option>
+                    <option value="facade">Facade</option>
+                    <option value="construction">Construction / extension</option>
+                    <option value="amenagement">Amenagement sur mesure</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-est-surface">Surface (m2)</label>
+                  <input id="ai-est-surface" name="surface" type="number" min="5" placeholder="80" required>
+                </div>
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-complexity">Complexite</label>
+                  <select id="ai-complexity" name="complexity" required>
+                    <option value="simple">Simple</option>
+                    <option value="standard">Standard</option>
+                    <option value="complexe">Complexe</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-est-finish">Finition</label>
+                  <select id="ai-est-finish" name="finish" required>
+                    <option value="essentiel">Essentiel</option>
+                    <option value="equilibre">Equilibre</option>
+                    <option value="premium">Premium</option>
+                    <option value="prestige">Prestige</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-field">
+                <label for="ai-occupancy">Logement pendant les travaux</label>
+                <select id="ai-occupancy" name="occupancy" required>
+                  <option value="libre">Logement libre</option>
+                  <option value="occupe">Logement occupe</option>
+                </select>
+              </div>
+              <button class="button" type="submit">Calculer l'estimation</button>
+              <p class="subtle-note">Cette estimation est indicative et sert a pre-qualifier la demande.</p>
+            </form>
+            <div id="ai-estimator-result" style="margin-top: 22px;" hidden></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-muted" id="outil-idees">
+        <div class="container tool-grid">
+          <article class="tool-panel reveal">
+            <h3>Ideateur design IA</h3>
+            <p>
+              Choisissez la piece, le style et l'ambiance. L'IA propose trois pistes d'inspiration
+              coherentes, avec palette et materiaux a privilegier.
+            </p>
+            <form id="ai-concept-form" class="tool-form">
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-concept-room">Piece</label>
+                  <select id="ai-concept-room" name="room" required>
+                    <option value="cuisine">Cuisine</option>
+                    <option value="salle-de-bain">Salle de bain</option>
+                    <option value="salon">Salon / sejour</option>
+                    <option value="facade">Facade</option>
+                    <option value="chambre">Chambre</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-concept-style">Style cible</label>
+                  <select id="ai-concept-style" name="style" required>
+                    <option value="moderne">Moderne lumineux</option>
+                    <option value="naturel">Naturel / boise</option>
+                    <option value="haussmann">Haussmann chic</option>
+                    <option value="minimal">Minimal / zen</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-concept-mood">Ambiance</label>
+                  <select id="ai-concept-mood" name="mood" required>
+                    <option value="lumineux">Lumineuse</option>
+                    <option value="chaleureux">Chaleureuse</option>
+                    <option value="contrast">Contrastee</option>
+                    <option value="spa">Apaisante / spa</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-concept-budget">Niveau budget</label>
+                  <select id="ai-concept-budget" name="budget" required>
+                    <option value="essentiel">Essentiel</option>
+                    <option value="equilibre">Equilibre</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-field">
+                <label for="ai-concept-notes">Contraintes ou envies</label>
+                <input id="ai-concept-notes" name="notes" type="text" placeholder="Ex: douche italienne, ilot central, pierre claire">
+              </div>
+              <button class="button" type="submit">Generer 3 idees</button>
+            </form>
+          </article>
+
+          <div id="ai-concept-result" class="reveal" hidden></div>
+        </div>
+      </section>
+
+      <section class="section" id="outil-plan">
+        <div class="container tool-grid">
+          <article class="tool-panel reveal">
+            <h3>Planificateur IA du chantier</h3>
+            <p>
+              Obtenez un phasage indicatif et les priorites critiques pour votre projet, selon le
+              type de travaux, l'intensite et l'urgence.
+            </p>
+            <form id="ai-roadmap-form" class="tool-form">
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-roadmap-type">Type de chantier</label>
+                  <select id="ai-roadmap-type" name="type" required>
+                    <option value="interieur">Interieur</option>
+                    <option value="salle-de-bain">Salle de bain</option>
+                    <option value="cuisine">Cuisine</option>
+                    <option value="facade">Facade</option>
+                    <option value="extension">Extension / construction</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-roadmap-scope">Intensite</label>
+                  <select id="ai-roadmap-scope" name="scope" required>
+                    <option value="rafraichissement">Rafraichissement</option>
+                    <option value="renovation">Renovation complete</option>
+                    <option value="lourd">Lourd / structurel</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-roadmap-urgency">Urgence</label>
+                  <select id="ai-roadmap-urgency" name="urgency" required>
+                    <option value="basse">Planifie</option>
+                    <option value="normale">Standard</option>
+                    <option value="haute">Prioritaire</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-roadmap-occupancy">Logement</label>
+                  <select id="ai-roadmap-occupancy" name="occupancy" required>
+                    <option value="libre">Logement libre</option>
+                    <option value="occupe">Logement occupe</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-field">
+                <label for="ai-roadmap-surface">Surface (m2)</label>
+                <input id="ai-roadmap-surface" name="surface" type="number" min="5" placeholder="80" required>
+              </div>
+              <button class="button" type="submit">Construire le plan IA</button>
+            </form>
+          </article>
+
+          <div id="ai-roadmap-result" class="reveal" hidden></div>
+        </div>
+      </section>
+
+      <section class="section section-primary">
+        <div class="container">
+          <div class="cta-shell reveal" style="text-align:center;">
+            <h2>Vous voulez transformer ces outils en vraie IA connectee ?</h2>
+            <p class="muted-on-dark">
+              La page est deja prete. L'etape suivante consiste a connecter un petit backend
+              securise pour l'analyse d'image reelle, un chatbot GPT et des recommandations
+              dynamiques.
+            </p>
+            <div class="hero-actions" style="justify-content:center;">
+              <a class="button secondary" href="contact.html">Demander un devis</a>
+              <a class="button light" href="services.html">Voir les services</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="site-footer"></div>
+  </body>
+</html>
