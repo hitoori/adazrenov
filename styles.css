@@ -269,6 +269,10 @@ button {
     linear-gradient(145deg, var(--primary), var(--primary-deep));
 }
 
+.section-light {
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+}
+
 .section-accent {
   background: linear-gradient(145deg, #ead2a7, #d4af7a);
 }
@@ -303,60 +307,112 @@ button {
 }
 
 .hero-home {
-  min-height: min(88vh, 760px);
-  display: grid;
-  align-items: stretch;
-}
-
-.hero-media,
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-}
-
-.hero-media img {
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.95);
-}
-
-.hero-overlay {
+  padding: 140px 0 110px;
   background:
-    linear-gradient(90deg, rgba(20, 40, 64, 0.96) 0%, rgba(20, 40, 64, 0.74) 48%, rgba(20, 40, 64, 0.42) 100%);
+    radial-gradient(circle at 20% 20%, rgba(212, 175, 122, 0.18), transparent 24%),
+    radial-gradient(circle at 80% 10%, rgba(30, 58, 95, 0.2), transparent 28%),
+    linear-gradient(180deg, #fdfbf7 0%, #f2f4f8 100%);
+}
+
+.hero-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 56px;
+  align-items: center;
 }
 
 .hero-panel {
   position: relative;
   z-index: 1;
-  display: grid;
-  align-items: center;
-  min-height: min(88vh, 760px);
-  padding: 120px 0 88px;
 }
 
 .hero-copy {
   max-width: 720px;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .hero-copy h1 {
   margin: 0 0 22px;
-  font-size: clamp(2.8rem, 6vw, 5.3rem);
-  line-height: 0.96;
-  letter-spacing: -0.05em;
+  font-size: clamp(2.8rem, 5vw, 4.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
 }
 
 .hero-copy p {
   margin: 0 0 32px;
-  font-size: 1.12rem;
-  color: rgba(255, 255, 255, 0.86);
-  max-width: 640px;
+  font-size: 1.08rem;
+  color: var(--muted);
+  max-width: 620px;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
+}
+
+.hero-bullets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.hero-gallery {
+  position: relative;
+}
+
+.hero-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 220px 200px;
+  gap: 16px;
+}
+
+.hero-g {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-g1 {
+  grid-column: span 2;
+  min-height: 280px;
+}
+
+.hero-g img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 260ms ease;
+}
+
+.hero-g:hover img {
+  transform: scale(1.04);
+}
+
+.hero-quote-card {
+  position: absolute;
+  bottom: -26px;
+  right: 24px;
+  max-width: 320px;
+  padding: 22px;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  border: 1px solid rgba(21, 32, 51, 0.08);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-quote-card p {
+  margin: 0 0 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-quote-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--muted);
 }
 
 .hero-simple {
@@ -735,6 +791,66 @@ button {
   border-radius: 999px;
   background: rgba(212, 175, 122, 0.25);
   color: var(--text);
+  font-weight: 800;
+}
+
+.avatar-ring {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(145deg, var(--primary), var(--accent));
+  box-shadow: 0 12px 32px -20px rgba(20, 40, 64, 0.65);
+}
+
+.avatar-ring img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.testimonial-card {
+  padding: 22px;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  border: 1px solid rgba(21, 32, 51, 0.06);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 12px;
+}
+
+.testimonial-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonial-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.testimonial-card strong {
+  display: block;
+}
+
+.testimonial-card span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.rating span {
+  color: #f2b324;
+  letter-spacing: 2px;
   font-weight: 800;
 }
 
@@ -1404,6 +1520,20 @@ button {
   .tool-grid,
   .ai-hero-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .hero-gallery-grid {
+    grid-template-rows: auto;
+  }
+
+  .hero-quote-card {
+    position: static;
+    margin-top: 6px;
   }
 }
 
