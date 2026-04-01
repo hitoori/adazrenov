@@ -542,9 +542,14 @@ function setupAiChatbot() {
         "Pour ce type de projet, je vous conseille de commencer par l'analyse photo IA si vous avez une image, puis de lancer l'estimateur pour cadrer budget et delai.",
     },
     {
-      keywords: ["contact", "telephone", "mail", "rendez-vous"],
+      keywords: ["contact", "telephone", "mail"],
       answer:
         "Vous pouvez nous joindre via la page Contact, par telephone au 01 23 45 67 89 ou par email a contact@adazrenov.fr.",
+    },
+    {
+      keywords: ["program", "programm", "consultation", "calendrier", "rendez-vous", "reservation"],
+      answer:
+        "Oui. Je peux vous proposer des dates libres dans la section programmation plus bas. Entrez votre nom, prenom et telephone, puis choisissez un créneau pour recevoir la proposition de calendrier.",
     },
   ];
 
@@ -964,6 +969,343 @@ function setupAiRoadmapPlanner() {
   });
 }
 
+const aiBookingState = {
+  firebase: null,
+  firebaseLoading: null,
+  slots: [],
+  selectedSlotId: "",
+};
+
+function getAiBookingConfig() {
+  return window.AI_AISSTEN_BOOKING_CONFIG || {};
+}
+
+function getAiFirebaseConfig() {
+  return window.AI_AISSTEN_FIREBASE_CONFIG || null;
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function formatBookingSlot(date) {
+  return new Intl.DateTimeFormat("fr-FR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function formatBookingDateOnly(date) {
+  return new Intl.DateTimeFormat("fr-FR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+  }).format(date);
+}
+
+function toIcsStamp(date) {
+  return new Date(date).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+}
+
+function buildFallbackBookingSlots(count = 6) {
+  const slots = [];
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() + 1);
+  startDate.setHours(0, 0, 0, 0);
+
+  for (let offset = 0; slots.length < count && offset < 14; offset += 1) {
+    const day = new Date(startDate);
+    day.setDate(startDate.getDate() + offset);
+
+    if (day.getDay() === 0) continue;
+
+    [9, 11, 14, 16].forEach((hour, index) => {
+      if (slots.length >= count) return;
+
+      const start = new Date(day);
+      start.setHours(hour, 0, 0, 0);
+      const end = new Date(start);
+      end.setMinutes(end.getMinutes() + 60);
+
+      slots.push({
+        id: `demo-${start.toISOString()}`,
+        start,
+        end,
+        service: index === 0 ? "Consultation" : "Disponible",
+        advisor: "ADAZ RENOV",
+        source: "demo",
+      });
+    });
+  }
+
+  return slots;
+}
+
+async function getFirebaseBookingApi() {
+  const config = getAiFirebaseConfig();
+  if (!config) return null;
+
+  if (aiBookingState.firebase) return aiBookingState.firebase;
+  if (aiBookingState.firebaseLoading) return aiBookingState.firebaseLoading;
+
+  aiBookingState.firebaseLoading = (async () => {
+    const appModule = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+    const firestoreModule = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
+
+    const app = appModule.getApps().length ? appModule.getApp() : appModule.initializeApp(config);
+
+    aiBookingState.firebase = {
+      app,
+      db: firestoreModule.getFirestore(app),
+      collection: firestoreModule.collection,
+      getDocs: firestoreModule.getDocs,
+      addDoc: firestoreModule.addDoc,
+      query: firestoreModule.query,
+      where: firestoreModule.where,
+      orderBy: firestoreModule.orderBy,
+      limit: firestoreModule.limit,
+      serverTimestamp: firestoreModule.serverTimestamp,
+    };
+
+    return aiBookingState.firebase;
+  })();
+
+  return aiBookingState.firebaseLoading;
+}
+
+async function loadAiBookingSlots() {
+  const config = getAiBookingConfig();
+  const maxSlots = Math.max(3, Number(config.slotCount || 6));
+  const slots = [];
+  const firebase = await getFirebaseBookingApi();
+
+  if (firebase) {
+    try {
+      const collectionName = config.availabilityCollection || "aiAvailabilitySlots";
+      const snapshot = await firebase.getDocs(
+        firebase.query(firebase.collection(firebase.db, collectionName), firebase.where("status", "==", "open"))
+      );
+
+      snapshot.forEach((documentSnapshot) => {
+        const data = documentSnapshot.data();
+        const rawStart = data.startAt || data.start || data.date;
+        const rawEnd = data.endAt || data.end;
+        const start = rawStart?.toDate ? rawStart.toDate() : new Date(rawStart);
+        const end = rawEnd?.toDate ? rawEnd.toDate() : new Date(rawEnd || start.getTime() + 60 * 60 * 1000);
+
+        if (!Number.isNaN(start.getTime())) {
+          slots.push({
+            id: documentSnapshot.id,
+            start,
+            end: Number.isNaN(end.getTime()) ? new Date(start.getTime() + 60 * 60 * 1000) : end,
+            service: data.service || data.label || "Consultation",
+            advisor: data.advisor || data.name || "ADAZ RENOV",
+            source: "firebase",
+          });
+        }
+      });
+    } catch (error) {
+      console.warn("Firebase slots unavailable, falling back to demo slots.", error);
+    }
+  }
+
+  if (!slots.length) {
+    slots.push(...buildFallbackBookingSlots(maxSlots));
+  }
+
+  return slots
+    .sort((left, right) => left.start.getTime() - right.start.getTime())
+    .slice(0, maxSlots);
+}
+
+function buildGoogleCalendarUrl(slot, data) {
+  const start = toIcsStamp(slot.start).replace(/[-:]/g, "");
+  const end = toIcsStamp(slot.end).replace(/[-:]/g, "");
+  const text = encodeURIComponent(`ADAZ RENOV - Consultation ${data.service}`);
+  const details = encodeURIComponent(
+    `Client: ${data.firstname} ${data.lastname}\nTelephone: ${data.phone}\nEmail: ${data.email || "non precise"}\nNotes: ${data.notes || "Aucune"}`
+  );
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}&location=${encodeURIComponent("ADAZ RENOV")}`;
+}
+
+function buildIcsContent(slot, data) {
+  const uid = `${slot.id || slot.start.getTime()}@adazrenov.fr`;
+  const summary = `ADAZ RENOV - Consultation ${data.service}`;
+  const description = [`Client: ${data.firstname} ${data.lastname}`, `Telephone: ${data.phone}`, `Email: ${data.email || "non precise"}`, `Notes: ${data.notes || "Aucune"}`].join("\\n");
+
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//ADAZ RENOV//Ai Aissten//FR",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTAMP:${toIcsStamp(new Date())}`,
+    `DTSTART:${toIcsStamp(slot.start)}`,
+    `DTEND:${toIcsStamp(slot.end)}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    "LOCATION:ADAZ RENOV",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+}
+
+function downloadTextFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function setupAiBookingPlanner() {
+  const form = document.querySelector("#ai-booking-form");
+  const slotList = document.querySelector("#ai-slot-list");
+  const slotInput = document.querySelector("#ai-booking-slot");
+  const result = document.querySelector("#ai-booking-result");
+
+  if (!form || !slotList || !slotInput || !result) return;
+
+  async function renderSlots() {
+    const slots = aiBookingState.slots.length ? aiBookingState.slots : await loadAiBookingSlots();
+    aiBookingState.slots = slots;
+    if (!aiBookingState.selectedSlotId || !slots.some((slot) => slot.id === aiBookingState.selectedSlotId)) {
+      aiBookingState.selectedSlotId = slots[0]?.id || "";
+    }
+    slotInput.value = aiBookingState.selectedSlotId;
+
+    slotList.innerHTML = slots
+      .map((slot) => {
+        const active = slot.id === aiBookingState.selectedSlotId ? "is-active" : "";
+        return `
+          <button type="button" class="slot-pill ${active}" data-slot-id="${escapeHtml(slot.id)}">
+            <strong>${escapeHtml(formatBookingDateOnly(slot.start))}</strong>
+            <span>${escapeHtml(formatBookingSlot(slot.start))}</span>
+            <small>${escapeHtml(slot.service)} · ${escapeHtml(slot.advisor)}</small>
+          </button>
+        `;
+      })
+      .join("");
+
+    slotList.querySelectorAll("[data-slot-id]").forEach((button) => {
+      button.addEventListener("click", () => {
+        aiBookingState.selectedSlotId = button.dataset.slotId || "";
+        slotInput.value = aiBookingState.selectedSlotId;
+        renderSlots();
+      });
+    });
+  }
+
+  loadAiBookingSlots().then((slots) => {
+    aiBookingState.slots = slots;
+    renderSlots();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const slotId = String(formData.get("slot") || aiBookingState.selectedSlotId || "");
+    const slot = aiBookingState.slots.find((entry) => entry.id === slotId) || aiBookingState.slots[0];
+
+    if (!slot) {
+      result.innerHTML = `<div class="tool-result-card"><h3>Aucun créneau disponible</h3><p>Rechargez la liste des dates ou ajoutez des disponibilités dans Firebase.</p></div>`;
+      result.hidden = false;
+      return;
+    }
+
+    const payload = {
+      firstname: String(formData.get("firstname") || "").trim(),
+      lastname: String(formData.get("lastname") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      service: String(formData.get("service") || ""),
+      calendarMode: String(formData.get("calendar_mode") || "google"),
+      notes: String(formData.get("notes") || "").trim(),
+      slotId: slot.id,
+      slotStart: slot.start.toISOString(),
+      slotEnd: slot.end.toISOString(),
+    };
+
+    const firebase = await getFirebaseBookingApi();
+    let bookingSource = slot.source === "firebase" ? "Firebase" : "demo local";
+
+    if (firebase) {
+      try {
+        const collectionName = getAiBookingConfig().appointmentsCollection || "aiAppointments";
+        await firebase.addDoc(firebase.collection(firebase.db, collectionName), {
+          ...payload,
+          status: "pending",
+          createdAt: firebase.serverTimestamp(),
+        });
+        bookingSource = "Firebase";
+      } catch (error) {
+        console.warn("Could not save booking to Firebase.", error);
+        bookingSource = "local preview";
+      }
+    }
+
+    const googleUrl = buildGoogleCalendarUrl(slot, payload);
+    const icsContent = buildIcsContent(slot, payload);
+
+    result.innerHTML = `
+      <div class="tool-result-card">
+        <span class="result-kicker">Demande de consultation</span>
+        <h3>Programmation preparee</h3>
+        <p>
+          Merci ${escapeHtml(payload.firstname)} ${escapeHtml(payload.lastname)}. Nous avons prepare
+          votre demande pour ${escapeHtml(payload.service)} le ${escapeHtml(formatBookingSlot(slot.start))}.
+        </p>
+        <div class="estimate-strip">
+          <div class="estimate-box">
+            <span>Telephone</span>
+            <strong>${escapeHtml(payload.phone)}</strong>
+          </div>
+          <div class="estimate-box">
+            <span>Source de reservation</span>
+            <strong>${escapeHtml(bookingSource)}</strong>
+          </div>
+          <div class="estimate-box">
+            <span>Canal calendrier</span>
+            <strong>${escapeHtml(payload.calendarMode)}</strong>
+          </div>
+        </div>
+        <div class="booking-actions">
+          <a class="button small secondary" href="${googleUrl}" target="_blank" rel="noreferrer">Ouvrir Google Calendar</a>
+          <button class="button small light" type="button" data-download-ics>Telecharger Apple Calendar</button>
+        </div>
+        <div class="result-note">Votre demande peut ensuite etre reliee a Firebase, puis synchronisee avec Google Calendar et importee dans Apple Calendar via le fichier .ics.</div>
+      </div>
+    `;
+
+    result.hidden = false;
+
+    const downloadButton = result.querySelector("[data-download-ics]");
+    if (downloadButton) {
+      downloadButton.addEventListener("click", () => {
+        const safeDate = slot.start.toISOString().slice(0, 10);
+        downloadTextFile(`adaz-renov-consultation-${safeDate}.ics`, icsContent, "text/calendar;charset=utf-8");
+      });
+    }
+
+    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const currentPage = document.body.dataset.page || "home";
   const headerRoot = document.querySelector(".site-header");
@@ -1001,4 +1343,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupAiEstimator();
   setupAiConceptIdeator();
   setupAiRoadmapPlanner();
+  setupAiBookingPlanner();
 });

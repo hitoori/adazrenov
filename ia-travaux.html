@@ -22,13 +22,14 @@
                 <span class="eyebrow">IA Travaux</span>
                 <h1>Ai Aissten</h1>
                 <p>
-                  Un assistant intelligent pour poser des questions, estimer un prix, planifier une
-                  programmation et guider le client dans son projet de renovation.
+                  Un assistant intelligent pour poser des questions, estimer un prix et proposer des
+                  dates libres pour guider le client dans son projet de renovation.
                 </p>
                 <div class="shortcut-row" aria-label="Acces rapide aux outils IA">
                   <a class="shortcut-pill" href="#outil-chat">Questions</a>
                   <a class="shortcut-pill" href="#outil-estimateur">Prix</a>
                   <a class="shortcut-pill" href="#outil-plan">Rendez-vous</a>
+                  <a class="shortcut-pill" href="#outil-programmation">Programmer</a>
                 </div>
               </div>
               <div class="hero-side-card">
@@ -37,6 +38,7 @@
                   <li><span class="check">&#10003;</span><span>Poser des questions sur les travaux</span></li>
                   <li><span class="check">&#10003;</span><span>Obtenir une estimation de prix</span></li>
                   <li><span class="check">&#10003;</span><span>Programmer un rendez-vous</span></li>
+                  <li><span class="check">&#10003;</span><span>Recevoir des dates libres depuis le calendrier</span></li>
                   <li><span class="check">&#10003;</span><span>Préparer le projet avant le devis</span></li>
                 </ul>
               </div>
@@ -48,11 +50,11 @@
       <section class="section section-muted">
         <div class="container">
           <div class="section-head reveal">
-            <span class="eyebrow">6 outils</span>
+            <span class="eyebrow">Assistant IA</span>
             <h2>Un assistant IA pensé pour guider vos clients</h2>
             <p>
               Cette page aide vos clients à poser leurs questions, recevoir une estimation rapide et
-              prendre contact plus facilement pour avancer sur leur projet.
+              réserver une consultation en choisissant parmi les créneaux libres.
             </p>
           </div>
           <div class="cards-4">
@@ -238,6 +240,7 @@
               <button class="tag" type="button" data-chat-question="Quelles garanties proposez-vous ?">Garanties</button>
               <button class="tag" type="button" data-chat-question="Avez-vous des fenetres pour l'isolation thermique ?">Fenetres et isolation</button>
               <button class="tag" type="button" data-chat-question="Travaillez-vous a Paris ?">Zone d'intervention</button>
+              <button class="tag" type="button" data-chat-question="Je veux programmer une consultation">Programmer</button>
             </div>
             <form id="ai-chat-form" class="chat-form">
               <input id="ai-chat-input" type="text" placeholder="Ex: combien coute une renovation complete de 70 m2 ?">
@@ -302,6 +305,74 @@
           </article>
         </div>
       </section>
+
+        <section class="section" id="outil-programmation">
+          <div class="container tool-grid">
+            <article class="tool-panel reveal">
+              <h3>Programmation de consultation</h3>
+              <p>
+                Laissez vos coordonnees et le systeme vous proposera des dates libres. Les demandes
+                peuvent ensuite etre sauvegardees dans Firebase et synchronisees vers Google Calendar.
+              </p>
+              <form id="ai-booking-form" class="tool-form">
+                <div class="tool-form-row">
+                  <div class="tool-field">
+                    <label for="ai-booking-firstname">Prenom</label>
+                    <input id="ai-booking-firstname" name="firstname" type="text" placeholder="Jean" required>
+                  </div>
+                  <div class="tool-field">
+                    <label for="ai-booking-lastname">Nom</label>
+                    <input id="ai-booking-lastname" name="lastname" type="text" placeholder="Dupont" required>
+                  </div>
+                </div>
+                <div class="tool-form-row">
+                  <div class="tool-field">
+                    <label for="ai-booking-phone">Telephone</label>
+                    <input id="ai-booking-phone" name="phone" type="tel" placeholder="06 12 34 56 78" required>
+                  </div>
+                  <div class="tool-field">
+                    <label for="ai-booking-email">Email</label>
+                    <input id="ai-booking-email" name="email" type="email" placeholder="nom@exemple.fr">
+                  </div>
+                </div>
+                <div class="tool-form-row">
+                  <div class="tool-field">
+                    <label for="ai-booking-service">Service</label>
+                    <select id="ai-booking-service" name="service" required>
+                      <option value="Fourniture de fenêtres et pose">Fourniture de fenêtres et pose</option>
+                      <option value="Salle de bain">Salle de bain</option>
+                      <option value="Interphone et visiophone">Interphone et visiophone</option>
+                      <option value="Installation Électrique">Installation Électrique</option>
+                      <option value="Travaux Maçonnerie">Travaux Maçonnerie</option>
+                      <option value="Peinture et décoration">Peinture et décoration</option>
+                    </select>
+                  </div>
+                  <div class="tool-field">
+                    <label for="ai-booking-mode">Canal calendrier</label>
+                    <select id="ai-booking-mode" name="calendar_mode" required>
+                      <option value="google">Google Calendar</option>
+                      <option value="apple">Apple Calendar</option>
+                      <option value="firebase">Firebase + calendrier</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="tool-field">
+                  <label>Dates proposees</label>
+                  <div id="ai-slot-list" class="slot-list" aria-live="polite"></div>
+                  <input id="ai-booking-slot" name="slot" type="hidden" required>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-booking-notes">Message ou besoin precise</label>
+                  <textarea id="ai-booking-notes" name="notes" rows="4" placeholder="Expliquez votre projet en quelques mots..."></textarea>
+                </div>
+                <button class="button" type="submit">Demander une programmation</button>
+                <p class="subtle-note">Le systeme vous montre des dates libres avant confirmation. Une integration Firebase permet ensuite de reserver et de synchroniser les demandes.</p>
+              </form>
+            </article>
+
+            <div id="ai-booking-result" class="reveal" hidden></div>
+          </div>
+        </section>
 
       <section class="section section-muted" id="outil-idees">
         <div class="container tool-grid">

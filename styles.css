@@ -1307,6 +1307,50 @@ button {
   margin: 22px 0;
 }
 
+.slot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.slot-pill {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(21, 32, 51, 0.1);
+  background: rgba(238, 242, 246, 0.75);
+  color: var(--text);
+  text-align: left;
+}
+
+.slot-pill strong {
+  font-size: 0.98rem;
+}
+
+.slot-pill span,
+.slot-pill small {
+  color: var(--muted);
+}
+
+.slot-pill.is-active {
+  border-color: rgba(30, 58, 95, 0.32);
+  background: rgba(30, 58, 95, 0.08);
+}
+
+.slot-pill:focus-visible {
+  outline: 2px solid rgba(30, 58, 95, 0.22);
+  outline-offset: 2px;
+}
+
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0 8px;
+}
+
 .estimate-box {
   padding: 22px;
   border-radius: 20px;
