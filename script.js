@@ -1085,7 +1085,34 @@ async function loadAiBookingSlots() {
   const config = getAiBookingConfig();
   const maxSlots = Math.max(3, Number(config.slotCount || 6));
   const slots = [];
-  const firebase = await getFirebaseBookingApi();
+
+  if (config.availabilityApiUrl) {
+    try {
+      const response = await fetch(`${config.availabilityApiUrl}?limit=${maxSlots}`);
+      if (response.ok) {
+        const payload = await response.json();
+        const apiSlots = Array.isArray(payload?.slots) ? payload.slots : [];
+        apiSlots.forEach((slot) => {
+          const start = new Date(slot.start);
+          const end = new Date(slot.end || new Date(start).getTime() + 60 * 60 * 1000);
+          if (!Number.isNaN(start.getTime())) {
+            slots.push({
+              id: String(slot.id || `api-${start.toISOString()}`),
+              start,
+              end,
+              service: String(slot.service || "Consultation"),
+              advisor: String(slot.advisor || "ADAZ RENOV"),
+              source: "api",
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.warn("Availability API unavailable, falling back to Firebase/demo slots.", error);
+    }
+  }
+
+  const firebase = slots.length ? null : await getFirebaseBookingApi();
 
   if (firebase) {
     try {
@@ -1241,21 +1268,39 @@ function setupAiBookingPlanner() {
       slotEnd: slot.end.toISOString(),
     };
 
-    const firebase = await getFirebaseBookingApi();
+    const bookingConfig = getAiBookingConfig();
     let bookingSource = slot.source === "firebase" ? "Firebase" : "demo local";
 
-    if (firebase) {
+    if (bookingConfig.bookingApiUrl) {
       try {
-        const collectionName = getAiBookingConfig().appointmentsCollection || "aiAppointments";
-        await firebase.addDoc(firebase.collection(firebase.db, collectionName), {
-          ...payload,
-          status: "pending",
-          createdAt: firebase.serverTimestamp(),
+        const response = await fetch(bookingConfig.bookingApiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
-        bookingSource = "Firebase";
+        if (response.ok) {
+          bookingSource = "API calendrier";
+        }
       } catch (error) {
-        console.warn("Could not save booking to Firebase.", error);
-        bookingSource = "local preview";
+        console.warn("Booking API unavailable, trying Firebase fallback.", error);
+      }
+    }
+
+    if (bookingSource !== "API calendrier") {
+      const firebase = await getFirebaseBookingApi();
+      if (firebase) {
+        try {
+          const collectionName = bookingConfig.appointmentsCollection || "aiAppointments";
+          await firebase.addDoc(firebase.collection(firebase.db, collectionName), {
+            ...payload,
+            status: "pending",
+            createdAt: firebase.serverTimestamp(),
+          });
+          bookingSource = "Firebase";
+        } catch (error) {
+          console.warn("Could not save booking to Firebase.", error);
+          bookingSource = "local preview";
+        }
       }
     }
 
