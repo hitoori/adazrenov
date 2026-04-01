@@ -1,0 +1,27 @@
+{
+  "name": "practicatest",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static renovation site with Firebase booking support for ADAZ RENOV.",
+  "scripts": {
+    "firebase:login": "firebase login",
+    "firebase:use": "firebase use --add",
+    "firebase:deploy:functions": "firebase deploy --only functions",
+    "firebase:deploy": "firebase deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hitoori/adazrenov.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hitoori/adazrenov/issues"
+  },
+  "homepage": "https://github.com/hitoori/adazrenov#readme",
+  "devDependencies": {
+    "firebase-tools": "^15.12.0"
+  }
+}
