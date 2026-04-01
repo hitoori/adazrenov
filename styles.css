@@ -1071,7 +1071,23 @@ button {
 }
 
 .chat-home-grid {
+  display: grid;
   grid-template-columns: minmax(0, 1fr);
+}
+
+.adazai-home .section-head {
+  max-width: 100%;
+  text-align: left;
+  margin: 0 0 28px;
+}
+
+.adazai-home .chat-shell {
+  width: 100%;
+  min-height: 560px;
+}
+
+.adazai-home .chat-log {
+  max-height: 430px;
 }
 
 .tool-panel,
@@ -1630,6 +1646,24 @@ button {
   .cta-shell,
   .light-panel {
     padding: 28px;
+  }
+
+  .adazai-home .chat-shell {
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .adazai-home .chat-log {
+    max-height: 300px;
+    padding: 12px;
+  }
+
+  .adazai-home .chat-form {
+    grid-template-columns: 1fr;
+  }
+
+  .adazai-home .chat-form .button {
+    width: 100%;
   }
 
   .shortcut-row {
