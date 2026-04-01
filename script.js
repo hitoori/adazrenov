@@ -510,48 +510,58 @@ function setupAiChatbot() {
 
   if (!form || !input || !log) return;
 
-  const responses = [
+  const intents = [
     {
-      keywords: ["devis", "prix", "cout", "combien"],
+      keywords: ["devis", "prix", "cout", "combien", "tarif", "budget", "estimation"],
       answer:
-        "Nous proposons un devis gratuit. Pour une estimation rapide, utilisez l'estimateur IA ci-dessous, puis envoyez votre demande via la page Contact pour recevoir une proposition precise.",
+        "Nous proposons un devis gratuit. Donnez-moi le type de travaux et une surface approximative, et je vous donne une premiere fourchette avant le devis detaille.",
     },
     {
-      keywords: ["delai", "duree", "combien de temps", "temps"],
+      keywords: ["delai", "duree", "combien de temps", "temps", "planning", "date"],
       answer:
-        "Le delai depend surtout de la surface, de la complexite du chantier et des finitions. En general, une salle de bain se traite en quelques semaines et une renovation complete en plusieurs mois.",
+        "Le delai depend de la surface, de la complexite et des finitions. Pour une salle de bain, on est souvent sur quelques semaines, et pour une renovation complete sur plusieurs mois.",
     },
     {
-      keywords: ["garantie", "assurance", "decennale"],
+      keywords: ["garantie", "assurance", "decennale", "sav", "qualite"],
       answer:
-        "ADAZ RENOV met en avant une garantie decennale et une assurance responsabilite civile professionnelle sur ses travaux.",
+        "ADAZ RENOV met en avant la garantie decennale et une assurance responsabilite civile professionnelle sur les travaux realises.",
     },
     {
-      keywords: ["paris", "france", "zone", "intervention", "ville"],
+      keywords: ["paris", "france", "zone", "intervention", "ville", "deplacement"],
       answer:
-        "Le site indique une intervention principale en Ile-de-France et dans les grandes villes francaises. Pour votre localisation exacte, le plus simple est de nous l'envoyer dans la demande de devis.",
+        "Nous intervenons principalement en Ile-de-France et dans plusieurs grandes villes. Envoyez votre ville et je vous confirme rapidement la disponibilite.",
     },
     {
-      keywords: ["fenetre", "porte", "materiau", "produit", "catalogue"],
+      keywords: ["fenetre", "porte", "materiau", "produit", "catalogue", "isolation"],
       answer:
-        "Nous pouvons vous orienter vers les fenetres, portes et materiaux du catalogue. Le recommandateur IA produits est justement la pour filtrer selon budget, style et performance.",
+        "Nous pouvons vous orienter vers les fenetres, portes et materiaux adaptes. Si vous voulez, je peux vous recommander une option selon votre budget et votre besoin d'isolation.",
     },
     {
-      keywords: ["cuisine", "salle de bain", "facade", "toiture", "renovation"],
+      keywords: ["cuisine", "salle de bain", "facade", "toiture", "renovation", "maconnerie", "peinture", "electrique"],
       answer:
-        "Pour ce type de projet, je vous conseille de commencer par l'analyse photo IA si vous avez une image, puis de lancer l'estimateur pour cadrer budget et delai.",
+        "Parfait. Pour ce type de projet, donnez-moi la surface, votre priorite (budget, delai ou finition) et je vous propose une premiere orientation claire.",
     },
     {
-      keywords: ["contact", "telephone", "mail"],
+      keywords: ["contact", "telephone", "mail", "email", "numero"],
       answer:
         "Vous pouvez nous joindre via la page Contact, par telephone au 01 23 45 67 89 ou par email a contact@adazrenov.fr.",
     },
     {
-      keywords: ["program", "programm", "consultation", "calendrier", "rendez-vous", "reservation"],
+      keywords: ["program", "programm", "consultation", "calendrier", "rendez-vous", "reservation", "rdv"],
       answer:
-        "Oui. Je peux vous proposer des dates libres dans la section programmation plus bas. Entrez votre nom, prenom et telephone, puis choisissez un créneau pour recevoir la proposition de calendrier.",
+        "Oui. Je peux vous proposer des dates libres dans la section programmation. Entrez votre nom, prenom et telephone, puis choisissez un créneau.",
     },
   ];
+
+  function normalizeText(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
   function appendMessage(role, text) {
     const bubble = document.createElement("div");
@@ -562,10 +572,28 @@ function setupAiChatbot() {
   }
 
   function getAnswer(question) {
-    const normalized = question.toLowerCase();
-    const match = responses.find((item) => item.keywords.some((keyword) => normalized.includes(keyword)));
+    const normalized = normalizeText(question);
+
+    const scored = intents
+      .map((intent) => {
+        let score = 0;
+        intent.keywords.forEach((keyword) => {
+          const key = normalizeText(keyword);
+          if (!key) return;
+          if (normalized.includes(key)) {
+            const occurrences = normalized.split(key).length - 1;
+            score += key.includes(" ") ? 4 : 2;
+            score += Math.min(occurrences - 1, 2);
+          }
+        });
+        return { ...intent, score };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const match = scored[0];
+
     return (
-      match?.answer ||
+      (match && match.score > 0 ? match.answer : null) ||
       "Je peux vous aider sur les devis, delais, garanties, produits, cuisines, salles de bain, facades et zones d'intervention. Posez-moi une question plus precise ou utilisez les outils IA de cette page."
     );
   }

@@ -1070,6 +1070,10 @@ button {
   align-items: start;
 }
 
+.chat-home-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .tool-panel,
 .chat-shell,
 .tool-result-card {
