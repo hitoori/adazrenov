@@ -8,6 +8,8 @@ const navItems = [
   { page: "contact", href: "contact.html", label: "Contact" },
 ];
 
+const brandLogoPath = "Pozelogo+altele/Original%20on%20Transparent.png";
+
 function buildHeader(currentPage) {
   const links = navItems
     .map((item) => {
@@ -20,11 +22,7 @@ function buildHeader(currentPage) {
     <div class="site-header-shell">
       <div class="container site-nav">
         <a class="brand" href="index.html" aria-label="ADAZ RENOV Accueil">
-          <span class="logo-mark">AR</span>
-          <span class="logo-word">
-            <strong>ADAZ RENOV</strong>
-            <span>Renovation & Construction</span>
-          </span>
+          <img class="brand-logo" src="${brandLogoPath}" alt="Logo ADAZ RENOV">
         </a>
         <nav class="nav-links" aria-label="Navigation principale">
           ${links}
@@ -54,11 +52,7 @@ function buildFooter() {
       <div class="container footer-grid">
         <div class="footer-block">
           <div class="brand">
-            <span class="logo-mark">AR</span>
-            <span class="logo-word">
-              <strong>ADAZ RENOV</strong>
-              <span>Votre partenaire de confiance</span>
-            </span>
+            <img class="brand-logo" src="${brandLogoPath}" alt="Logo ADAZ RENOV">
           </div>
           <p>
             Votre partenaire de confiance pour tous vos projets de renovation et construction en France.

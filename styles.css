@@ -85,8 +85,15 @@ button {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   min-width: 0;
+}
+
+.brand-logo {
+  display: block;
+  width: auto;
+  height: 56px;
+  object-fit: contain;
 }
 
 .logo-mark {
@@ -959,6 +966,10 @@ button {
   padding: 72px 0 42px;
 }
 
+.footer-block .brand-logo {
+  height: 62px;
+}
+
 .footer-block p,
 .footer-links a,
 .footer-block li,
@@ -1616,6 +1627,11 @@ button {
 
   .logo-mark {
     width: 46px;
+    height: 46px;
+  }
+
+  .brand-logo,
+  .footer-block .brand-logo {
     height: 46px;
   }
 
