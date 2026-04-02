@@ -139,7 +139,7 @@ button {
 
 .crown-glyph {
   position: absolute;
-  top: -0.6em;
+  top: -0.48em;
   left: 50%;
   transform: translateX(-50%);
   width: 0.52em;
