@@ -739,6 +739,7 @@ function setupAiChatbot() {
   const input = document.querySelector("#ai-chat-input");
   const log = document.querySelector("#ai-chat-log");
   const quickQuestions = document.querySelectorAll("[data-chat-question]");
+  let userMessageCount = 0;
 
   if (!form || !input || !log) return;
 
@@ -990,6 +991,19 @@ function setupAiChatbot() {
       .trim();
   }
 
+  function getGreetingAnswer(question, isFirstUserMessage) {
+    const normalized = normalizeText(question);
+    const greetingTokens = ["hey", "salut", "buna", "privet", "noroc", "ce faci", "hello", "bonjour"];
+    const isGreeting = greetingTokens.some((token) => normalized.includes(token));
+    if (!isGreeting) return null;
+
+    if (isFirstUserMessage) {
+      return "Salut! Ma bucur sa te cunosc. Sunt ADAZAI si te pot ajuta cu estimare buget, recomandari materiale si programare consultatie. Spune-mi ce proiect ai.";
+    }
+
+    return "Salut! Cu drag te ajut. Spune-mi tipul lucrarii si suprafata aproximativa, iar eu iti dau rapid bugetul si urmatorii pasi.";
+  }
+
   function appendMessage(role, text) {
     const bubble = document.createElement("div");
     bubble.className = `chat-message ${role}`;
@@ -998,7 +1012,10 @@ function setupAiChatbot() {
     log.scrollTop = log.scrollHeight;
   }
 
-  function getAnswer(question) {
+  function getAnswer(question, isFirstUserMessage) {
+    const greetingAnswer = getGreetingAnswer(question, isFirstUserMessage);
+    if (greetingAnswer) return greetingAnswer;
+
     const gptIntegrationAnswer = getChatGptIntegrationAnswer(question);
     if (gptIntegrationAnswer) return gptIntegrationAnswer;
 
@@ -1055,9 +1072,11 @@ function setupAiChatbot() {
   async function submitQuestion(question) {
     const clean = question.trim();
     if (!clean) return;
+    const isFirstUserMessage = userMessageCount === 0;
+    userMessageCount += 1;
     appendMessage("user", clean);
 
-    const localAnswer = getAnswer(clean);
+    const localAnswer = getAnswer(clean, isFirstUserMessage);
     const remoteAnswer = await getRemoteChatAnswer(clean);
     const answer = remoteAnswer || localAnswer;
 
