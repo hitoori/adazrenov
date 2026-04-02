@@ -151,6 +151,61 @@ function setupFilters() {
   });
 }
 
+function setupProductVariants() {
+  const cards = document.querySelectorAll(".product-card[data-base-price]");
+
+  if (!cards.length) return;
+
+  const parseNumber = (value, fallback) => {
+    const parsed = Number.parseFloat(String(value || ""));
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const formatPrice = (value, suffix) => {
+    const rounded = Math.round(value / 5) * 5;
+    return `A partir de ${rounded.toLocaleString("fr-FR")}EUR${suffix}`;
+  };
+
+  cards.forEach((card) => {
+    const basePrice = parseNumber(card.dataset.basePrice, 0);
+    const priceMode = card.dataset.priceMode || "fixed";
+    const priceSuffix = card.dataset.priceSuffix || "";
+    const colorSelect = card.querySelector("[data-product-color]");
+    const sizeSelect = card.querySelector("[data-product-size]");
+    const priceOutput = card.querySelector("[data-price-output]");
+    const priceNote = card.querySelector("[data-price-note]");
+
+    const updatePrice = () => {
+      const colorOption = colorSelect?.selectedOptions?.[0] || null;
+      const colorLabel = colorOption?.dataset.label || colorSelect?.value || "Standard";
+      const colorSurcharge = parseNumber(colorOption?.dataset.surcharge, 0);
+
+      let computedPrice = basePrice + colorSurcharge;
+      let detailLine = `Couleur choisie: ${colorLabel}`;
+
+      if (priceMode === "window") {
+        const sizeOption = sizeSelect?.selectedOptions?.[0] || null;
+        const area = parseNumber(sizeOption?.dataset.area, 0.96);
+        const normalizedArea = area / 0.96;
+        computedPrice = basePrice * normalizedArea + colorSurcharge;
+        detailLine = `Couleur ${colorLabel}${sizeSelect?.value ? ` · Dimension ${sizeSelect.value}` : ""}`;
+      }
+
+      if (priceOutput) {
+        priceOutput.textContent = formatPrice(computedPrice, priceSuffix);
+      }
+
+      if (priceNote) {
+        priceNote.textContent = `${detailLine}. Les variantes plus techniques coûtent plus cher.`;
+      }
+    };
+
+    colorSelect?.addEventListener("change", updatePrice);
+    sizeSelect?.addEventListener("change", updatePrice);
+    updatePrice();
+  });
+}
+
 function setupContactForm() {
   const form = document.querySelector("#contact-form");
   const success = document.querySelector("#contact-success");
@@ -1408,6 +1463,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setupFilters();
+  setupProductVariants();
   setupContactForm();
   setupReveal();
   setupAiPhotoAnalyzer();

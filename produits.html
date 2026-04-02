@@ -37,174 +37,351 @@
             <button class="filter-chip" type="button" data-filter="windows" aria-pressed="false">Fenetres</button>
             <button class="filter-chip" type="button" data-filter="doors" aria-pressed="false">Portes</button>
             <button class="filter-chip" type="button" data-filter="materials" aria-pressed="false">Materiaux</button>
+            <button class="filter-chip" type="button" data-filter="colors" aria-pressed="false">Culori</button>
+            <button class="filter-chip" type="button" data-filter="custom" aria-pressed="false">Sur mesure</button>
+            <button class="filter-chip" type="button" data-filter="premium" aria-pressed="false">Premium</button>
           </div>
 
           <div class="cards-3">
-            <article class="card product-card reveal" data-group="products" data-tags="windows">
+            <article class="card product-card reveal" data-group="products" data-tags="windows colors custom premium" data-base-price="350" data-price-mode="window" data-price-suffix="">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1648104266805-1f2e90ae2a98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3aW5kb3dzJTIwYXJjaGl0ZWN0dXJlfGVufDF8fHx8MTc3NDc2NzQzNnww&ixlib=rb-4.1.0&q=80&w=1400" alt="Fenetre PVC double vitrage" loading="lazy"></div>
               <div class="card-body">
                 <h3>Fenetre PVC double vitrage</h3>
                 <p>Haute performance energetique, isolation thermique et acoustique optimale.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="window-pvc-color">Couleur</label>
+                    <select id="window-pvc-color" data-product-color>
+                      <option value="blanc" data-label="Blanc" data-surcharge="0">Blanc</option>
+                      <option value="gris" data-label="Gris anthracite" data-surcharge="35">Gris anthracite</option>
+                      <option value="beige" data-label="Beige sable" data-surcharge="25">Beige sable</option>
+                      <option value="noir" data-label="Noir mat" data-surcharge="55">Noir mat</option>
+                    </select>
+                  </div>
+                  <div class="tool-field">
+                    <label for="window-pvc-size">Dimension</label>
+                    <select id="window-pvc-size" data-product-size>
+                      <option value="80x120" data-area="0.96">80 x 120 cm</option>
+                      <option value="100x120" data-area="1.2">100 x 120 cm</option>
+                      <option value="120x140" data-area="1.68">120 x 140 cm</option>
+                      <option value="150x200" data-area="3">150 x 200 cm</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Double vitrage</span></li>
                   <li><span class="check">&#10003;</span><span>PVC haute qualite</span></li>
                   <li><span class="check">&#10003;</span><span>5 ans de garantie</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 350EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 350EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les couleurs plus techniques et les grandes dimensions augmentent le prix.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="windows">
+            <article class="card product-card reveal" data-group="products" data-tags="windows colors custom premium" data-base-price="650" data-price-mode="window" data-price-suffix="">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1648104266805-1f2e90ae2a98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3aW5kb3dzJTIwYXJjaGl0ZWN0dXJlfGVufDF8fHx8MTc3NDc2NzQzNnww&ixlib=rb-4.1.0&q=80&w=1400" alt="Fenetre aluminium sur mesure" loading="lazy"></div>
               <div class="card-body">
                 <h3>Fenetre aluminium sur mesure</h3>
                 <p>Design contemporain, grande resistance et finitions premium.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="window-alu-color">Couleur</label>
+                    <select id="window-alu-color" data-product-color>
+                      <option value="blanc" data-label="Blanc ral" data-surcharge="0">Blanc ral</option>
+                      <option value="gris" data-label="Gris anthracite" data-surcharge="45">Gris anthracite</option>
+                      <option value="noir" data-label="Noir sable" data-surcharge="75">Noir sable</option>
+                      <option value="bronze" data-label="Bronze metalise" data-surcharge="95">Bronze metalise</option>
+                    </select>
+                  </div>
+                  <div class="tool-field">
+                    <label for="window-alu-size">Dimension</label>
+                    <select id="window-alu-size" data-product-size>
+                      <option value="80x120" data-area="0.96">80 x 120 cm</option>
+                      <option value="100x120" data-area="1.2">100 x 120 cm</option>
+                      <option value="120x140" data-area="1.68">120 x 140 cm</option>
+                      <option value="150x200" data-area="3">150 x 200 cm</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Aluminium premium</span></li>
                   <li><span class="check">&#10003;</span><span>Sur mesure</span></li>
                   <li><span class="check">&#10003;</span><span>10 ans de garantie</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 650EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 650EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les finitions métallisées et les grandes ouvertures coûtent plus cher.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="windows">
+            <article class="card product-card reveal" data-group="products" data-tags="windows colors custom premium" data-base-price="850" data-price-mode="window" data-price-suffix="">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1648104266805-1f2e90ae2a98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3aW5kb3dzJTIwYXJjaGl0ZWN0dXJlfGVufDF8fHx8MTc3NDc2NzQzNnww&ixlib=rb-4.1.0&q=80&w=1400" alt="Fenetre bois triple vitrage" loading="lazy"></div>
               <div class="card-body">
                 <h3>Fenetre bois triple vitrage</h3>
                 <p>Elegance naturelle et performances thermiques exceptionnelles.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="window-bois-color">Couleur</label>
+                    <select id="window-bois-color" data-product-color>
+                      <option value="naturel" data-label="Chene naturel" data-surcharge="0">Chene naturel</option>
+                      <option value="noyer" data-label="Noyer fonce" data-surcharge="60">Noyer fonce</option>
+                      <option value="blanc" data-label="Blanc casse" data-surcharge="25">Blanc casse</option>
+                      <option value="gris" data-label="Gris perle" data-surcharge="35">Gris perle</option>
+                    </select>
+                  </div>
+                  <div class="tool-field">
+                    <label for="window-bois-size">Dimension</label>
+                    <select id="window-bois-size" data-product-size>
+                      <option value="80x120" data-area="0.96">80 x 120 cm</option>
+                      <option value="100x120" data-area="1.2">100 x 120 cm</option>
+                      <option value="120x140" data-area="1.68">120 x 140 cm</option>
+                      <option value="150x200" data-area="3">150 x 200 cm</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Triple vitrage</span></li>
                   <li><span class="check">&#10003;</span><span>Bois noble</span></li>
                   <li><span class="check">&#10003;</span><span>Certification ecologique</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 850EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 850EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Le bois teinté et les grandes dimensions augmentent nettement le prix.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="doors">
+            <article class="card product-card reveal" data-group="products" data-tags="doors colors premium" data-base-price="1200" data-price-mode="fixed" data-price-suffix="">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1773291933719-fc02bea5a68f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBkb29yJTIwZW50cmFuY2V8ZW58MXx8fHwxNzc0NzY3NDM2fDA&ixlib=rb-4.1.0&q=80&w=1400" alt="Porte d'entree blindee" loading="lazy"></div>
               <div class="card-body">
                 <h3>Porte d'entree blindee</h3>
                 <p>Securite maximale avec certification A2P et design moderne.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="door-blind-color">Couleur</label>
+                    <select id="door-blind-color" data-product-color>
+                      <option value="anthracite" data-label="Anthracite" data-surcharge="0">Anthracite</option>
+                      <option value="noir" data-label="Noir profond" data-surcharge="45">Noir profond</option>
+                      <option value="blanc" data-label="Blanc" data-surcharge="25">Blanc</option>
+                      <option value="vert" data-label="Vert fonce" data-surcharge="65">Vert fonce</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Blindee A2P</span></li>
                   <li><span class="check">&#10003;</span><span>3 points de fermeture</span></li>
                   <li><span class="check">&#10003;</span><span>Isolation thermique</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 1 200EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 1 200EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les couleurs spéciales de sécurité peuvent coûter plus cher.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="doors">
+            <article class="card product-card reveal" data-group="products" data-tags="doors colors premium" data-base-price="900" data-price-mode="fixed" data-price-suffix="">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1773291933719-fc02bea5a68f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBkb29yJTIwZW50cmFuY2V8ZW58MXx8fHwxNzc0NzY3NDM2fDA&ixlib=rb-4.1.0&q=80&w=1400" alt="Porte fenetre coulissante" loading="lazy"></div>
               <div class="card-body">
                 <h3>Porte-fenetre coulissante</h3>
                 <p>Grande ouverture, luminosite optimale et gain d'espace.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="door-slide-color">Couleur</label>
+                    <select id="door-slide-color" data-product-color>
+                      <option value="blanc" data-label="Blanc" data-surcharge="0">Blanc</option>
+                      <option value="gris" data-label="Gris anthracite" data-surcharge="40">Gris anthracite</option>
+                      <option value="noir" data-label="Noir sable" data-surcharge="60">Noir sable</option>
+                      <option value="champagne" data-label="Champagne" data-surcharge="35">Champagne</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Systeme coulissant</span></li>
                   <li><span class="check">&#10003;</span><span>Double vitrage</span></li>
                   <li><span class="check">&#10003;</span><span>Installation incluse</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 900EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 900EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les grandes finitions coulissantes coûtent plus cher.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="doors">
+            <article class="card product-card reveal" data-group="products" data-tags="doors colors" data-base-price="250" data-price-mode="fixed" data-price-suffix="">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1773291933719-fc02bea5a68f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBkb29yJTIwZW50cmFuY2V8ZW58MXx8fHwxNzc0NzY3NDM2fDA&ixlib=rb-4.1.0&q=80&w=1400" alt="Porte interieure design" loading="lazy"></div>
               <div class="card-body">
                 <h3>Porte interieure design</h3>
                 <p>Finitions modernes, plusieurs coloris disponibles et pose rapide.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="door-inner-color">Couleur</label>
+                    <select id="door-inner-color" data-product-color>
+                      <option value="blanc" data-label="Blanc satine" data-surcharge="0">Blanc satine</option>
+                      <option value="chene" data-label="Chene clair" data-surcharge="25">Chene clair</option>
+                      <option value="gris" data-label="Gris sable" data-surcharge="20">Gris sable</option>
+                      <option value="noir" data-label="Noir mat" data-surcharge="35">Noir mat</option>
+                      <option value="bleu" data-label="Bleu nuit" data-surcharge="45">Bleu nuit</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Design contemporain</span></li>
                   <li><span class="check">&#10003;</span><span>Plusieurs finitions</span></li>
                   <li><span class="check">&#10003;</span><span>Pose rapide</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 250EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 250EUR</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les teintes foncées ou boisées sont plus coûteuses.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="materials">
+            <article class="card product-card reveal" data-group="products" data-tags="materials colors premium" data-base-price="35" data-price-mode="fixed" data-price-suffix="/m2">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1617707628145-8dfaf1678fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBtYXRlcmlhbHMlMjBicmlja3xlbnwxfHx8fDE3NzQ3Njc0MzZ8MA&ixlib=rb-4.1.0&q=80&w=1400" alt="Carrelage gres cerame premium" loading="lazy"></div>
               <div class="card-body">
                 <h3>Carrelage gres cerame premium</h3>
                 <p>Haute resistance, aspect naturel et facilite d'entretien.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="tile-color">Couleur</label>
+                    <select id="tile-color" data-product-color>
+                      <option value="blanc" data-label="Blanc casse" data-surcharge="0">Blanc casse</option>
+                      <option value="beige" data-label="Beige sable" data-surcharge="3">Beige sable</option>
+                      <option value="gris" data-label="Gris perle" data-surcharge="5">Gris perle</option>
+                      <option value="anthracite" data-label="Anthracite" data-surcharge="8">Anthracite</option>
+                      <option value="terre" data-label="Terre cuite" data-surcharge="10">Terre cuite</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Format 60x60</span></li>
                   <li><span class="check">&#10003;</span><span>Plusieurs coloris</span></li>
                   <li><span class="check">&#10003;</span><span>Usage intensif</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 35EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 35EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les teintes minérales et terre cuite augmentent légèrement le prix.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="materials">
+            <article class="card product-card reveal" data-group="products" data-tags="materials colors premium" data-base-price="65" data-price-mode="fixed" data-price-suffix="/m2">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1617707628145-8dfaf1678fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBtYXRlcmlhbHMlMjBicmlja3xlbnwxfHx8fDE3NzQ3Njc0MzZ8MA&ixlib=rb-4.1.0&q=80&w=1400" alt="Parquet chene massif" loading="lazy"></div>
               <div class="card-body">
                 <h3>Parquet chene massif</h3>
                 <p>Bois noble francais, durabilite exceptionnelle et finition huilee.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="parquet-color">Couleur</label>
+                    <select id="parquet-color" data-product-color>
+                      <option value="naturel" data-label="Chene naturel" data-surcharge="0">Chene naturel</option>
+                      <option value="blanchi" data-label="Chene blanchi" data-surcharge="8">Chene blanchi</option>
+                      <option value="noyer" data-label="Noyer" data-surcharge="12">Noyer</option>
+                      <option value="fume" data-label="Fume" data-surcharge="15">Fume</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Chene massif</span></li>
                   <li><span class="check">&#10003;</span><span>Origine France</span></li>
                   <li><span class="check">&#10003;</span><span>Aspect naturel</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 65EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 65EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les finitions foncées et fumées sont plus coûteuses.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="materials">
+            <article class="card product-card reveal" data-group="products" data-tags="materials colors premium" data-base-price="18" data-price-mode="fixed" data-price-suffix="/m2">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1617707628145-8dfaf1678fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBtYXRlcmlhbHMlMjBicmlja3xlbnwxfHx8fDE3NzQ3Njc0MzZ8MA&ixlib=rb-4.1.0&q=80&w=1400" alt="Isolation thermique ecologique" loading="lazy"></div>
               <div class="card-body">
                 <h3>Isolation thermique ecologique</h3>
                 <p>Laine de bois haute performance, respectueuse de l'environnement.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="insulation-color">Couleur</label>
+                    <select id="insulation-color" data-product-color>
+                      <option value="naturel" data-label="Naturel" data-surcharge="0">Naturel</option>
+                      <option value="vert" data-label="Vert clair" data-surcharge="2">Vert clair</option>
+                      <option value="gris" data-label="Gris technique" data-surcharge="4">Gris technique</option>
+                      <option value="blanc" data-label="Blanc" data-surcharge="1">Blanc</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Laine de bois</span></li>
                   <li><span class="check">&#10003;</span><span>R = 6</span></li>
                   <li><span class="check">&#10003;</span><span>Certification ecologique</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 18EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 18EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les variantes techniques spéciales sont plus chères.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="materials">
+            <article class="card product-card reveal" data-group="products" data-tags="materials colors premium" data-base-price="45" data-price-mode="fixed" data-price-suffix=" / pot 10L">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1617707628145-8dfaf1678fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBtYXRlcmlhbHMlMjBicmlja3xlbnwxfHx8fDE3NzQ3Njc0MzZ8MA&ixlib=rb-4.1.0&q=80&w=1400" alt="Peinture interieure premium" loading="lazy"></div>
               <div class="card-body">
                 <h3>Peinture interieure premium</h3>
                 <p>Sans COV, finition mate veloutee et grande couvrance.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="paint-color">Couleur</label>
+                    <select id="paint-color" data-product-color>
+                      <option value="blanc" data-label="Blanc" data-surcharge="0">Blanc</option>
+                      <option value="lin" data-label="Lin" data-surcharge="4">Lin</option>
+                      <option value="sable" data-label="Sable" data-surcharge="6">Sable</option>
+                      <option value="gris" data-label="Gris perle" data-surcharge="8">Gris perle</option>
+                      <option value="sauge" data-label="Vert sauge" data-surcharge="12">Vert sauge</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Sans COV</span></li>
                   <li><span class="check">&#10003;</span><span>Finition mate</span></li>
                   <li><span class="check">&#10003;</span><span>Grande couvrance</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">45EUR / pot 10L</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 45EUR / pot 10L</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les couleurs profondes nécessitent plus de couches et coûtent plus.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="materials">
+            <article class="card product-card reveal" data-group="products" data-tags="materials colors premium" data-base-price="28" data-price-mode="fixed" data-price-suffix=" / sac">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1617707628145-8dfaf1678fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBtYXRlcmlhbHMlMjBicmlja3xlbnwxfHx8fDE3NzQ3Njc0MzZ8MA&ixlib=rb-4.1.0&q=80&w=1400" alt="Enduit de facade" loading="lazy"></div>
               <div class="card-body">
                 <h3>Enduit de facade</h3>
                 <p>Protection longue duree, finitions personnalisables et resistance aux UV.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="facade-color">Couleur</label>
+                    <select id="facade-color" data-product-color>
+                      <option value="blanc" data-label="Blanc pierre" data-surcharge="0">Blanc pierre</option>
+                      <option value="ocre" data-label="Ocre" data-surcharge="4">Ocre</option>
+                      <option value="gris" data-label="Gris urbain" data-surcharge="6">Gris urbain</option>
+                      <option value="beige" data-label="Beige sable" data-surcharge="3">Beige sable</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Respirant</span></li>
                   <li><span class="check">&#10003;</span><span>Facile a appliquer</span></li>
                   <li><span class="check">&#10003;</span><span>Longue tenue</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 28EUR / sac</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 28EUR / sac</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les finitions pigmentées coûtent un peu plus cher.</p>
               </div>
             </article>
 
-            <article class="card product-card reveal" data-group="products" data-tags="materials">
+            <article class="card product-card reveal" data-group="products" data-tags="materials colors premium" data-base-price="42" data-price-mode="fixed" data-price-suffix="/m2">
               <div class="media-top"><img src="https://images.unsplash.com/photo-1617707628145-8dfaf1678fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBtYXRlcmlhbHMlMjBicmlja3xlbnwxfHx8fDE3NzQ3Njc0MzZ8MA&ixlib=rb-4.1.0&q=80&w=1400" alt="Tuiles terre cuite" loading="lazy"></div>
               <div class="card-body">
                 <h3>Tuiles terre cuite</h3>
                 <p>Durabilite ancestrale, esthetique traditionnelle et fabrication robuste.</p>
+                <div class="product-config">
+                  <div class="tool-field">
+                    <label for="tiles-color">Couleur</label>
+                    <select id="tiles-color" data-product-color>
+                      <option value="rouge" data-label="Rouge classique" data-surcharge="0">Rouge classique</option>
+                      <option value="brun" data-label="Brun terre" data-surcharge="4">Brun terre</option>
+                      <option value="ardoise" data-label="Ardoise" data-surcharge="8">Ardoise</option>
+                      <option value="anthracite" data-label="Anthracite" data-surcharge="12">Anthracite</option>
+                    </select>
+                  </div>
+                </div>
                 <ul class="mini-list">
                   <li><span class="check">&#10003;</span><span>Terre cuite</span></li>
                   <li><span class="check">&#10003;</span><span>50 ans de garantie</span></li>
                   <li><span class="check">&#10003;</span><span>Fabrication francaise</span></li>
                 </ul>
-                <div class="product-footer"><span class="price-row">A partir de 42EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <div class="product-footer"><span class="price-row" data-price-output>A partir de 42EUR/m2</span><a class="button small light" href="contact.html">Demander</a></div>
+                <p class="product-note" data-price-note>Les tuiles foncées et techniques sont plus chères.</p>
               </div>
             </article>
           </div>
