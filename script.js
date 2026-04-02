@@ -22,7 +22,13 @@ function buildHeader(currentPage) {
     <div class="site-header-shell">
       <div class="container site-nav">
         <a class="brand" href="index.html" aria-label="ADAZ RENOV Accueil">
-          <img class="brand-logo" src="${brandLogoPath}" alt="Logo ADAZ RENOV">
+          <div class="logo-mark" aria-hidden="true">AR</div>
+          <div class="logo-word">
+            <strong>
+              A<span class="crown-letter">D<span class="crown-glyph" aria-hidden="true">&#9819;</span></span>A<span class="crown-letter">Z<span class="crown-glyph" aria-hidden="true">&#9819;</span></span>
+            </strong>
+            <span>RENOV</span>
+          </div>
         </a>
         <nav class="nav-links" aria-label="Navigation principale">
           ${links}

@@ -117,13 +117,32 @@ button {
 }
 
 .logo-word strong {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.02em;
   font-size: 1.2rem;
   letter-spacing: 0.04em;
 }
 
-.logo-word span {
+.logo-word > span {
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.crown-letter {
+  position: relative;
+  display: inline-flex;
+  line-height: 1;
+}
+
+.crown-glyph {
+  position: absolute;
+  top: -0.72em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.46em;
+  line-height: 1;
+  color: var(--primary);
 }
 
 .nav-links,
