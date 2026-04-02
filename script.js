@@ -770,21 +770,21 @@ function setupAiChatbot() {
         "Vous pouvez nous joindre via la page Contact, par telephone au 01 23 45 67 89 ou par email a contact@adazrenov.fr.",
     },
     {
-      keywords: ["consultatie", "consultation", "programare", "rendez vous", "rdv", "rezervare", "reservation"],
+      keywords: ["consultation", "programmation", "programmer", "rendez vous", "rdv", "reservation", "reserver"],
       answer:
-        "Pentru programare consultatie, scrie-mi tipul lucrarii + suprafata + orasul, apoi te ghidez pas cu pas spre sectiunea de programare.",
+        "Pour planifier une consultation, ecrivez le type de travaux + la surface + la ville, puis je vous guide pas a pas vers la section de reservation.",
     },
     {
-      keywords: ["material", "materiaux", "ce folosesc", "recomanzi", "geam", "cabina", "sticla", "fenetre"],
+      keywords: ["materiau", "materiaux", "recommande", "recommandation", "fenetre", "cabine", "verre", "isolation"],
       answer:
-        "Pot recomanda materiale in functie de proiect (baie, bucatarie, fatada, izolatie), inclusiv combinatii pentru baie cu geam si cabina din sticla.",
+        "Je peux recommander les materiaux selon votre projet (salle de bain, cuisine, facade, isolation), y compris les combinaisons salle de bain avec fenetre et cabine en verre.",
     },
   ];
 
   const serviceProfiles = [
     {
       name: "salle de bain",
-      keywords: ["salle de bain", "baie", "bain"],
+      keywords: ["salle de bain", "bain"],
       minPerM2: 700,
       maxPerM2: 1400,
       minBase: 2800,
@@ -843,7 +843,7 @@ function setupAiChatbot() {
   }
 
   function detectSurface(question) {
-    const match = normalizeText(question).match(/(\d{1,4})\s*(m2|m\s?2|m²|mp|metri|metrii|metru|metri patrati|metrii patrati|metri patrați)/);
+    const match = normalizeText(question).match(/(\d{1,4})\s*(m2|m\s?2|m²|mp|metre|metres|metres carres)/);
     if (!match) return null;
     const value = Number.parseInt(match[1], 10);
     return Number.isFinite(value) ? value : null;
@@ -851,26 +851,26 @@ function setupAiChatbot() {
 
   function getMaterialByServiceAnswer(question) {
     const normalized = normalizeText(question);
-    const asksMaterial = ["material", "materiau", "materiaux", "recomand", "recommande", "ce sa folosesc", "ce sa aleg"].some((key) =>
+    const asksMaterial = ["materiau", "materiaux", "recommande", "recommandation", "que choisir", "que utiliser"].some((key) =>
       normalized.includes(key)
     );
 
     if (!asksMaterial) return null;
 
-    if (normalized.includes("bucatar") || normalized.includes("cuisine")) {
-      return "Pentru bucatarie recomand: carrelage gres cerame premium, plan de travail quartz ou granit, mobilier MDF hidrofug, peinture lavable premium, si geam termopan cu izolatie buna daca zona permite.";
+    if (normalized.includes("cuisine")) {
+      return "Pour la cuisine, je recommande: carrelage gres cerame premium, plan de travail quartz ou granit, mobilier hydrofuge, peinture lavable premium et menuiserie performante si necessaire.";
     }
 
     if (normalized.includes("electri")) {
-      return "Pentru instalatie electrica recomand: cabluri certificate, tablou modular nou, protectii diferentiale, prize IP44 pentru zone umede si verificare finala de siguranta.";
+      return "Pour l'installation electrique, je recommande: cables certifies, tableau modulaire neuf, protections differentielles, prises IP44 pour zones humides et verification finale de securite.";
     }
 
     if (normalized.includes("facade") || normalized.includes("ravalement")) {
-      return "Pentru fatada recomand: enduit respirant, fixatif de fond, plasa de armare pentru zone sensibile si vopsea exterioara rezistenta UV.";
+      return "Pour la facade, je recommande: enduit respirant, fixateur de fond, trame d'armature sur zones sensibles et peinture exterieure resistante aux UV.";
     }
 
     if (normalized.includes("renovation") || normalized.includes("interieur")) {
-      return "Pentru renovare interioara recomand un mix echilibrat: izolatie termica unde e nevoie, carrelage/parquet premium in functie de camera, si finisaje lavabile cu intretinere usoara.";
+      return "Pour une renovation interieure, je recommande un mix equilibre: isolation thermique selon les besoins, carrelage/parquet premium selon la piece, et finitions lavables faciles a entretenir.";
     }
 
     return null;
@@ -881,7 +881,7 @@ function setupAiChatbot() {
     const asksGpt = ["chatgpt", "gpt", "openai", "ai real", "integra", "integration"].some((key) => normalized.includes(key));
     if (!asksGpt) return null;
 
-    return "Da, putem integra ChatGPT real. Varianta corecta este prin backend securizat (nu direct din browser): endpoint API + cheie OpenAI pe server + fallback local daca API nu raspunde.";
+    return "Oui, on peut integrer ChatGPT en production. La bonne architecture est un backend securise (pas de cle OpenAI dans le navigateur): endpoint API + cle cote serveur + fallback local.";
   }
 
   function getChatConfig() {
@@ -959,26 +959,26 @@ function setupAiChatbot() {
 
   function getBathroomMaterialAnswer(question) {
     const normalized = normalizeText(question);
-    const mentionsBathroom = normalized.includes("salle de bain") || normalized.includes("baie");
+    const mentionsBathroom = normalized.includes("salle de bain");
     if (!mentionsBathroom) return null;
 
-    const mentionsWindow = normalized.includes("geam") || normalized.includes("fenetre");
+    const mentionsWindow = normalized.includes("fenetre");
     const mentionsGlassCabin =
-      normalized.includes("cabina") || normalized.includes("cabine") || normalized.includes("sticla") || normalized.includes("verre");
+      normalized.includes("cabine") || normalized.includes("verre");
 
     if (mentionsWindow && mentionsGlassCabin) {
       return "Pour une salle de bain avec fenetre + cabine en verre: fenetre PVC ou aluminium a isolation renforcee, vitrage securise anticalcaire pour la cabine, carrelage gres cerame antiderapant, peinture hydrofuge, et joints epoxy pour durabilite.";
     }
 
     if (mentionsWindow) {
-      return "Pour une salle de bain cu geam/fenetre: fenetre PVC double vitrage ou aluminium sur mesure, profil anti-condensation, carrelage gres cerame, peinture hydrofuge, ventilatie eficienta si etanseizare premium.";
+      return "Pour une salle de bain avec fenetre: fenetre PVC double vitrage ou aluminium sur mesure, profil anti-condensation, carrelage gres cerame, peinture hydrofuge, ventilation efficace et etancheite premium.";
     }
 
     if (mentionsGlassCabin) {
-      return "Pentru baie cu cabina din sticla: sticla securizata 8-10 mm, profil inox anti-coroziv, baterii termostatate, pardoseala antiderapanta R10-R11 si pereti protejati cu finisaj hidroizolant.";
+      return "Pour une salle de bain avec cabine en verre: verre securise 8-10 mm, profil inox anti-corrosion, robinetterie thermostatique, sol antiderapant R10-R11 et murs avec finition hydrofuge.";
     }
 
-    return "Pentru sala de bain recomand: carrelage gres cerame antiderapant, peinture hydrofuge, mobilier rezistent la umiditate, robinetterie economique et ventilation performante.";
+    return "Pour la salle de bain, je recommande: carrelage gres cerame antiderapant, peinture hydrofuge, mobilier resistant a l'humidite, robinetterie economique et ventilation performante.";
   }
 
   function normalizeText(value) {
@@ -993,15 +993,15 @@ function setupAiChatbot() {
 
   function getGreetingAnswer(question, isFirstUserMessage) {
     const normalized = normalizeText(question);
-    const greetingTokens = ["hey", "salut", "buna", "privet", "noroc", "ce faci", "hello", "bonjour"];
+    const greetingTokens = ["hey", "salut", "hello", "bonjour", "bonsoir"];
     const isGreeting = greetingTokens.some((token) => normalized.includes(token));
     if (!isGreeting) return null;
 
     if (isFirstUserMessage) {
-      return "Salut! Ma bucur sa te cunosc. Sunt ADAZAI si te pot ajuta cu estimare buget, recomandari materiale si programare consultatie. Spune-mi ce proiect ai.";
+      return "Salut! Ravi de vous rencontrer. Je suis ADAZAI et je peux vous aider pour l'estimation de budget, les recommandations materiaux et la programmation de consultation. Dites-moi votre projet.";
     }
 
-    return "Salut! Cu drag te ajut. Spune-mi tipul lucrarii si suprafata aproximativa, iar eu iti dau rapid bugetul si urmatorii pasi.";
+    return "Salut! Avec plaisir. Donnez-moi le type de travaux et la surface approximative, et je vous donne rapidement un budget indicatif et les prochaines etapes.";
   }
 
   function appendMessage(role, text) {
