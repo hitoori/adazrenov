@@ -768,6 +768,16 @@ function setupAiChatbot() {
       answer:
         "Vous pouvez nous joindre via la page Contact, par telephone au 01 23 45 67 89 ou par email a contact@adazrenov.fr.",
     },
+    {
+      keywords: ["consultatie", "consultation", "programare", "rendez vous", "rdv", "rezervare", "reservation"],
+      answer:
+        "Pentru programare consultatie, scrie-mi tipul lucrarii + suprafata + orasul, apoi te ghidez pas cu pas spre sectiunea de programare.",
+    },
+    {
+      keywords: ["material", "materiaux", "ce folosesc", "recomanzi", "geam", "cabina", "sticla", "fenetre"],
+      answer:
+        "Pot recomanda materiale in functie de proiect (baie, bucatarie, fatada, izolatie), inclusiv combinatii pentru baie cu geam si cabina din sticla.",
+    },
   ];
 
   const serviceProfiles = [
@@ -1023,6 +1033,18 @@ function setupAiChatbot() {
       .sort((a, b) => b.score - a.score);
 
     const match = scored[0];
+    const extraMatches = scored.filter((entry) => entry.score >= 2).slice(0, 3);
+
+    if (extraMatches.length > 1) {
+      const uniqueAnswers = [];
+      extraMatches.forEach((entry) => {
+        if (!uniqueAnswers.includes(entry.answer)) {
+          uniqueAnswers.push(entry.answer);
+        }
+      });
+
+      return uniqueAnswers.join(" ");
+    }
 
     return (
       (match && match.score > 0 ? match.answer : null) ||
