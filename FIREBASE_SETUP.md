@@ -52,15 +52,29 @@ If you prefer `functions:config`, adapt `firebase/functions/index.js` to read fr
 firebase deploy --only functions
 ```
 
-After deploy, copy the two endpoints:
+After deploy, copy the endpoints:
 - `getAvailability`
 - `createBooking`
+- `adazChat`
+
+## 6.1 Configure OpenAI for real chat
+Set environment variables for Functions runtime:
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL` (optional, default `gpt-4o-mini`)
+
+Example (local deploy shell):
+```bash
+export OPENAI_API_KEY="sk-..."
+export OPENAI_MODEL="gpt-4o-mini"
+firebase deploy --only functions
+```
 
 ## 7. Configure frontend runtime
 Edit `ai-config.js` and set:
 - `window.AI_AISSTEN_FIREBASE_CONFIG` (optional for direct Firestore fallback)
 - `window.AI_AISSTEN_BOOKING_CONFIG.availabilityApiUrl`
 - `window.AI_AISSTEN_BOOKING_CONFIG.bookingApiUrl`
+- `window.AI_AISSTEN_CHAT_CONFIG.apiUrl`
 
 Example:
 ```js
@@ -79,6 +93,11 @@ window.AI_AISSTEN_BOOKING_CONFIG = {
   appointmentsCollection: "aiAppointments",
   availabilityApiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/getAvailability",
   bookingApiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/createBooking",
+};
+
+window.AI_AISSTEN_CHAT_CONFIG = {
+  apiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/adazChat",
+  model: "gpt-4o-mini",
 };
 ```
 

@@ -26,6 +26,42 @@ function asIso(value) {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
+async function callOpenAiChat({ message, model }) {
+  const apiKey = process.env.OPENAI_API_KEY || "";
+  if (!apiKey) {
+    return null;
+  }
+
+  const systemPrompt =
+    "You are ADAZAI, assistant for ADAZ RENOV construction and renovation services in France. Be concise, practical, and provide budget ranges, materials guidance, and booking guidance when asked.";
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: model || process.env.OPENAI_MODEL || "gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: String(message || "") },
+      ],
+      temperature: 0.4,
+      max_tokens: 420,
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`OpenAI error ${response.status}: ${text}`);
+  }
+
+  const data = await response.json();
+  const content = data?.choices?.[0]?.message?.content;
+  return typeof content === "string" ? content.trim() : null;
+}
+
 async function getGoogleCalendarClient() {
   const serviceAccountEmail = process.env.GCAL_SERVICE_ACCOUNT_EMAIL || "";
   const privateKeyRaw = process.env.GCAL_PRIVATE_KEY || "";
@@ -224,5 +260,41 @@ exports.createBooking = onRequest({ region: "europe-west1" }, async (req, res) =
   } catch (error) {
     logger.error("createBooking failed", error);
     res.status(500).json({ error: "Failed to create booking" });
+  }
+});
+
+exports.adazChat = onRequest({ region: "europe-west1" }, async (req, res) => {
+  setCorsHeaders(res);
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    const body = req.body || {};
+    const message = String(body.message || "").trim();
+    const model = String(body.model || "").trim();
+
+    if (!message) {
+      res.status(400).json({ error: "Missing message" });
+      return;
+    }
+
+    const answer = await callOpenAiChat({ message, model });
+
+    if (!answer) {
+      res.status(503).json({ error: "OpenAI not configured" });
+      return;
+    }
+
+    res.json({ answer });
+  } catch (error) {
+    logger.error("adazChat failed", error);
+    res.status(500).json({ error: "Failed to generate AI response" });
   }
 });

@@ -878,7 +878,6 @@ function setupAiChatbot() {
     if (!root || typeof root !== "object") return null;
     return {
       apiUrl: String(root.apiUrl || ""),
-      apiKey: String(root.apiKey || ""),
       model: String(root.model || "gpt-4o-mini"),
     };
   }
@@ -892,7 +891,6 @@ function setupAiChatbot() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
         },
         body: JSON.stringify({
           message: question,

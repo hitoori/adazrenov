@@ -12,7 +12,7 @@ window.AI_AISSTEN_BOOKING_CONFIG = {
 
 window.AI_AISSTEN_CHAT_CONFIG = {
   // Optional endpoint for real AI (ChatGPT) integration via backend.
-  // apiUrl: "https://<your-domain>/api/adaz-chat",
-  // apiKey: "",
+  // Keep OpenAI key ONLY on server side.
+  // apiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/adazChat",
   model: "gpt-4o-mini",
 };
