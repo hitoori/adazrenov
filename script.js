@@ -1193,7 +1193,7 @@ function buildIcsContent(slot, data) {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//ADAZ RENOV//Ai Aissten//FR",
+    "PRODID:-//ADAZ RENOV//Assistant ADAZ RENOV//FR",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
