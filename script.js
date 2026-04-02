@@ -151,6 +151,130 @@ function setupFilters() {
   });
 }
 
+function inferProductPreviewKind(title) {
+  const normalized = String(title || "").toLowerCase();
+  if (normalized.includes("fenetre") || normalized.includes("porte-fenetre") || normalized.includes("porte fenetre")) {
+    return "window";
+  }
+  if (normalized.includes("porte")) {
+    return "door";
+  }
+  return "material";
+}
+
+function resolveSwatchColor(option) {
+  const label = String(option?.dataset?.label || option?.textContent || option?.value || "").toLowerCase();
+
+  if (label.includes("anthracite")) return "#3c4047";
+  if (label.includes("noir")) return "#1f2024";
+  if (label.includes("blanc casse")) return "#f2eee7";
+  if (label.includes("blanc")) return "#f6f7f8";
+  if (label.includes("gris perle")) return "#c8cdd4";
+  if (label.includes("gris")) return "#8a929b";
+  if (label.includes("beige") || label.includes("sable") || label.includes("lin")) return "#d9c8a7";
+  if (label.includes("naturel") || label.includes("chene")) return "#b78354";
+  if (label.includes("noyer")) return "#6f4a2f";
+  if (label.includes("bronze")) return "#8b6a45";
+  if (label.includes("vert")) return "#728a56";
+  if (label.includes("champagne")) return "#d4c59d";
+  if (label.includes("bleu")) return "#355a8a";
+  if (label.includes("ocre")) return "#c47a3a";
+  if (label.includes("terre") || label.includes("brun") || label.includes("rouge")) return "#b96a46";
+  if (label.includes("sauge")) return "#90a57c";
+  if (label.includes("bois")) return "#9a6a40";
+  return "#8a929b";
+}
+
+function hexToRgba(hex, alpha) {
+  const normalized = String(hex || "").replace("#", "");
+  if (normalized.length !== 6) return `rgba(138, 146, 155, ${alpha})`;
+  const red = Number.parseInt(normalized.slice(0, 2), 16);
+  const green = Number.parseInt(normalized.slice(2, 4), 16);
+  const blue = Number.parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+function escapeSvgText(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function svgToDataUri(svg) {
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function buildProductPreview(kind, colorHex, colorLabel, sizeLabel) {
+  const safeColor = colorHex || "#8a929b";
+  const safeLabel = escapeSvgText(colorLabel);
+  const safeSize = escapeSvgText(sizeLabel);
+
+  if (kind === "window") {
+    return svgToDataUri(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Fenetre ${safeLabel}">
+        <defs>
+          <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#eef4f9"/>
+            <stop offset="100%" stop-color="#d8e1ea"/>
+          </linearGradient>
+          <linearGradient id="glass" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#eff9ff" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#cfe6f8" stop-opacity="0.9"/>
+          </linearGradient>
+        </defs>
+        <rect width="800" height="600" fill="url(#bg)"/>
+        <rect x="170" y="78" width="460" height="352" rx="30" fill="${safeColor}"/>
+        <rect x="205" y="112" width="390" height="286" rx="16" fill="url(#glass)"/>
+        <rect x="367" y="112" width="36" height="286" fill="rgba(255,255,255,0.3)"/>
+        <rect x="205" y="245" width="390" height="36" fill="rgba(255,255,255,0.34)"/>
+        <rect x="150" y="440" width="500" height="34" rx="16" fill="rgba(20, 34, 52, 0.12)"/>
+        <text x="400" y="520" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="28" font-weight="800" fill="#203047">${safeLabel}${safeSize ? ` · ${safeSize}` : ""}</text>
+      </svg>
+    `);
+  }
+
+  if (kind === "door") {
+    return svgToDataUri(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Porte ${safeLabel}">
+        <defs>
+          <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#f2efe8"/>
+            <stop offset="100%" stop-color="#dfd9cf"/>
+          </linearGradient>
+        </defs>
+        <rect width="800" height="600" fill="url(#bg)"/>
+        <rect x="244" y="72" width="312" height="456" rx="24" fill="${safeColor}"/>
+        <rect x="270" y="98" width="260" height="404" rx="16" fill="rgba(255,255,255,0.14)"/>
+        <rect x="304" y="152" width="192" height="88" rx="10" fill="rgba(255,255,255,0.18)"/>
+        <rect x="304" y="268" width="192" height="140" rx="10" fill="rgba(255,255,255,0.1)"/>
+        <circle cx="494" cy="340" r="11" fill="#f2d49a"/>
+        <rect x="164" y="486" width="472" height="30" rx="15" fill="rgba(20, 34, 52, 0.12)"/>
+        <text x="400" y="548" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="28" font-weight="800" fill="#203047">${safeLabel}</text>
+      </svg>
+    `);
+  }
+
+  return svgToDataUri(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Produit ${safeLabel}">
+      <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="#f5f1ea"/>
+          <stop offset="100%" stop-color="#e4ddd1"/>
+        </linearGradient>
+      </defs>
+      <rect width="800" height="600" fill="url(#bg)"/>
+      <rect x="150" y="138" width="500" height="244" rx="28" fill="${safeColor}" opacity="0.92"/>
+      <rect x="178" y="166" width="444" height="188" rx="18" fill="rgba(255,255,255,0.35)"/>
+      <rect x="206" y="194" width="388" height="132" rx="12" fill="rgba(255,255,255,0.18)"/>
+      <rect x="176" y="428" width="448" height="34" rx="17" fill="rgba(20, 34, 52, 0.12)"/>
+      <text x="400" y="510" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="28" font-weight="800" fill="#203047">${safeLabel}</text>
+    </svg>
+  `);
+}
+
 function setupProductVariants() {
   const cards = document.querySelectorAll(".product-card[data-base-price]");
 
@@ -174,14 +298,54 @@ function setupProductVariants() {
     const sizeSelect = card.querySelector("[data-product-size]");
     const priceOutput = card.querySelector("[data-price-output]");
     const priceNote = card.querySelector("[data-price-note]");
+    const productImage = card.querySelector(".media-top img");
+    const productTitle = card.querySelector("h3")?.textContent || "Produit";
+    const previewKind = card.dataset.previewKind || inferProductPreviewKind(productTitle);
+    let swatchContainer = null;
+
+    if (colorSelect) {
+      colorSelect.classList.add("variant-select");
+      swatchContainer = document.createElement("div");
+      swatchContainer.className = "variant-swatches";
+      swatchContainer.setAttribute("role", "listbox");
+      swatchContainer.setAttribute("aria-label", `Couleurs disponibles pour ${productTitle}`);
+
+      Array.from(colorSelect.options).forEach((option, index) => {
+        const swatchButton = document.createElement("button");
+        swatchButton.type = "button";
+        swatchButton.className = "color-swatch";
+        swatchButton.dataset.swatchValue = option.value;
+        swatchButton.dataset.swatchColor = resolveSwatchColor(option);
+        swatchButton.title = option.dataset.label || option.textContent || option.value;
+        swatchButton.setAttribute("aria-label", swatchButton.title);
+        swatchButton.style.setProperty("--swatch-color", swatchButton.dataset.swatchColor);
+        if (index === 0 || option.selected) {
+          swatchButton.classList.add("is-active");
+        }
+
+        swatchButton.addEventListener("click", () => {
+          colorSelect.value = option.value;
+          colorSelect.dispatchEvent(new Event("change", { bubbles: true }));
+          swatchContainer.querySelectorAll(".color-swatch").forEach((button) => {
+            button.classList.toggle("is-active", button === swatchButton);
+          });
+        });
+
+        swatchContainer.appendChild(swatchButton);
+      });
+
+      colorSelect.insertAdjacentElement("afterend", swatchContainer);
+    }
 
     const updatePrice = () => {
       const colorOption = colorSelect?.selectedOptions?.[0] || null;
       const colorLabel = colorOption?.dataset.label || colorSelect?.value || "Standard";
       const colorSurcharge = parseNumber(colorOption?.dataset.surcharge, 0);
+      const colorHex = resolveSwatchColor(colorOption);
 
       let computedPrice = basePrice + colorSurcharge;
       let detailLine = `Couleur choisie: ${colorLabel}`;
+      let previewSizeLabel = "";
 
       if (priceMode === "window") {
         const sizeOption = sizeSelect?.selectedOptions?.[0] || null;
@@ -189,6 +353,7 @@ function setupProductVariants() {
         const normalizedArea = area / 0.96;
         computedPrice = basePrice * normalizedArea + colorSurcharge;
         detailLine = `Couleur ${colorLabel}${sizeSelect?.value ? ` · Dimension ${sizeSelect.value}` : ""}`;
+        previewSizeLabel = sizeOption ? String(sizeOption.textContent || sizeSelect?.value || "") : "";
       }
 
       if (priceOutput) {
@@ -198,6 +363,18 @@ function setupProductVariants() {
       if (priceNote) {
         priceNote.textContent = `${detailLine}. Les variantes plus techniques coûtent plus cher.`;
       }
+
+      if (productImage) {
+        productImage.src = buildProductPreview(
+          previewKind,
+          colorHex,
+          colorLabel,
+          previewSizeLabel,
+        );
+      }
+
+      card.style.setProperty("--preview-accent", colorHex);
+      card.style.setProperty("--preview-accent-soft", hexToRgba(colorHex, 0.16));
     };
 
     colorSelect?.addEventListener("change", updatePrice);

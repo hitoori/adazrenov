@@ -637,6 +637,60 @@ button {
   font-size: 0.9rem;
 }
 
+.variant-select {
+  display: none;
+}
+
+.variant-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 9px;
+  border: 2px solid rgba(21, 32, 51, 0.12);
+  background: var(--swatch-color, #c8cdd4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  position: relative;
+}
+
+.color-swatch::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  opacity: 0.35;
+}
+
+.color-swatch.is-active {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+.media-top {
+  position: relative;
+}
+
+.media-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--preview-accent-soft, rgba(138, 146, 155, 0.16)), transparent 42%);
+  pointer-events: none;
+}
+
+.media-top img {
+  position: relative;
+  z-index: 0;
+}
+
 .product-note {
   margin-top: 12px;
   color: var(--muted);
