@@ -1181,7 +1181,7 @@ button {
 
 .tool-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
 }
 
 .chat-home-grid {
@@ -1214,7 +1214,20 @@ button {
 }
 
 .tool-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   padding: 30px;
+}
+
+.chat-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tool-inline-result {
+  margin-top: 22px;
 }
 
 .chat-guide-table-wrap {

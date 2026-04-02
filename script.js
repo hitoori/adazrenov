@@ -488,6 +488,15 @@ function setupAiPhotoAnalyzer() {
     vieillissement: "materiaux en fin de cycle",
   };
 
+  const issueWeights = {
+    humidite: 2,
+    fissures: 3,
+    energie: 2,
+    finition: 1,
+    circulation: 1,
+    vieillissement: 2,
+  };
+
   fileInput.addEventListener("change", () => {
     const [file] = fileInput.files || [];
     if (!file) {
@@ -527,15 +536,18 @@ function setupAiPhotoAnalyzer() {
       diagnostic: "un diagnostic technique avant arbitrage budgetaire",
     };
 
+    const weightedIssues = issues.reduce((sum, key) => sum + (issueWeights[key] || 1), 0);
     const severityScore =
-      issues.length + (urgency === "haute" ? 2 : urgency === "normale" ? 1 : 0) + (area > 80 ? 1 : 0);
+      weightedIssues + (urgency === "haute" ? 3 : urgency === "normale" ? 1 : 0) + (area > 100 ? 2 : area > 60 ? 1 : 0);
 
     const priority =
-      severityScore >= 5
+      severityScore >= 8
         ? "Priorite elevee"
-        : severityScore >= 3
+        : severityScore >= 5
           ? "Priorite moyenne"
           : "Priorite de confort";
+
+    const confidence = Math.max(62, Math.min(95, 66 + Math.round(severityScore * 2.8) + (issues.length >= 3 ? 5 : 0)));
 
     const observations = issues.length
       ? issues.map((issue) => issueMap[issue] || issue).join(", ")
@@ -545,6 +557,12 @@ function setupAiPhotoAnalyzer() {
       `Verifier en premier ${profile.zones[0]} et ${profile.zones[1]}.`,
       `Votre objectif indique plutot ${objectiveText[objective]}.`,
       `Le niveau d'urgence correspond a ${urgencyText[urgency]}.`,
+    ];
+
+    const timeline = [
+      "Phase 1 (0-7 jours): visite technique et validation des points critiques.",
+      "Phase 2 (1-3 semaines): chiffrage detaille + choix techniques et materiaux.",
+      "Phase 3: execution chantier selon priorites et planning valide.",
     ];
 
     if (issues.includes("humidite")) {
@@ -573,10 +591,19 @@ function setupAiPhotoAnalyzer() {
           D'apres les informations transmises, la zone semble relever de
           <strong>${objectiveText[objective]}</strong>, avec ${observations}.
         </p>
+        <div class="result-tags">
+          <span class="badge">Indice de confiance: ${confidence}%</span>
+          <span class="badge">Niveau de risque: ${priority}</span>
+          <span class="badge">Surface analysee: ${area || "non precisee"}${area ? " m2" : ""}</span>
+        </div>
         <div class="tool-result-grid">
           <div>
             <h4>Points a verifier</h4>
             <ul class="feature-list">${recommendations
+              .map((item) => `<li><span class="check">&#10003;</span><span>${item}</span></li>`)
+              .join("")}</ul>
+            <h4>Plan d'action propose</h4>
+            <ul class="feature-list">${timeline
               .map((item) => `<li><span class="check">&#10003;</span><span>${item}</span></li>`)
               .join("")}</ul>
           </div>
@@ -588,8 +615,7 @@ function setupAiPhotoAnalyzer() {
           </div>
         </div>
         <div class="result-note">
-          Surface indiquee: <strong>${area || "non precisee"}${area ? " m2" : ""}</strong>.
-          Pour une analyse vision reelle sur image, la prochaine etape sera de brancher un backend IA.
+          Plus les informations sont precises (surface, contraintes, photos nettes), plus l'analyse IA devient fiable.
         </div>
       </div>
     `;
@@ -690,16 +716,52 @@ function setupAiMaterialAdvisor() {
     const scored = catalog
       .map((item) => {
         let score = 0;
-        if (item.usage.includes(zone)) score += 3;
-        if (item.priorities.includes(priority)) score += 2;
-        if (item.budgets.includes(budget)) score += 2;
-        if (finish === "premium" && item.budgets.includes("premium")) score += 1;
-        if (finish === "equilibre" && item.budgets.includes("moyen")) score += 1;
-        if (finish === "essentiel" && item.budgets.includes("eco")) score += 1;
-        return { ...item, score };
+        const reasons = [];
+
+        if (item.usage.includes(zone)) {
+          score += 3;
+          reasons.push("compatible avec la zone du projet");
+        }
+
+        if (item.priorities.includes(priority)) {
+          score += 2;
+          reasons.push("aligne sur votre priorite technique");
+        }
+
+        if (item.budgets.includes(budget)) {
+          score += 2;
+          reasons.push("coherent avec votre niveau de budget");
+        }
+
+        if (finish === "premium" && item.budgets.includes("premium")) {
+          score += 1;
+          reasons.push("adapte a une finition premium");
+        }
+
+        if (finish === "equilibre" && item.budgets.includes("moyen")) {
+          score += 1;
+          reasons.push("equilibre cout / performance");
+        }
+
+        if (finish === "essentiel" && item.budgets.includes("eco")) {
+          score += 1;
+          reasons.push("optimise pour une finition essentielle");
+        }
+
+        const fit = Math.max(45, Math.min(98, 45 + score * 7));
+        return { ...item, score, reasons, fit };
       })
       .sort((a, b) => b.score - a.score)
       .slice(0, 3);
+
+    const strategy =
+      priority === "isolation"
+        ? "Priorisez les performances thermiques avant les finitions decoratives."
+        : priority === "durabilite"
+          ? "Favorisez des materiaux robustes avec entretien faible et cycle long."
+          : priority === "budget"
+            ? "Concentrez le budget sur les postes visibles et gardez des references fiables pour le reste."
+            : "Misez sur la coherence visuelle entre revetements, menuiseries et quincaillerie.";
 
     result.innerHTML = `
       <div class="tool-result-card">
@@ -713,7 +775,7 @@ function setupAiMaterialAdvisor() {
                   <div class="recommendation-rank">0${index + 1}</div>
                   <div>
                     <h4>${item.name}</h4>
-                    <p>Pourquoi ce choix: ${item.strengths.slice(0, 2).join(", ")}.</p>
+                    <p>Indice de pertinence: <strong>${item.fit}%</strong>. ${item.reasons.slice(0, 2).join(" · ")}.</p>
                     <div class="tag-row">
                       ${item.strengths.map((strength) => `<span class="tag">${strength}</span>`).join("")}
                     </div>
@@ -724,7 +786,7 @@ function setupAiMaterialAdvisor() {
             .join("")}
         </div>
         <div class="result-note">
-          Conseil de suite: consultez le <a href="produits.html">catalogue produits</a> puis demandez un chiffrage avec pose.
+          Conseil IA: ${strategy} Ensuite, consultez le <a href="produits.html">catalogue produits</a> puis demandez un chiffrage avec pose.
         </div>
       </div>
     `;
@@ -1129,6 +1191,39 @@ function setupAiEstimator() {
     occupe: 1.12,
   };
 
+  const packageProfiles = {
+    interieur: [
+      { label: "Preparation & protection", share: 0.12 },
+      { label: "Corps d'etat techniques", share: 0.38 },
+      { label: "Finitions", share: 0.5 },
+    ],
+    "salle-de-bain": [
+      { label: "Demolition & supports", share: 0.2 },
+      { label: "Plomberie / etancheite", share: 0.42 },
+      { label: "Finitions & equipements", share: 0.38 },
+    ],
+    cuisine: [
+      { label: "Preparation reseaux", share: 0.22 },
+      { label: "Mobilier & plan de travail", share: 0.48 },
+      { label: "Pose & finitions", share: 0.3 },
+    ],
+    facade: [
+      { label: "Preparation supports", share: 0.24 },
+      { label: "Isolation / enduits", share: 0.52 },
+      { label: "Finitions", share: 0.24 },
+    ],
+    construction: [
+      { label: "Gros oeuvre", share: 0.45 },
+      { label: "Second oeuvre", share: 0.35 },
+      { label: "Finitions", share: 0.2 },
+    ],
+    amenagement: [
+      { label: "Conception / releves", share: 0.2 },
+      { label: "Fabrication / pose", share: 0.55 },
+      { label: "Reglages finaux", share: 0.25 },
+    ],
+  };
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -1150,6 +1245,13 @@ function setupAiEstimator() {
     const baseDays = Math.max(8, Math.round((profile.daysPer100 / 100) * area));
     const durationMin = Math.max(1, Math.round(baseDays * 0.85));
     const durationMax = Math.max(durationMin + 3, Math.round(baseDays * factor * 1.12));
+    const confidence = Math.max(64, Math.min(96, 70 + Math.round((area >= 40 ? 8 : 3) + (complexity === "standard" ? 4 : 1) - (occupancy === "occupe" ? 2 : 0))));
+
+    const packs = (packageProfiles[type] || packageProfiles.interieur).map((pack) => ({
+      ...pack,
+      min: Math.round(minBudget * pack.share),
+      max: Math.round(maxBudget * pack.share),
+    }));
 
     result.innerHTML = `
       <div class="tool-result-card">
@@ -1165,6 +1267,19 @@ function setupAiEstimator() {
             <strong>${durationMin} a ${durationMax} jours ouvres</strong>
           </div>
         </div>
+        <div class="result-tags">
+          <span class="badge">Indice de confiance: ${confidence}%</span>
+          <span class="badge">Surface: ${area} m2</span>
+        </div>
+        <h4>Repartition budgetaire proposee</h4>
+        <ul class="feature-list">
+          ${packs
+            .map(
+              (pack) =>
+                `<li><span class="check">&#10003;</span><span>${pack.label}: <strong>${formatCurrency(pack.min)} - ${formatCurrency(pack.max)}</strong></span></li>`
+            )
+            .join("")}
+        </ul>
         <ul class="feature-list">
           <li><span class="check">&#10003;</span><span>Complexite chantier: <strong>${complexity}</strong></span></li>
           <li><span class="check">&#10003;</span><span>Niveau de finition: <strong>${finish}</strong></span></li>
