@@ -113,36 +113,39 @@ button {
 .logo-word {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .logo-word strong {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.02em;
+  display: block;
   font-size: 1.2rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
+  line-height: 1.06;
+  white-space: nowrap;
 }
 
 .logo-word > span {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .crown-letter {
   position: relative;
-  display: inline-flex;
+  display: inline-block;
   line-height: 1;
 }
 
 .crown-glyph {
   position: absolute;
-  top: -0.72em;
+  top: -0.6em;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.46em;
-  line-height: 1;
-  color: var(--primary);
+  width: 0.52em;
+  height: 0.2em;
+  background: var(--primary);
+  clip-path: polygon(0 100%, 0 62%, 17% 0, 34% 62%, 50% 20%, 66% 62%, 83% 0, 100% 62%, 100% 100%);
 }
 
 .nav-links,

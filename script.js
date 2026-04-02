@@ -25,9 +25,9 @@ function buildHeader(currentPage) {
           <div class="logo-mark" aria-hidden="true">AR</div>
           <div class="logo-word">
             <strong>
-              A<span class="crown-letter">D<span class="crown-glyph" aria-hidden="true">&#9819;</span></span>A<span class="crown-letter">Z<span class="crown-glyph" aria-hidden="true">&#9819;</span></span>
+              A<span class="crown-letter">D<span class="crown-glyph" aria-hidden="true"></span></span>A<span class="crown-letter">Z<span class="crown-glyph" aria-hidden="true"></span></span> RENOV
             </strong>
-            <span>RENOV</span>
+            <span>Renovation &amp; Construction</span>
           </div>
         </a>
         <nav class="nav-links" aria-label="Navigation principale">
