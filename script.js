@@ -746,12 +746,12 @@ function setupAiChatbot() {
     {
       keywords: ["devis", "prix", "cout", "combien", "tarif", "budget", "estimation"],
       answer:
-        "Nous proposons un devis gratuit. Donnez-moi le type de travaux et une surface approximative, et je vous donne une premiere fourchette avant le devis detaille.",
+        "Je peux vous donner une estimation rapide. Ecrivez par exemple: 'salle de bain 8m2' ou 'cuisine 20m2' et je vous calcule une fourchette budget + delai.",
     },
     {
       keywords: ["delai", "duree", "combien de temps", "temps", "planning", "date"],
       answer:
-        "Le delai depend de la surface, de la complexite et des finitions. Pour une salle de bain, on est souvent sur quelques semaines, et pour une renovation complete sur plusieurs mois.",
+        "Le delai depend de la surface, de la complexite et des finitions. Dites-moi votre service + surface et je vous donne un delai indicatif realiste.",
     },
     {
       keywords: ["garantie", "assurance", "decennale", "sav", "qualite"],
@@ -761,29 +761,142 @@ function setupAiChatbot() {
     {
       keywords: ["paris", "france", "zone", "intervention", "ville", "deplacement"],
       answer:
-        "Nous intervenons principalement en Ile-de-France et dans plusieurs grandes villes. Envoyez votre ville et je vous confirme rapidement la disponibilite.",
-    },
-    {
-      keywords: ["fenetre", "porte", "materiau", "produit", "catalogue", "isolation"],
-      answer:
-        "Nous pouvons vous orienter vers les fenetres, portes et materiaux adaptes. Si vous voulez, je peux vous recommander une option selon votre budget et votre besoin d'isolation.",
-    },
-    {
-      keywords: ["cuisine", "salle de bain", "facade", "toiture", "renovation", "maconnerie", "peinture", "electrique"],
-      answer:
-        "Parfait. Pour ce type de projet, donnez-moi la surface, votre priorite (budget, delai ou finition) et je vous propose une premiere orientation claire.",
+        "Nous intervenons principalement en Ile-de-France. Envoyez votre ville/commune et je vous confirme rapidement la disponibilite.",
     },
     {
       keywords: ["contact", "telephone", "mail", "email", "numero"],
       answer:
         "Vous pouvez nous joindre via la page Contact, par telephone au 01 23 45 67 89 ou par email a contact@adazrenov.fr.",
     },
+  ];
+
+  const serviceProfiles = [
     {
-      keywords: ["program", "programm", "consultation", "calendrier", "rendez-vous", "reservation", "rdv"],
-      answer:
-        "Oui. Je peux vous proposer des dates libres dans la section programmation. Entrez votre nom, prenom et telephone, puis choisissez un créneau.",
+      name: "salle de bain",
+      keywords: ["salle de bain", "baie", "bain"],
+      minPerM2: 700,
+      maxPerM2: 1400,
+      minBase: 2800,
+      maxBase: 5200,
+      duration: "2 a 5 semaines",
+    },
+    {
+      name: "cuisine",
+      keywords: ["cuisine", "ilot", "plan de travail"],
+      minPerM2: 650,
+      maxPerM2: 1300,
+      minBase: 3000,
+      maxBase: 6000,
+      duration: "3 a 6 semaines",
+    },
+    {
+      name: "renovation interieure",
+      keywords: ["renovation complete", "renovation", "interieur", "appartement"],
+      minPerM2: 450,
+      maxPerM2: 980,
+      minBase: 3500,
+      maxBase: 9000,
+      duration: "1 a 4 mois",
+    },
+    {
+      name: "facade",
+      keywords: ["facade", "ravalement", "enduit"],
+      minPerM2: 120,
+      maxPerM2: 260,
+      minBase: 2000,
+      maxBase: 4800,
+      duration: "1 a 3 semaines",
+    },
+    {
+      name: "peinture",
+      keywords: ["peinture", "peindre", "deco"],
+      minPerM2: 45,
+      maxPerM2: 120,
+      minBase: 900,
+      maxBase: 2200,
+      duration: "3 a 10 jours",
+    },
+    {
+      name: "installation electrique",
+      keywords: ["electrique", "installation electrique", "tableau"],
+      minPerM2: 90,
+      maxPerM2: 220,
+      minBase: 1500,
+      maxBase: 4200,
+      duration: "4 a 14 jours",
     },
   ];
+
+  function formatMoney(value) {
+    return `${Math.round(value).toLocaleString("fr-FR")} EUR`;
+  }
+
+  function detectSurface(question) {
+    const match = normalizeText(question).match(/(\d{1,4})\s*(m2|m\s?2|m²|mp)/);
+    if (!match) return null;
+    const value = Number.parseInt(match[1], 10);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  function findServiceProfile(question) {
+    const normalized = normalizeText(question);
+    const scored = serviceProfiles
+      .map((profile) => ({
+        profile,
+        score: profile.keywords.reduce((acc, keyword) => (normalized.includes(normalizeText(keyword)) ? acc + 1 : acc), 0),
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    return scored[0]?.score > 0 ? scored[0].profile : null;
+  }
+
+  function getBudgetEstimationAnswer(question) {
+    const profile = findServiceProfile(question);
+    if (!profile) return null;
+
+    const surface = detectSurface(question);
+    const minBudget = surface ? profile.minBase + surface * profile.minPerM2 : profile.minBase + 12 * profile.minPerM2;
+    const maxBudget = surface ? profile.maxBase + surface * profile.maxPerM2 : profile.maxBase + 20 * profile.maxPerM2;
+
+    return `Estimation rapide pour ${profile.name}${surface ? ` (${surface} m2)` : ""}: entre ${formatMoney(minBudget)} et ${formatMoney(maxBudget)}. Delai indicatif: ${profile.duration}. Si vous voulez, je vous aide ensuite a programmer une consultation.`;
+  }
+
+  function getBookingAnswer(question) {
+    const normalized = normalizeText(question);
+    const isBookingIntent = ["consultation", "program", "programm", "rendez vous", "rdv", "reservation", "calendrier"].some((key) => normalized.includes(key));
+    if (!isBookingIntent) return null;
+
+    const onAiPage = document.body.dataset.page === "ai";
+    if (onAiPage) {
+      return `Pour programmer une consultation: 1) ouvrez la section 'Programmation de consultation', 2) saisissez nom, telephone, service, 3) choisissez le creneau, 4) validez. Je peux aussi vous proposer quel service choisir avant la reservation.`;
+    }
+
+    return `Pour programmer une consultation, ouvrez la page IA Travaux puis la section programmation: ia-travaux.html#outil-programmation. Vous pourrez choisir un creneau libre et confirmer en 1 minute.`;
+  }
+
+  function getBathroomMaterialAnswer(question) {
+    const normalized = normalizeText(question);
+    const mentionsBathroom = normalized.includes("salle de bain") || normalized.includes("baie");
+    if (!mentionsBathroom) return null;
+
+    const mentionsWindow = normalized.includes("geam") || normalized.includes("fenetre");
+    const mentionsGlassCabin =
+      normalized.includes("cabina") || normalized.includes("cabine") || normalized.includes("sticla") || normalized.includes("verre");
+
+    if (mentionsWindow && mentionsGlassCabin) {
+      return "Pour une salle de bain avec fenetre + cabine en verre: fenetre PVC ou aluminium a isolation renforcee, vitrage securise anticalcaire pour la cabine, carrelage gres cerame antiderapant, peinture hydrofuge, et joints epoxy pour durabilite.";
+    }
+
+    if (mentionsWindow) {
+      return "Pour une salle de bain cu geam/fenetre: fenetre PVC double vitrage ou aluminium sur mesure, profil anti-condensation, carrelage gres cerame, peinture hydrofuge, ventilatie eficienta si etanseizare premium.";
+    }
+
+    if (mentionsGlassCabin) {
+      return "Pentru baie cu cabina din sticla: sticla securizata 8-10 mm, profil inox anti-coroziv, baterii termostatate, pardoseala antiderapanta R10-R11 si pereti protejati cu finisaj hidroizolant.";
+    }
+
+    return "Pentru sala de bain recomand: carrelage gres cerame antiderapant, peinture hydrofuge, mobilier rezistent la umiditate, robinetterie economique et ventilation performante.";
+  }
 
   function normalizeText(value) {
     return String(value || "")
@@ -804,6 +917,15 @@ function setupAiChatbot() {
   }
 
   function getAnswer(question) {
+    const budgetAnswer = getBudgetEstimationAnswer(question);
+    if (budgetAnswer) return budgetAnswer;
+
+    const bookingAnswer = getBookingAnswer(question);
+    if (bookingAnswer) return bookingAnswer;
+
+    const bathroomMaterialAnswer = getBathroomMaterialAnswer(question);
+    if (bathroomMaterialAnswer) return bathroomMaterialAnswer;
+
     const normalized = normalizeText(question);
 
     const scored = intents
@@ -826,7 +948,7 @@ function setupAiChatbot() {
 
     return (
       (match && match.score > 0 ? match.answer : null) ||
-      "Je peux vous aider sur les devis, delais, garanties, produits, cuisines, salles de bain, facades et zones d'intervention. Posez-moi une question plus precise ou utilisez les outils IA de cette page."
+      "Je peux vous aider sur: 1) estimation budget par service, 2) programmation consultation, 3) recommandations materiaux (ex: salle de bain avec fenetre ou cabine en verre), 4) delais et garanties."
     );
   }
 
