@@ -1217,6 +1217,50 @@ button {
   padding: 30px;
 }
 
+.chat-guide-table-wrap {
+  overflow: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(21, 32, 51, 0.1);
+  background: rgba(248, 250, 253, 0.9);
+}
+
+.chat-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.chat-guide-table th,
+.chat-guide-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(21, 32, 51, 0.08);
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.92rem;
+}
+
+.chat-guide-table th {
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: rgba(30, 58, 95, 0.05);
+}
+
+.chat-guide-action {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.chat-guide-action:hover {
+  text-decoration: underline;
+}
+
 .tool-panel h3,
 .chat-shell h3,
 .tool-result-card h3 {

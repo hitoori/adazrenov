@@ -9,3 +9,10 @@ window.AI_AISSTEN_BOOKING_CONFIG = {
   // availabilityApiUrl: "https://<region>-<project-id>.cloudfunctions.net/getAvailability",
   // bookingApiUrl: "https://<region>-<project-id>.cloudfunctions.net/createBooking",
 };
+
+window.AI_AISSTEN_CHAT_CONFIG = {
+  // Optional endpoint for real AI (ChatGPT) integration via backend.
+  // apiUrl: "https://<your-domain>/api/adaz-chat",
+  // apiKey: "",
+  model: "gpt-4o-mini",
+};

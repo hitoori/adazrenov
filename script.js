@@ -832,10 +832,84 @@ function setupAiChatbot() {
   }
 
   function detectSurface(question) {
-    const match = normalizeText(question).match(/(\d{1,4})\s*(m2|m\s?2|m²|mp)/);
+    const match = normalizeText(question).match(/(\d{1,4})\s*(m2|m\s?2|m²|mp|metri|metrii|metru|metri patrati|metrii patrati|metri patrați)/);
     if (!match) return null;
     const value = Number.parseInt(match[1], 10);
     return Number.isFinite(value) ? value : null;
+  }
+
+  function getMaterialByServiceAnswer(question) {
+    const normalized = normalizeText(question);
+    const asksMaterial = ["material", "materiau", "materiaux", "recomand", "recommande", "ce sa folosesc", "ce sa aleg"].some((key) =>
+      normalized.includes(key)
+    );
+
+    if (!asksMaterial) return null;
+
+    if (normalized.includes("bucatar") || normalized.includes("cuisine")) {
+      return "Pentru bucatarie recomand: carrelage gres cerame premium, plan de travail quartz ou granit, mobilier MDF hidrofug, peinture lavable premium, si geam termopan cu izolatie buna daca zona permite.";
+    }
+
+    if (normalized.includes("electri")) {
+      return "Pentru instalatie electrica recomand: cabluri certificate, tablou modular nou, protectii diferentiale, prize IP44 pentru zone umede si verificare finala de siguranta.";
+    }
+
+    if (normalized.includes("facade") || normalized.includes("ravalement")) {
+      return "Pentru fatada recomand: enduit respirant, fixatif de fond, plasa de armare pentru zone sensibile si vopsea exterioara rezistenta UV.";
+    }
+
+    if (normalized.includes("renovation") || normalized.includes("interieur")) {
+      return "Pentru renovare interioara recomand un mix echilibrat: izolatie termica unde e nevoie, carrelage/parquet premium in functie de camera, si finisaje lavabile cu intretinere usoara.";
+    }
+
+    return null;
+  }
+
+  function getChatGptIntegrationAnswer(question) {
+    const normalized = normalizeText(question);
+    const asksGpt = ["chatgpt", "gpt", "openai", "ai real", "integra", "integration"].some((key) => normalized.includes(key));
+    if (!asksGpt) return null;
+
+    return "Da, putem integra ChatGPT real. Varianta corecta este prin backend securizat (nu direct din browser): endpoint API + cheie OpenAI pe server + fallback local daca API nu raspunde.";
+  }
+
+  function getChatConfig() {
+    const root = window.AI_AISSTEN_CHAT_CONFIG || null;
+    if (!root || typeof root !== "object") return null;
+    return {
+      apiUrl: String(root.apiUrl || ""),
+      apiKey: String(root.apiKey || ""),
+      model: String(root.model || "gpt-4o-mini"),
+    };
+  }
+
+  async function getRemoteChatAnswer(question) {
+    const config = getChatConfig();
+    if (!config || !config.apiUrl) return null;
+
+    try {
+      const response = await fetch(config.apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
+        },
+        body: JSON.stringify({
+          message: question,
+          model: config.model,
+          context: "ADAZ RENOV chantier assistant",
+        }),
+      });
+
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      const text = String(data.answer || data.message || data.output || "").trim();
+      return text || null;
+    } catch (error) {
+      console.warn("Remote chat API unavailable, using local intents.", error);
+      return null;
+    }
   }
 
   function findServiceProfile(question) {
@@ -917,6 +991,9 @@ function setupAiChatbot() {
   }
 
   function getAnswer(question) {
+    const gptIntegrationAnswer = getChatGptIntegrationAnswer(question);
+    if (gptIntegrationAnswer) return gptIntegrationAnswer;
+
     const budgetAnswer = getBudgetEstimationAnswer(question);
     if (budgetAnswer) return budgetAnswer;
 
@@ -925,6 +1002,9 @@ function setupAiChatbot() {
 
     const bathroomMaterialAnswer = getBathroomMaterialAnswer(question);
     if (bathroomMaterialAnswer) return bathroomMaterialAnswer;
+
+    const serviceMaterialAnswer = getMaterialByServiceAnswer(question);
+    if (serviceMaterialAnswer) return serviceMaterialAnswer;
 
     const normalized = normalizeText(question);
 
@@ -952,11 +1032,15 @@ function setupAiChatbot() {
     );
   }
 
-  function submitQuestion(question) {
+  async function submitQuestion(question) {
     const clean = question.trim();
     if (!clean) return;
     appendMessage("user", clean);
-    const answer = getAnswer(clean);
+
+    const localAnswer = getAnswer(clean);
+    const remoteAnswer = await getRemoteChatAnswer(clean);
+    const answer = remoteAnswer || localAnswer;
+
     window.setTimeout(() => appendMessage("assistant", answer), 180);
   }
 
