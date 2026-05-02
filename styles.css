@@ -760,6 +760,25 @@ button {
   transform: scale(1.04);
 }
 
+.catalogue-card .catalogue-media {
+  background: #ffffff;
+  border-bottom: 1px solid rgba(21, 32, 51, 0.08);
+}
+
+.catalogue-card .catalogue-media::after {
+  display: none;
+}
+
+.catalogue-card .catalogue-media img {
+  object-fit: contain;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.catalogue-card:hover .catalogue-media img {
+  transform: scale(1.02);
+}
+
 .tag-row,
 .filter-row {
   display: flex;
