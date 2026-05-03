@@ -264,9 +264,6 @@ const windowCatalogue = [
   },
 ];
 
-const shutterDescription =
-  "Les volets roulants exterieurs sont la solution ideale pour tout batiment. Fonctionnels et esthetiques, ils s'integrent parfaitement a tous les styles architecturaux. Ils protegent contre la chaleur et la lumiere excessives, augmentent la durabilite des fenetres, garantissent l'intimite et dissuadent les intrus pour une maison confortable et bien securisee.";
-
 const shutterCatalogue = [
   { id: 1, title: "Volet roulant exterieur modele 01", feature: "Coffre apparent compact avec tablier gris, ideal pour renovation." },
   { id: 2, title: "Volet roulant exterieur modele 02", feature: "Integration sous linteau avec coffre discret et finition architecturale sobre." },
@@ -509,7 +506,6 @@ function buildShutterCatalogueCard(model) {
       <div class="card-body">
         <div class="project-topline">Volets roulants exterieurs</div>
         <h3>${model.title}</h3>
-        <p>${shutterDescription}</p>
         <ul class="mini-list shutter-benefits">
           <li><span class="check">&#10003;</span><span>${model.feature}</span></li>
           <li><span class="check">&#10003;</span><span>Protection solaire, intimite et securite renforcee.</span></li>
