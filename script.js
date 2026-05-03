@@ -202,7 +202,7 @@ function getDoorModelSlug(modelId) {
 function getDoorImagePath(model, variantIndex) {
   const modelSlug = getDoorModelSlug(model.id);
   const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
-  return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp`;
+  return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`;
 }
 
 function buildDoorCatalogueCard(model) {
