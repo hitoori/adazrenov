@@ -225,22 +225,22 @@ function buildDoorCatalogueCard(model) {
       <div class="card-body">
         <div class="project-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
-        <p>Model de usa disponibil in variantele de culoare din galerie, cu dimensiune standard selectabila pentru cererea de oferta.</p>
+        <p>Modele de porte disponible dans les coloris presentes, avec dimension standard selectionnable pour votre demande de devis.</p>
         <div class="product-config door-config">
           <div class="tool-field">
-            <label for="door-color-${model.id}">Culoare</label>
+            <label for="door-color-${model.id}">Couleur</label>
             <select id="door-color-${model.id}" data-door-color>
               ${colorOptions}
             </select>
           </div>
           <div class="tool-field">
-            <label for="door-size-${model.id}">Dimensiune</label>
+            <label for="door-size-${model.id}">Dimension</label>
             <select id="door-size-${model.id}" data-door-size>
               ${sizeOptions}
             </select>
           </div>
         </div>
-        <p class="product-note" data-door-note>Culoare aleasa: ${model.colors[0]}. Dimensiune: ${doorStandardSizes[0]}.</p>
+        <p class="product-note" data-door-note>Couleur choisie : ${model.colors[0]}. Dimension : ${doorStandardSizes[0]}.</p>
         <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
@@ -295,7 +295,7 @@ function setupDoorCatalogue() {
         image.alt = `${title} - ${colorLabel}`;
       }
       if (note) {
-        note.textContent = `Culoare aleasa: ${colorLabel}. Dimensiune: ${sizeLabel}.`;
+        note.textContent = `Couleur choisie : ${colorLabel}. Dimension : ${sizeLabel}.`;
       }
 
       swatches.querySelectorAll(".color-swatch").forEach((button, index) => {
