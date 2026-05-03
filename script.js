@@ -264,6 +264,18 @@ const windowCatalogue = [
   },
 ];
 
+const shutterDescription =
+  "Les volets roulants exterieurs sont la solution ideale pour tout batiment. Fonctionnels et esthetiques, ils s'integrent parfaitement a tous les styles architecturaux. Ils protegent contre la chaleur et la lumiere excessives, augmentent la durabilite des fenetres, garantissent l'intimite et dissuadent les intrus pour une maison confortable et bien securisee.";
+
+const shutterCatalogue = [
+  { id: 1, title: "Volet roulant exterieur modele 01", feature: "Coffre apparent compact avec tablier gris, ideal pour renovation." },
+  { id: 2, title: "Volet roulant exterieur modele 02", feature: "Integration sous linteau avec coffre discret et finition architecturale sobre." },
+  { id: 3, title: "Volet roulant exterieur modele 03", feature: "Systeme exterieur avec coffre droit et coulisses laterales robustes." },
+  { id: 4, title: "Volet roulant exterieur modele 04", feature: "Coffre arrondi pour une finition plus douce sur facade contemporaine." },
+  { id: 5, title: "Volet roulant exterieur modele 05", feature: "Solution de renovation avec mecanisme visible et acces technique facilite." },
+  { id: 6, title: "Volet roulant exterieur modele 06", feature: "Volet roulant blanc pour fenetre existante, rendu propre et lumineux." },
+];
+
 function slugifyDoorColor(value) {
   return String(value || "")
     .normalize("NFD")
@@ -290,6 +302,15 @@ function getWindowModelSlug(modelId) {
 function getWindowImagePath(model, slideKey) {
   const modelSlug = getWindowModelSlug(model.id);
   return `assets/catalogue/geamuri/${modelSlug}/${modelSlug}-${slideKey}.webp?v=20260503`;
+}
+
+function getShutterModelSlug(modelId) {
+  return `volet-roulant-exterieur-modele-${String(modelId).padStart(2, "0")}`;
+}
+
+function getShutterImagePath(model) {
+  const modelSlug = getShutterModelSlug(model.id);
+  return `assets/catalogue/volets/${modelSlug}/${modelSlug}.webp?v=20260503`;
 }
 
 function buildDoorCatalogueCard(model) {
@@ -477,6 +498,33 @@ function setupWindowCatalogue() {
       });
     });
   });
+}
+
+function buildShutterCatalogueCard(model) {
+  return `
+    <article class="card product-card catalogue-card shutter-card reveal" data-group="products" data-tags="shutters volets protection" data-shutter-card>
+      <div class="media-top catalogue-media shutter-media">
+        <img src="${getShutterImagePath(model)}" alt="${model.title}" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="project-topline">Volets roulants exterieurs</div>
+        <h3>${model.title}</h3>
+        <p>${shutterDescription}</p>
+        <ul class="mini-list shutter-benefits">
+          <li><span class="check">&#10003;</span><span>${model.feature}</span></li>
+          <li><span class="check">&#10003;</span><span>Protection solaire, intimite et securite renforcee.</span></li>
+        </ul>
+        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+      </div>
+    </article>
+  `;
+}
+
+function setupShutterCatalogue() {
+  const root = document.querySelector("#shutter-products");
+  if (!root) return;
+
+  root.innerHTML = shutterCatalogue.map(buildShutterCatalogueCard).join("");
 }
 
 function inferProductPreviewKind(title) {
@@ -2336,6 +2384,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupDoorCatalogue();
   setupWindowCatalogue();
+  setupShutterCatalogue();
   setupFilters();
   setupProductVariants();
   setupContactForm();

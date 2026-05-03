@@ -826,6 +826,31 @@ button {
   font-weight: 700;
 }
 
+.shutter-card .shutter-media {
+  aspect-ratio: 1 / 1.08;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fb 100%);
+}
+
+.shutter-card .catalogue-media img {
+  padding: 16px;
+}
+
+.shutter-benefits {
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.shutter-benefits li {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.shutter-benefits .check {
+  width: 22px;
+  height: 22px;
+  font-size: 0.82rem;
+}
+
 .door-config {
   grid-template-columns: 1fr;
 }
