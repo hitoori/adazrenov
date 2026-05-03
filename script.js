@@ -325,7 +325,7 @@ function buildDoorCatalogueCard(model) {
   return `
     <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors aluminium premium" data-door-card>
       <div class="media-top catalogue-media door-media">
-        <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" data-door-image>
+        <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" decoding="async" data-door-image>
       </div>
       <div class="card-body">
         <div class="project-topline">Portes d'entree</div>
@@ -441,7 +441,7 @@ function buildWindowCatalogueCard(model) {
   return `
     <article class="card product-card catalogue-card window-card reveal" data-group="products" data-tags="windows fenetres vitrage" data-window-card>
       <div class="media-top catalogue-media window-media">
-        <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" data-window-image>
+        <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" decoding="async" data-window-image>
       </div>
       <div class="card-body">
         <div class="project-topline">Fenetres</div>
@@ -500,7 +500,7 @@ function buildShutterCatalogueCard(model) {
   return `
     <article class="card product-card catalogue-card shutter-card reveal" data-group="products" data-tags="shutters volets protection" data-shutter-card>
       <div class="media-top catalogue-media shutter-media">
-        <img src="${getShutterImagePath(model)}" alt="${model.title}" loading="lazy">
+        <img src="${getShutterImagePath(model)}" alt="${model.title}" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="project-topline">Volets roulants exterieurs</div>
