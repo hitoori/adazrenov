@@ -181,19 +181,32 @@ const doorCatalogue = [
   { id: 19, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
   { id: 20, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
   { id: 21, colors: ["Beige gris", "Vert fonce", "Noir mat", "Gris sauge", "Bleu nuit"] },
-  { id: 22, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Vert fonce", "Bleu nuit"] },
   { id: 23, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Vert fonce", "Bleu nuit"] },
   { id: 24, colors: ["Gris anthracite", "Bleu nuit", "Noir mat", "Beige gris", "Vert fonce"] },
   { id: 25, colors: ["Gris anthracite", "Noir mat", "Bleu nuit", "Beige gris", "Vert fonce"] },
 ];
 
-function getDoorImagePath(modelId, variantIndex) {
-  const folder = `usanr${String(modelId).padStart(2, "0")}`;
-  return `assets/catalogue/usi/${folder}/culoare-${String(variantIndex + 1).padStart(2, "0")}.webp`;
+function slugifyDoorColor(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getDoorModelSlug(modelId) {
+  return `porte-entree-modele-${String(modelId).padStart(2, "0")}`;
+}
+
+function getDoorImagePath(model, variantIndex) {
+  const modelSlug = getDoorModelSlug(model.id);
+  const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
+  return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp`;
 }
 
 function buildDoorCatalogueCard(model) {
-  const modelLabel = `Usa NR ${String(model.id).padStart(2, "0")}`;
+  const modelLabel = `Porte d'entree modele ${String(model.id).padStart(2, "0")}`;
   const colorOptions = model.colors
     .map((color, index) => {
       const selected = index === 0 ? " selected" : "";
@@ -207,10 +220,10 @@ function buildDoorCatalogueCard(model) {
   return `
     <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors aluminium premium" data-door-card>
       <div class="media-top catalogue-media door-media">
-        <img src="${getDoorImagePath(model.id, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" data-door-image>
+        <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" data-door-image>
       </div>
       <div class="card-body">
-        <div class="project-topline">Usi de intrare</div>
+        <div class="project-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
         <p>Model de usa disponibil in variantele de culoare din galerie, cu dimensiune standard selectabila pentru cererea de oferta.</p>
         <div class="product-config door-config">
@@ -246,7 +259,7 @@ function setupDoorCatalogue() {
     const sizeSelect = card.querySelector("[data-door-size]");
     const image = card.querySelector("[data-door-image]");
     const note = card.querySelector("[data-door-note]");
-    const title = card.querySelector("h3")?.textContent || "Usa";
+    const title = card.querySelector("h3")?.textContent || "Porte d'entree";
 
     colorSelect?.classList.add("variant-select");
     const swatches = document.createElement("div");
@@ -278,7 +291,7 @@ function setupDoorCatalogue() {
       const sizeLabel = sizeSelect?.value || doorStandardSizes[0];
 
       if (image) {
-        image.src = getDoorImagePath(model.id, selectedIndex);
+        image.src = getDoorImagePath(model, selectedIndex);
         image.alt = `${title} - ${colorLabel}`;
       }
       if (note) {
