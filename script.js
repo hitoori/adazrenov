@@ -151,6 +151,151 @@ function setupFilters() {
   });
 }
 
+const doorStandardSizes = [
+  "80 x 200 cm",
+  "90 x 200 cm",
+  "90 x 210 cm",
+  "100 x 210 cm",
+  "140 x 210 cm double",
+];
+
+const doorCatalogue = [
+  { id: 1, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 2, colors: ["Noir et vert", "Noir et blanc", "Noir et bleu", "Noir et gris"] },
+  { id: 3, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 4, colors: ["Blanc", "Bleu", "Noir mat", "Vert fonce"] },
+  { id: 5, colors: ["Rouge", "Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 6, colors: ["Noir avec lignes rouges", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 7, colors: ["Marron", "Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 8, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 9, colors: ["Orange", "Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  { id: 10, colors: ["Blanc", "Noir mat", "Bleu", "Vert fonce", "Gris"] },
+  { id: 11, colors: ["Noyer", "Chene clair", "Chene dore", "Noyer fonce", "Acajou"] },
+  { id: 12, colors: ["Noyer avec insert inox", "Chene clair avec insert inox", "Chene dore avec insert inox", "Noyer fonce avec insert inox", "Acajou avec insert inox"] },
+  { id: 13, colors: ["Noir mat", "Gris anthracite", "Bleu nuit", "Beige gris", "Beige clair"] },
+  { id: 14, colors: ["Bleu", "Noir mat", "Beige gris", "Blanc", "Gris anthracite"] },
+  { id: 15, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
+  { id: 16, colors: ["Chene clair", "Chene dore", "Chene naturel", "Noyer", "Wenge"] },
+  { id: 17, colors: ["Noir mat", "Beige gris", "Gris anthracite", "Bleu nuit"] },
+  { id: 18, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
+  { id: 19, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
+  { id: 20, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
+  { id: 21, colors: ["Beige gris", "Vert fonce", "Noir mat", "Gris sauge", "Bleu nuit"] },
+  { id: 22, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Vert fonce", "Bleu nuit"] },
+  { id: 23, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Vert fonce", "Bleu nuit"] },
+  { id: 24, colors: ["Gris anthracite", "Bleu nuit", "Noir mat", "Beige gris", "Vert fonce"] },
+  { id: 25, colors: ["Gris anthracite", "Noir mat", "Bleu nuit", "Beige gris", "Vert fonce"] },
+];
+
+function getDoorImagePath(modelId, variantIndex) {
+  const folder = `usanr${String(modelId).padStart(2, "0")}`;
+  return `assets/catalogue/usi/${folder}/culoare-${String(variantIndex + 1).padStart(2, "0")}.webp`;
+}
+
+function buildDoorCatalogueCard(model) {
+  const modelLabel = `Usa NR ${String(model.id).padStart(2, "0")}`;
+  const colorOptions = model.colors
+    .map((color, index) => {
+      const selected = index === 0 ? " selected" : "";
+      return `<option value="${index}" data-label="${color}"${selected}>${color}</option>`;
+    })
+    .join("");
+  const sizeOptions = doorStandardSizes
+    .map((size) => `<option value="${size}">${size}</option>`)
+    .join("");
+
+  return `
+    <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors aluminium premium" data-door-card>
+      <div class="media-top catalogue-media door-media">
+        <img src="${getDoorImagePath(model.id, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" data-door-image>
+      </div>
+      <div class="card-body">
+        <div class="project-topline">Usi de intrare</div>
+        <h3>${modelLabel}</h3>
+        <p>Model de usa disponibil in variantele de culoare din galerie, cu dimensiune standard selectabila pentru cererea de oferta.</p>
+        <div class="product-config door-config">
+          <div class="tool-field">
+            <label for="door-color-${model.id}">Culoare</label>
+            <select id="door-color-${model.id}" data-door-color>
+              ${colorOptions}
+            </select>
+          </div>
+          <div class="tool-field">
+            <label for="door-size-${model.id}">Dimensiune</label>
+            <select id="door-size-${model.id}" data-door-size>
+              ${sizeOptions}
+            </select>
+          </div>
+        </div>
+        <p class="product-note" data-door-note>Culoare aleasa: ${model.colors[0]}. Dimensiune: ${doorStandardSizes[0]}.</p>
+        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+      </div>
+    </article>
+  `;
+}
+
+function setupDoorCatalogue() {
+  const root = document.querySelector("#door-products");
+  if (!root) return;
+
+  root.innerHTML = doorCatalogue.map(buildDoorCatalogueCard).join("");
+
+  root.querySelectorAll("[data-door-card]").forEach((card, cardIndex) => {
+    const model = doorCatalogue[cardIndex];
+    const colorSelect = card.querySelector("[data-door-color]");
+    const sizeSelect = card.querySelector("[data-door-size]");
+    const image = card.querySelector("[data-door-image]");
+    const note = card.querySelector("[data-door-note]");
+    const title = card.querySelector("h3")?.textContent || "Usa";
+
+    colorSelect?.classList.add("variant-select");
+    const swatches = document.createElement("div");
+    swatches.className = "variant-swatches";
+    swatches.setAttribute("aria-label", `Culori disponibile pentru ${title}`);
+
+    Array.from(colorSelect?.options || []).forEach((option, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "color-swatch";
+      button.title = option.dataset.label || option.textContent || "";
+      button.setAttribute("aria-label", button.title);
+      button.style.setProperty("--swatch-color", resolveSwatchColor(option));
+      if (index === 0) button.classList.add("is-active");
+
+      button.addEventListener("click", () => {
+        colorSelect.value = option.value;
+        colorSelect.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+
+      swatches.appendChild(button);
+    });
+
+    colorSelect?.insertAdjacentElement("afterend", swatches);
+
+    const updateDoor = () => {
+      const selectedIndex = Number.parseInt(colorSelect?.value || "0", 10) || 0;
+      const colorLabel = model.colors[selectedIndex] || model.colors[0];
+      const sizeLabel = sizeSelect?.value || doorStandardSizes[0];
+
+      if (image) {
+        image.src = getDoorImagePath(model.id, selectedIndex);
+        image.alt = `${title} - ${colorLabel}`;
+      }
+      if (note) {
+        note.textContent = `Culoare aleasa: ${colorLabel}. Dimensiune: ${sizeLabel}.`;
+      }
+
+      swatches.querySelectorAll(".color-swatch").forEach((button, index) => {
+        button.classList.toggle("is-active", index === selectedIndex);
+      });
+    };
+
+    colorSelect?.addEventListener("change", updateDoor);
+    sizeSelect?.addEventListener("change", updateDoor);
+    updateDoor();
+  });
+}
+
 function inferProductPreviewKind(title) {
   const normalized = String(title || "").toLowerCase();
   if (normalized.includes("fenetre") || normalized.includes("porte-fenetre") || normalized.includes("porte fenetre")) {
@@ -171,8 +316,11 @@ function resolveSwatchColor(option) {
   if (label.includes("blanc")) return "#f6f7f8";
   if (label.includes("gris perle")) return "#c8cdd4";
   if (label.includes("gris")) return "#8a929b";
+  if (label.includes("orange")) return "#f26a21";
   if (label.includes("beige") || label.includes("sable") || label.includes("lin")) return "#d9c8a7";
   if (label.includes("naturel") || label.includes("chene")) return "#b78354";
+  if (label.includes("acajou")) return "#9f3e25";
+  if (label.includes("wenge")) return "#33221b";
   if (label.includes("noyer")) return "#6f4a2f";
   if (label.includes("bronze")) return "#8b6a45";
   if (label.includes("vert")) return "#728a56";
@@ -1999,6 +2147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     year.textContent = String(new Date().getFullYear());
   }
 
+  setupDoorCatalogue();
   setupFilters();
   setupProductVariants();
   setupContactForm();

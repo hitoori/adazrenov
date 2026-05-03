@@ -578,6 +578,10 @@ button {
   overflow: hidden;
 }
 
+.door-products-slot {
+  display: contents;
+}
+
 .product-card .card-body,
 .project-card .card-body {
   padding: 24px;
@@ -773,6 +777,22 @@ button {
   object-fit: contain;
   padding: 10px;
   background: #ffffff;
+}
+
+.door-card .door-media {
+  aspect-ratio: 1 / 1.24;
+}
+
+.door-card .catalogue-media img {
+  padding: 14px 12px;
+}
+
+.door-config {
+  grid-template-columns: 1fr;
+}
+
+.door-config .tool-field select {
+  width: 100%;
 }
 
 .catalogue-card:hover .catalogue-media img {
