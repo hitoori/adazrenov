@@ -323,6 +323,10 @@ function inferProductPreviewKind(title) {
 function resolveSwatchColor(option) {
   const label = String(option?.dataset?.label || option?.textContent || option?.value || "").toLowerCase();
 
+  if (label.includes("noir et vert")) return "linear-gradient(135deg, #1f2024 0 50%, #1f4f38 50% 100%)";
+  if (label.includes("noir et blanc")) return "linear-gradient(135deg, #1f2024 0 50%, #f6f7f8 50% 100%)";
+  if (label.includes("noir et bleu")) return "linear-gradient(135deg, #1f2024 0 50%, #1f5fa8 50% 100%)";
+  if (label.includes("noir et gris")) return "linear-gradient(135deg, #1f2024 0 50%, #8a929b 50% 100%)";
   if (label.includes("anthracite")) return "#3c4047";
   if (label.includes("noir")) return "#1f2024";
   if (label.includes("blanc casse")) return "#f2eee7";
