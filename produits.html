@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Produits | Portes d'entree sur mesure | ADAZ RENOV</title>
-    <meta name="description" content="Catalogue ADAZ RENOV: portes d'entree sur mesure avec choix du modele, de la couleur et des dimensions standard. Pose professionnelle et devis personnalise.">
+    <title>Produits | Portes et fenetres sur mesure | ADAZ RENOV</title>
+    <meta name="description" content="Catalogue ADAZ RENOV: portes d'entree et fenetres sur mesure avec choix du modele, des coloris, des dimensions standard et des fiches techniques disponibles.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="Pozelogo+altele/Original%20on%20Transparent.png">
     <link rel="apple-touch-icon" href="Pozelogo+altele/Original%20on%20Transparent.png">
-    <script src="script.js?v=20260503doors-white-bg" defer></script>
+    <script src="script.js?v=20260503windows" defer></script>
   </head>
   <body data-page="products">
     <div class="site-header"></div>
@@ -21,11 +21,11 @@
         <div class="container">
           <div class="hero-card reveal">
             <span class="eyebrow">Catalogue produits</span>
-            <h1>Portes d'entree sur mesure</h1>
+            <h1>Portes et fenetres sur mesure</h1>
             <p>
-              Decouvrez notre selection de portes d'entree avec plusieurs variantes de couleur
-              par modele. Choisissez le modele, la finition et une dimension standard avant de
-              demander un devis personnalise.
+              Decouvrez notre selection de portes d'entree et de fenetres avec vues du modele,
+              coloris disponibles et fiches techniques lorsque les informations sont fournies.
+              Choisissez la reference qui vous interesse avant de demander un devis personnalise.
             </p>
           </div>
         </div>
@@ -35,12 +35,14 @@
         <div class="container">
           <div class="filter-bar reveal" data-filter-group="products">
             <span class="filter-lead">Filtrer par :</span>
-            <button class="filter-chip" type="button" data-filter="all" aria-pressed="false">Toutes les portes</button>
+            <button class="filter-chip" type="button" data-filter="all" aria-pressed="false">Tous les produits</button>
             <button class="filter-chip" type="button" data-filter="doors" aria-pressed="false">Portes d'entree</button>
+            <button class="filter-chip" type="button" data-filter="windows" aria-pressed="false">Fenetres</button>
           </div>
 
           <div class="cards-3" id="products-grid">
             <div id="door-products" class="door-products-slot"></div>
+            <div id="window-products" class="catalogue-products-slot"></div>
           </div>
 
           <p class="no-results" data-empty="products" hidden>Aucun produit trouve dans cette categorie.</p>
@@ -73,7 +75,7 @@
             <h2>Vous avez vu un modele qui vous interesse ?</h2>
             <p class="muted-on-dark">
               Envoyez-nous la reference du produit ou une capture du modele. Nous verifierons la
-              faisabilite, les dimensions et les options avant de preparer un devis.
+              faisabilite, les dimensions, les coloris et les options avant de preparer un devis.
             </p>
             <div class="hero-actions" style="justify-content:center;">
               <a class="button secondary" href="contact.html">Demander un devis</a>

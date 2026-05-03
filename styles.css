@@ -578,7 +578,8 @@ button {
   overflow: hidden;
 }
 
-.door-products-slot {
+.door-products-slot,
+.catalogue-products-slot {
   display: contents;
 }
 
@@ -785,6 +786,44 @@ button {
 
 .door-card .catalogue-media img {
   padding: 14px 12px;
+}
+
+.window-card .window-media {
+  aspect-ratio: 1 / 1.08;
+}
+
+.window-card .catalogue-media img {
+  padding: 18px;
+}
+
+.image-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.image-toggle-button {
+  min-width: 42px;
+  height: 38px;
+  border: 1px solid rgba(21, 32, 51, 0.14);
+  border-radius: 8px;
+  background: #f4f7fa;
+  color: var(--text);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.image-toggle-button.is-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(30, 58, 95, 0.18);
+}
+
+.window-specs {
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .door-config {

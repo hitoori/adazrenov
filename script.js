@@ -186,6 +186,84 @@ const doorCatalogue = [
   { id: 25, colors: ["Gris anthracite", "Noir mat", "Bleu nuit", "Beige gris", "Vert fonce"] },
 ];
 
+const windowCatalogue = [
+  {
+    id: 1,
+    title: "Fenetre aluminium ENTRA",
+    description: "Profil aluminium moderne avec isolation renforcee et finition personnalisable.",
+    specs: "Aluminium, 3 joints, 3 chambres, Uw 0,85 pour Ug = 0,5.",
+    hasTechSheet: true,
+  },
+  {
+    id: 2,
+    title: "Fenetre bois ESPERIA LIFE",
+    description: "Menuiserie bois chaleureuse avec profil isolant pour renovation premium.",
+    specs: "Bois, fiche technique disponible, Uw 0,83 pour Ug = 0,5.",
+    hasTechSheet: true,
+  },
+  {
+    id: 3,
+    title: "Fenetre PVC modele 03",
+    description: "Profil PVC blanc avec vitrage isolant et lignes sobres pour facade contemporaine.",
+  },
+  {
+    id: 4,
+    title: "Baie coulissante PVC EKOSUN HST",
+    description: "Systeme coulissant PVC pour grandes ouvertures avec performance thermique elevee.",
+    specs: "PVC coulissant, fiche technique disponible, Uw 0,63 pour Ug = 0,5.",
+    hasTechSheet: true,
+  },
+  {
+    id: 5,
+    title: "Fenetre PVC IDEAL 8000",
+    description: "Profil PVC performant pour isolation, etancheite et confort au quotidien.",
+    specs: "PVC, 3 joints, 6 chambres, Uw 0,74 pour Ug = 0,5.",
+    hasTechSheet: true,
+  },
+  {
+    id: 6,
+    title: "Fenetre PVC modele 06",
+    description: "Menuiserie PVC blanche avec double vitrage et coloris disponibles sur demande.",
+  },
+  {
+    id: 7,
+    title: "Fenetre aluminium modele 07",
+    description: "Profil aluminium fin, adapte aux projets modernes et aux finitions foncees.",
+  },
+  {
+    id: 8,
+    title: "Fenetre aluminium anthracite",
+    description: "Menuiserie aluminium foncee avec vitrage isolant et style contemporain.",
+  },
+  {
+    id: 9,
+    title: "Fenetre bois avec appui",
+    description: "Profil bois robuste avec finition protectrice et rendu naturel.",
+    specs: "Fenetres en bois avec couches de vernis pour garantir une utilisation durable.",
+    hasTechSheet: true,
+  },
+  {
+    id: 10,
+    title: "Fenetre PVC isolation renforcee",
+    description: "Profil PVC blanc concu pour une bonne isolation thermique et acoustique.",
+  },
+  {
+    id: 11,
+    title: "Fenetre PVC double vitrage",
+    description: "Solution PVC compacte pour renovation avec vitrage isolant.",
+  },
+  {
+    id: 12,
+    title: "Fenetre PVC haute performance",
+    description: "Profil PVC blanc avec structure renforcie pour confort et durabilite.",
+  },
+  {
+    id: 13,
+    title: "Fenetre aluminium modele 13",
+    description: "Profil aluminium epure avec choix de coloris pour s'adapter a la facade.",
+  },
+];
+
 function slugifyDoorColor(value) {
   return String(value || "")
     .normalize("NFD")
@@ -203,6 +281,15 @@ function getDoorImagePath(model, variantIndex) {
   const modelSlug = getDoorModelSlug(model.id);
   const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
   return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`;
+}
+
+function getWindowModelSlug(modelId) {
+  return `fenetre-modele-${String(modelId).padStart(2, "0")}`;
+}
+
+function getWindowImagePath(model, slideKey) {
+  const modelSlug = getWindowModelSlug(model.id);
+  return `assets/catalogue/geamuri/${modelSlug}/${modelSlug}-${slideKey}.webp?v=20260503`;
 }
 
 function buildDoorCatalogueCard(model) {
@@ -306,6 +393,89 @@ function setupDoorCatalogue() {
     colorSelect?.addEventListener("change", updateDoor);
     sizeSelect?.addEventListener("change", updateDoor);
     updateDoor();
+  });
+}
+
+function getWindowSlides(model) {
+  const slides = [
+    { key: "vue", label: "1", title: "Vue du modele" },
+    { key: "coloris", label: "2", title: "Coloris disponibles" },
+  ];
+
+  if (model.hasTechSheet) {
+    slides.push({ key: "fiche", label: "Info", title: "Fiche technique" });
+  }
+
+  return slides;
+}
+
+function buildWindowCatalogueCard(model) {
+  const slides = getWindowSlides(model);
+  const controls = slides
+    .map((slide, index) => {
+      const active = index === 0 ? " is-active" : "";
+      return `<button class="image-toggle-button${active}" type="button" data-window-slide="${index}" aria-pressed="${index === 0}" aria-label="${slide.title}">${slide.label}</button>`;
+    })
+    .join("");
+
+  const specLine = model.specs ? `<p class="product-note window-specs">${model.specs}</p>` : "";
+
+  return `
+    <article class="card product-card catalogue-card window-card reveal" data-group="products" data-tags="windows fenetres vitrage" data-window-card>
+      <div class="media-top catalogue-media window-media">
+        <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" data-window-image>
+      </div>
+      <div class="card-body">
+        <div class="project-topline">Fenetres</div>
+        <h3>${model.title}</h3>
+        <p>${model.description}</p>
+        ${specLine}
+        <div class="image-toggle" aria-label="Changer l'image du produit">
+          ${controls}
+        </div>
+        <p class="product-note" data-window-note>Image affichee : vue du modele.</p>
+        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+      </div>
+    </article>
+  `;
+}
+
+function setupWindowCatalogue() {
+  const root = document.querySelector("#window-products");
+  if (!root) return;
+
+  root.innerHTML = windowCatalogue.map(buildWindowCatalogueCard).join("");
+
+  root.querySelectorAll("[data-window-card]").forEach((card, cardIndex) => {
+    const model = windowCatalogue[cardIndex];
+    const slides = getWindowSlides(model);
+    const image = card.querySelector("[data-window-image]");
+    const note = card.querySelector("[data-window-note]");
+    const buttons = card.querySelectorAll("[data-window-slide]");
+
+    const updateWindow = (nextIndex) => {
+      const slide = slides[nextIndex] || slides[0];
+
+      if (image) {
+        image.src = getWindowImagePath(model, slide.key);
+        image.alt = `${model.title} - ${slide.title.toLowerCase()}`;
+      }
+      if (note) {
+        note.textContent = `Image affichee : ${slide.title.toLowerCase()}.`;
+      }
+
+      buttons.forEach((button, index) => {
+        const active = index === nextIndex;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        updateWindow(Number.parseInt(button.dataset.windowSlide || "0", 10) || 0);
+      });
+    });
   });
 }
 
@@ -2165,6 +2335,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setupDoorCatalogue();
+  setupWindowCatalogue();
   setupFilters();
   setupProductVariants();
   setupContactForm();
