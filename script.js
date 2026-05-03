@@ -265,12 +265,12 @@ const windowCatalogue = [
 ];
 
 const shutterCatalogue = [
-  { id: 1, title: "Volet roulant exterieur modele 01", feature: "Coffre apparent compact avec tablier gris, ideal pour renovation." },
-  { id: 2, title: "Volet roulant exterieur modele 02", feature: "Integration sous linteau avec coffre discret et finition architecturale sobre." },
-  { id: 3, title: "Volet roulant exterieur modele 03", feature: "Systeme exterieur avec coffre droit et coulisses laterales robustes." },
-  { id: 4, title: "Volet roulant exterieur modele 04", feature: "Coffre arrondi pour une finition plus douce sur facade contemporaine." },
-  { id: 5, title: "Volet roulant exterieur modele 05", feature: "Solution de renovation avec mecanisme visible et acces technique facilite." },
-  { id: 6, title: "Volet roulant exterieur modele 06", feature: "Volet roulant blanc pour fenetre existante, rendu propre et lumineux." },
+  { id: 1, title: "Volet roulant exterieur modele 01", feature: "Coffre apparent" },
+  { id: 2, title: "Volet roulant exterieur modele 02", feature: "Sous linteau" },
+  { id: 3, title: "Volet roulant exterieur modele 03", feature: "Coffre droit" },
+  { id: 4, title: "Volet roulant exterieur modele 04", feature: "Coffre arrondi" },
+  { id: 5, title: "Volet roulant exterieur modele 05", feature: "Acces technique" },
+  { id: 6, title: "Volet roulant exterieur modele 06", feature: "Finition blanche" },
 ];
 
 function slugifyDoorColor(value) {
@@ -446,7 +446,6 @@ function buildWindowCatalogueCard(model) {
       <div class="card-body">
         <div class="project-topline">Fenetres</div>
         <h3>${model.title}</h3>
-        <p>${model.description}</p>
         ${specLine}
         <div class="image-toggle" aria-label="Changer l'image du produit">
           ${controls}
@@ -506,10 +505,7 @@ function buildShutterCatalogueCard(model) {
       <div class="card-body">
         <div class="project-topline">Volets roulants exterieurs</div>
         <h3>${model.title}</h3>
-        <ul class="mini-list shutter-benefits">
-          <li><span class="check">&#10003;</span><span>${model.feature}</span></li>
-          <li><span class="check">&#10003;</span><span>Protection solaire, intimite et securite renforcee.</span></li>
-        </ul>
+        <p class="product-note shutter-short">${model.feature}</p>
         <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
@@ -521,6 +517,18 @@ function setupShutterCatalogue() {
   if (!root) return;
 
   root.innerHTML = shutterCatalogue.map(buildShutterCatalogueCard).join("");
+}
+
+function orderProductCatalogueCards() {
+  document.querySelectorAll("[data-door-card]").forEach((card, index) => {
+    card.style.order = String(index * 3 + 1);
+  });
+  document.querySelectorAll("[data-window-card]").forEach((card, index) => {
+    card.style.order = String(index * 3 + 2);
+  });
+  document.querySelectorAll("[data-shutter-card]").forEach((card, index) => {
+    card.style.order = String(index * 3 + 3);
+  });
 }
 
 function inferProductPreviewKind(title) {
@@ -2381,6 +2389,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDoorCatalogue();
   setupWindowCatalogue();
   setupShutterCatalogue();
+  orderProductCatalogueCards();
   setupFilters();
   setupProductVariants();
   setupContactForm();
