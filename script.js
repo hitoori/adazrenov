@@ -631,9 +631,10 @@ function setupDoorCatalogue() {
     });
 
     sizeSelect?.addEventListener("change", updateDoor);
+    colorInput?.addEventListener("input", updateDoor);
     widthInput?.addEventListener("input", updateDoor);
     heightInput?.addEventListener("input", updateDoor);
-    updateMedia("photo");
+    updateSlide(0);
     updateDoor();
   });
 }
