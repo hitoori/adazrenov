@@ -479,14 +479,16 @@ function buildDoorCatalogueCard(model) {
               ${schemaContent}
             </div>
           </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="door-card-topline">
+          <div class="project-topline">Portes d'entree</div>
           <div class="door-slider-dots" aria-label="Changer l'image du produit">
             <button class="is-active" type="button" data-door-slide="0" aria-label="Voir le modele" aria-pressed="true"></button>
             <button type="button" data-door-slide="1" aria-label="Voir le schema" aria-pressed="false"></button>
           </div>
         </div>
-      </div>
-      <div class="card-body">
-        <div class="project-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
         <div class="door-choice-tabs" aria-label="Type de commande">
           <button class="door-choice-button is-active" type="button" data-door-mode="standard" aria-pressed="true">Standard</button>
@@ -537,7 +539,6 @@ function setupDoorCatalogue() {
     const model = doorCatalogue[cardIndex];
     const material = getDoorMaterial(model);
     const materialLabel = getDoorMaterialLabel(material);
-    const slider = card.querySelector("[data-door-slider]");
     const sliderTrack = card.querySelector("[data-door-slider-track]");
     const slideButtons = card.querySelectorAll("[data-door-slide]");
     const modeButtons = card.querySelectorAll("[data-door-mode]");
@@ -550,8 +551,6 @@ function setupDoorCatalogue() {
     const note = card.querySelector("[data-door-note]");
     let activeMode = "standard";
     let activeSlide = 0;
-    let dragStart = 0;
-    let dragDelta = 0;
 
     const updateSlide = (nextSlide) => {
       activeSlide = nextSlide === 1 ? 1 : 0;
@@ -564,14 +563,6 @@ function setupDoorCatalogue() {
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-pressed", String(active));
       });
-    };
-
-    const finishDrag = () => {
-      if (Math.abs(dragDelta) > 36) {
-        updateSlide(dragDelta < 0 ? 1 : 0);
-      }
-      dragStart = 0;
-      dragDelta = 0;
     };
 
     const updateDoor = () => {
@@ -610,18 +601,6 @@ function setupDoorCatalogue() {
         updateSlide(Number.parseInt(button.dataset.doorSlide || "0", 10) || 0);
       });
     });
-
-    slider?.addEventListener("pointerdown", (event) => {
-      dragStart = event.clientX;
-      dragDelta = 0;
-      slider.setPointerCapture?.(event.pointerId);
-    });
-    slider?.addEventListener("pointermove", (event) => {
-      if (!dragStart) return;
-      dragDelta = event.clientX - dragStart;
-    });
-    slider?.addEventListener("pointerup", finishDrag);
-    slider?.addEventListener("pointercancel", finishDrag);
 
     modeButtons.forEach((button) => {
       button.addEventListener("click", () => {
