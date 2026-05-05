@@ -481,6 +481,10 @@ function buildDoorCatalogueCard(model) {
           <button class="is-active" type="button" data-door-slide="0" aria-label="Voir la version standard" aria-pressed="true"></button>
           <button type="button" data-door-slide="1" aria-label="Voir la version personnalisée" aria-pressed="false"></button>
         </div>
+        <div class="door-slider-dots" aria-hidden="true">
+          <span class="is-active"></span>
+          <span></span>
+        </div>
         <div class="project-topline door-card-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
         <div class="door-spec-line" aria-label="Résumé du produit">
@@ -515,12 +519,10 @@ function buildDoorCatalogueCard(model) {
             </div>
           </div>
         </div>
-        <div class="door-price-box">
-          <span>Prix estimatif</span>
-          <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>
-          <small>Prix indicatif hors pose</small>
-        </div>
-        <p class="product-note" data-door-note>${materialLabel}. Finition standard prête à poser.</p>
+        <p class="door-summary product-note" data-door-note>
+          <span class="door-summary-meta">${materialLabel}. Dimension standard : ${doorStandardSizes[0]}.</span>
+          <span class="door-summary-price">Prix estimatif : <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>, hors pose.</span>
+        </p>
         <div class="product-footer"><span class="price-row">Devis final sur mesure</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
@@ -588,9 +590,9 @@ function setupDoorCatalogue() {
       if (price) price.textContent = formatDoorPrice(priceValue);
       if (note) {
         const colorText = customColor ? ` Couleur : ${customColor}.` : "";
-        note.textContent = activeMode === "custom"
-          ? `${materialLabel}. Sur mesure : ${width} x ${height} cm.${colorText}`
-          : `${materialLabel}. Finition standard prête à poser.`;
+        note.innerHTML = activeMode === "custom"
+          ? `<span class="door-summary-meta">${materialLabel}. Sur mesure : ${width} x ${height} cm.${colorText}</span><span class="door-summary-price">Prix estimatif : <strong data-door-price>${formatDoorPrice(priceValue)}</strong>, hors pose.</span>`
+          : `<span class="door-summary-meta">${materialLabel}. Dimension standard : ${standardSize}.</span><span class="door-summary-price">Prix estimatif : <strong data-door-price>${formatDoorPrice(priceValue)}</strong>, hors pose.</span>`;
       }
     };
 
