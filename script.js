@@ -2,7 +2,6 @@ const navItems = [
   { page: "home", href: "index.html", label: "Accueil" },
   { page: "services", href: "services.html", label: "Services" },
   { page: "products", href: "produits.html", label: "Produits" },
-  { page: "catalogue", href: "catalogue-portes.html", label: "Catalogue" },
   { page: "projects", href: "projets.html", label: "Projets" },
   { page: "about", href: "a-propos.html", label: "A propos" },
   { page: "ai", href: "ia-travaux.html", label: "IA Travaux" },
