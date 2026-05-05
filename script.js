@@ -364,9 +364,17 @@ function getDoorModelSlug(modelId) {
 }
 
 function getDoorImagePath(model, variantIndex) {
+  if (model.id === 1) {
+    return "primausatest/UsaMetal.png?v=20260506";
+  }
+
   const modelSlug = getDoorModelSlug(model.id);
   const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
   return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`;
+}
+
+function getDoorSchemaImagePath(model) {
+  return model.id === 1 ? "primausatest/SchemaUsametal.png?v=20260506" : "";
 }
 
 function getWindowModelSlug(modelId) {
@@ -444,6 +452,15 @@ function buildDoorCatalogueCard(model) {
   const modelLabel = `Porte d'entree modele ${String(model.id).padStart(2, "0")}`;
   const material = getDoorMaterial(model);
   const materialLabel = getDoorMaterialLabel(material);
+  const schemaImage = getDoorSchemaImagePath(model);
+  const schemaContent = schemaImage
+    ? `<img src="${schemaImage}" alt="Schema ${modelLabel}" loading="lazy" decoding="async">`
+    : `<div class="door-schema">
+        <span class="schema-frame"></span>
+        <span class="schema-panel"></span>
+        <span class="schema-handle"></span>
+        <span class="schema-arc"></span>
+      </div>`;
   const sizeOptions = doorStandardSizes
     .map((size) => `<option value="${size}">${size}</option>`)
     .join("");
@@ -453,25 +470,24 @@ function buildDoorCatalogueCard(model) {
   return `
     <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors ${material} premium" data-subcategory="${material}" data-door-card>
       <div class="media-top catalogue-media door-media">
-        <div class="door-view is-active" data-door-view="photo">
-          <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
-        </div>
-        <div class="door-view door-schema-view" data-door-view="schema" hidden>
-          <div class="door-schema">
-            <span class="schema-frame"></span>
-            <span class="schema-panel"></span>
-            <span class="schema-handle"></span>
-            <span class="schema-arc"></span>
+        <div class="door-slider" data-door-slider>
+          <div class="door-slider-track" data-door-slider-track>
+            <div class="door-slide">
+              <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
+            </div>
+            <div class="door-slide door-schema-view">
+              ${schemaContent}
+            </div>
+          </div>
+          <div class="door-slider-dots" aria-label="Changer l'image du produit">
+            <button class="is-active" type="button" data-door-slide="0" aria-label="Voir le modele" aria-pressed="true"></button>
+            <button type="button" data-door-slide="1" aria-label="Voir le schema" aria-pressed="false"></button>
           </div>
         </div>
       </div>
       <div class="card-body">
         <div class="project-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
-        <div class="image-toggle door-image-toggle" aria-label="Changer la vue du produit">
-          <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true">Modele</button>
-          <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false">Schema</button>
-        </div>
         <div class="door-choice-tabs" aria-label="Type de commande">
           <button class="door-choice-button is-active" type="button" data-door-mode="standard" aria-pressed="true">Standard</button>
           <button class="door-choice-button" type="button" data-door-mode="custom" aria-pressed="false">Sur mesure</button>
@@ -486,6 +502,10 @@ function buildDoorCatalogueCard(model) {
             </div>
           </div>
           <div class="door-panel door-custom-panel" data-door-panel="custom" hidden>
+            <div class="tool-field door-color-field">
+              <label for="door-custom-color-${model.id}">Couleur souhaitee</label>
+              <input id="door-custom-color-${model.id}" type="text" placeholder="Ex. noir mat, chene, gris anthracite" data-door-custom-color>
+            </div>
             <div class="tool-field">
               <label for="door-width-${model.id}">Largeur en cm</label>
               <input id="door-width-${model.id}" type="number" min="70" max="160" step="1" value="90" inputmode="numeric" data-door-width>
@@ -517,29 +537,41 @@ function setupDoorCatalogue() {
     const model = doorCatalogue[cardIndex];
     const material = getDoorMaterial(model);
     const materialLabel = getDoorMaterialLabel(material);
-    const mediaButtons = card.querySelectorAll("[data-door-media]");
-    const views = card.querySelectorAll("[data-door-view]");
+    const slider = card.querySelector("[data-door-slider]");
+    const sliderTrack = card.querySelector("[data-door-slider-track]");
+    const slideButtons = card.querySelectorAll("[data-door-slide]");
     const modeButtons = card.querySelectorAll("[data-door-mode]");
     const panels = card.querySelectorAll("[data-door-panel]");
     const sizeSelect = card.querySelector("[data-door-size]");
+    const colorInput = card.querySelector("[data-door-custom-color]");
     const widthInput = card.querySelector("[data-door-width]");
     const heightInput = card.querySelector("[data-door-height]");
     const price = card.querySelector("[data-door-price]");
     const note = card.querySelector("[data-door-note]");
     let activeMode = "standard";
+    let activeSlide = 0;
+    let dragStart = 0;
+    let dragDelta = 0;
 
-    const updateMedia = (nextView) => {
-      views.forEach((view) => {
-        const active = view.dataset.doorView === nextView;
-        view.hidden = !active;
-        view.classList.toggle("is-active", active);
-      });
+    const updateSlide = (nextSlide) => {
+      activeSlide = nextSlide === 1 ? 1 : 0;
+      if (sliderTrack) {
+        sliderTrack.style.transform = `translateX(-${activeSlide * 50}%)`;
+      }
 
-      mediaButtons.forEach((button) => {
-        const active = button.dataset.doorMedia === nextView;
+      slideButtons.forEach((button) => {
+        const active = Number.parseInt(button.dataset.doorSlide || "0", 10) === activeSlide;
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-pressed", String(active));
       });
+    };
+
+    const finishDrag = () => {
+      if (Math.abs(dragDelta) > 36) {
+        updateSlide(dragDelta < 0 ? 1 : 0);
+      }
+      dragStart = 0;
+      dragDelta = 0;
     };
 
     const updateDoor = () => {
@@ -547,6 +579,7 @@ function setupDoorCatalogue() {
       const parsedStandard = parseDoorSize(standardSize);
       const customWidth = Number.parseInt(widthInput?.value || "90", 10) || 90;
       const customHeight = Number.parseInt(heightInput?.value || "210", 10) || 210;
+      const customColor = String(colorInput?.value || "").trim();
       const width = activeMode === "custom" ? customWidth : parsedStandard.width;
       const height = activeMode === "custom" ? customHeight : parsedStandard.height;
       const priceValue = estimateDoorPrice(material, activeMode, width, height, standardSize);
@@ -561,17 +594,34 @@ function setupDoorCatalogue() {
         button.setAttribute("aria-pressed", String(active));
       });
 
+      card.querySelector(".door-choice-tabs")?.classList.toggle("is-custom", activeMode === "custom");
+
       if (price) price.textContent = formatDoorPrice(priceValue);
       if (note) {
+        const colorText = customColor ? ` Couleur : ${customColor}.` : "";
         note.textContent = activeMode === "custom"
-          ? `${materialLabel}. Sur mesure : ${width} x ${height} cm. Prix indicatif hors pose.`
+          ? `${materialLabel}. Sur mesure : ${width} x ${height} cm.${colorText} Prix indicatif hors pose.`
           : `${materialLabel}. Dimension standard : ${standardSize}. Prix indicatif hors pose.`;
       }
     };
 
-    mediaButtons.forEach((button) => {
-      button.addEventListener("click", () => updateMedia(button.dataset.doorMedia || "photo"));
+    slideButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        updateSlide(Number.parseInt(button.dataset.doorSlide || "0", 10) || 0);
+      });
     });
+
+    slider?.addEventListener("pointerdown", (event) => {
+      dragStart = event.clientX;
+      dragDelta = 0;
+      slider.setPointerCapture?.(event.pointerId);
+    });
+    slider?.addEventListener("pointermove", (event) => {
+      if (!dragStart) return;
+      dragDelta = event.clientX - dragStart;
+    });
+    slider?.addEventListener("pointerup", finishDrag);
+    slider?.addEventListener("pointercancel", finishDrag);
 
     modeButtons.forEach((button) => {
       button.addEventListener("click", () => {
