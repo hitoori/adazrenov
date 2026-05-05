@@ -578,6 +578,21 @@ button {
   overflow: hidden;
 }
 
+.project-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card .card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.project-card .project-footer {
+  margin-top: auto;
+}
+
 .catalogue-card {
   content-visibility: auto;
   contain-intrinsic-size: 720px;
