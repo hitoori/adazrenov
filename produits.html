@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260505crown">
+    <link rel="stylesheet" href="styles.css?v=20260506subfilters">
     <link rel="icon" type="image/png" href="Pozelogo+altele/Original%20on%20Transparent.png">
     <link rel="apple-touch-icon" href="Pozelogo+altele/Original%20on%20Transparent.png">
-    <script src="script.js?v=20260503optimized" defer></script>
+    <script src="script.js?v=20260506subfilters" defer></script>
   </head>
   <body data-page="products">
     <div class="site-header"></div>
@@ -38,6 +38,24 @@
             <button class="filter-chip" type="button" data-filter="doors" aria-pressed="false">Portes d'entree</button>
             <button class="filter-chip" type="button" data-filter="windows" aria-pressed="false">Fenetres</button>
             <button class="filter-chip" type="button" data-filter="shutters" aria-pressed="false">Volets</button>
+          </div>
+
+          <div class="product-subfilters reveal" data-product-subfilters hidden>
+            <div class="subcategory-panel" data-subfilter-panel="doors" hidden>
+              <span class="filter-lead">Type de porte :</span>
+              <button class="filter-chip subfilter-chip is-active" type="button" data-subfilter="all" aria-pressed="true">Toutes les portes</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="metal" aria-pressed="false">Portes metalliques</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Portes en bois</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">Portes PVC</button>
+            </div>
+
+            <div class="subcategory-panel" data-subfilter-panel="windows" hidden>
+              <span class="filter-lead">Type de fenetre :</span>
+              <button class="filter-chip subfilter-chip is-active" type="button" data-subfilter="all" aria-pressed="true">Toutes les fenetres</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">Fenetres PVC</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="aluminium" aria-pressed="false">Fenetres aluminium</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Fenetres bois</button>
+            </div>
           </div>
 
           <div class="cards-3" id="products-grid">

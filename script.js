@@ -141,6 +141,10 @@ function setupFilters() {
       if (emptyState) {
         emptyState.hidden = visible !== 0;
       }
+
+      if (key === "products") {
+        document.dispatchEvent(new CustomEvent("productsfilterchange", { detail: { filter } }));
+      }
     }
 
     buttons.forEach((button) => {
@@ -149,6 +153,79 @@ function setupFilters() {
 
     apply("all");
   });
+}
+
+function setupProductSubfilters() {
+  const root = document.querySelector("[data-product-subfilters]");
+  if (!root) return;
+
+  const panels = root.querySelectorAll("[data-subfilter-panel]");
+  const buttons = root.querySelectorAll("[data-subfilter]");
+  const cards = document.querySelectorAll('[data-group="products"]');
+  const emptyState = document.querySelector('[data-empty="products"]');
+  let activeMain = "all";
+  let activeSub = "all";
+
+  function renderPanels() {
+    const showSubfilters = activeMain === "doors" || activeMain === "windows";
+    root.hidden = !showSubfilters;
+
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.subfilterPanel !== activeMain;
+    });
+  }
+
+  function updateButtons() {
+    buttons.forEach((button) => {
+      const panel = button.closest("[data-subfilter-panel]");
+      const panelKey = panel?.dataset.subfilterPanel || "";
+      const active = panelKey === activeMain && button.dataset.subfilter === activeSub;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  function applySubfilter(nextSub = activeSub) {
+    activeSub = nextSub;
+    let visible = 0;
+    const needsSubfilter = activeMain === "doors" || activeMain === "windows";
+
+    cards.forEach((card) => {
+      const tags = (card.dataset.tags || "").split(" ");
+      const matchesMain = activeMain === "all" || tags.includes(activeMain);
+      const matchesSub = !needsSubfilter || activeSub === "all" || card.dataset.subcategory === activeSub;
+      const show = matchesMain && matchesSub;
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+
+    updateButtons();
+
+    if (emptyState) {
+      emptyState.hidden = visible !== 0;
+    }
+  }
+
+  function setMainFilter(filter) {
+    if (filter !== activeMain) {
+      activeSub = "all";
+    }
+
+    activeMain = filter;
+    renderPanels();
+    applySubfilter(activeSub);
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => applySubfilter(button.dataset.subfilter || "all"));
+  });
+
+  document.addEventListener("productsfilterchange", (event) => {
+    setMainFilter(event.detail?.filter || "all");
+  });
+
+  const activeButton = document.querySelector('[data-filter-group="products"] .filter-chip.is-active');
+  setMainFilter(activeButton?.dataset.filter || "all");
 }
 
 const doorStandardSizes = [
@@ -310,8 +387,21 @@ function getShutterImagePath(model) {
   return `assets/catalogue/volets/${modelSlug}/${modelSlug}.webp?v=20260503`;
 }
 
+function getDoorMaterial(model) {
+  if ([11, 12, 16].includes(model.id)) return "wood";
+  if ([13, 14, 15, 17, 18, 19, 20, 21, 23, 24, 25].includes(model.id)) return "pvc";
+  return "metal";
+}
+
+function getWindowMaterial(model) {
+  if ([1, 7, 8, 13].includes(model.id)) return "aluminium";
+  if ([2, 9].includes(model.id)) return "wood";
+  return "pvc";
+}
+
 function buildDoorCatalogueCard(model) {
   const modelLabel = `Porte d'entree modele ${String(model.id).padStart(2, "0")}`;
+  const material = getDoorMaterial(model);
   const colorOptions = model.colors
     .map((color, index) => {
       const selected = index === 0 ? " selected" : "";
@@ -323,7 +413,7 @@ function buildDoorCatalogueCard(model) {
     .join("");
 
   return `
-    <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors aluminium premium" data-door-card>
+    <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors ${material} premium" data-subcategory="${material}" data-door-card>
       <div class="media-top catalogue-media door-media">
         <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" decoding="async" data-door-image>
       </div>
@@ -369,7 +459,7 @@ function setupDoorCatalogue() {
     colorSelect?.classList.add("variant-select");
     const swatches = document.createElement("div");
     swatches.className = "variant-swatches";
-    swatches.setAttribute("aria-label", `Culori disponibile pentru ${title}`);
+    swatches.setAttribute("aria-label", `Couleurs disponibles pour ${title}`);
 
     Array.from(colorSelect?.options || []).forEach((option, index) => {
       const button = document.createElement("button");
@@ -429,6 +519,7 @@ function getWindowSlides(model) {
 
 function buildWindowCatalogueCard(model) {
   const slides = getWindowSlides(model);
+  const material = getWindowMaterial(model);
   const controls = slides
     .map((slide, index) => {
       const active = index === 0 ? " is-active" : "";
@@ -439,7 +530,7 @@ function buildWindowCatalogueCard(model) {
   const specLine = model.specs ? `<p class="product-note window-specs">${model.specs}</p>` : "";
 
   return `
-    <article class="card product-card catalogue-card window-card reveal" data-group="products" data-tags="windows fenetres vitrage" data-window-card>
+    <article class="card product-card catalogue-card window-card reveal" data-group="products" data-tags="windows fenetres ${material}" data-subcategory="${material}" data-window-card>
       <div class="media-top catalogue-media window-media">
         <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" decoding="async" data-window-image>
       </div>
@@ -2391,6 +2482,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupShutterCatalogue();
   orderProductCatalogueCards();
   setupFilters();
+  setupProductSubfilters();
   setupProductVariants();
   setupContactForm();
   setupReveal();
