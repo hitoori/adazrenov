@@ -1261,6 +1261,51 @@ button {
   color: var(--muted);
 }
 
+.catalogue-hero .hero-actions {
+  margin-top: 28px;
+}
+
+.catalogue-section {
+  padding-top: 0;
+}
+
+.catalogue-viewer {
+  overflow: hidden;
+  min-height: 80vh;
+  border: 1px solid rgba(21, 32, 51, 0.08);
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px -48px rgba(20, 40, 64, 0.45);
+}
+
+.catalogue-pdf {
+  display: block;
+  width: 100%;
+  height: min(86vh, 980px);
+  min-height: 720px;
+  border: 0;
+}
+
+.catalogue-fallback {
+  display: grid;
+  min-height: 520px;
+  align-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 34px;
+  text-align: center;
+}
+
+.catalogue-fallback h2 {
+  margin: 0;
+}
+
+.catalogue-fallback p {
+  margin: 0;
+  max-width: 620px;
+  color: var(--muted);
+}
+
 .ai-hero-grid,
 .tool-grid,
 .tool-result-grid,
