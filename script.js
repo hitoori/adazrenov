@@ -399,44 +399,109 @@ function getWindowMaterial(model) {
   return "pvc";
 }
 
+function getDoorMaterialLabel(material) {
+  if (material === "wood") return "Bois";
+  if (material === "pvc") return "PVC";
+  return "Acier";
+}
+
+function getDoorBasePrice(material) {
+  if (material === "wood") return 1650;
+  if (material === "pvc") return 1150;
+  return 1450;
+}
+
+function parseDoorSize(value) {
+  const match = String(value || "").match(/(\d+)\s*x\s*(\d+)/i);
+  return {
+    width: match ? Number.parseInt(match[1], 10) : 90,
+    height: match ? Number.parseInt(match[2], 10) : 200,
+  };
+}
+
+function formatDoorPrice(value) {
+  const rounded = Math.round(value / 10) * 10;
+  return `${rounded.toLocaleString("fr-FR")} EUR`;
+}
+
+function estimateDoorPrice(material, mode, width, height, sizeLabel) {
+  const basePrice = getDoorBasePrice(material);
+  const areaRatio = Math.max((width * height) / (90 * 200), 0.82);
+  let price = basePrice * areaRatio;
+
+  if (mode === "custom") {
+    price += 320;
+  } else {
+    if (String(sizeLabel || "").includes("double")) price += 520;
+    if (width >= 100) price += 180;
+    if (height >= 210) price += 120;
+  }
+
+  return price;
+}
+
 function buildDoorCatalogueCard(model) {
   const modelLabel = `Porte d'entree modele ${String(model.id).padStart(2, "0")}`;
   const material = getDoorMaterial(model);
-  const colorOptions = model.colors
-    .map((color, index) => {
-      const selected = index === 0 ? " selected" : "";
-      return `<option value="${index}" data-label="${color}"${selected}>${color}</option>`;
-    })
-    .join("");
+  const materialLabel = getDoorMaterialLabel(material);
   const sizeOptions = doorStandardSizes
     .map((size) => `<option value="${size}">${size}</option>`)
     .join("");
+  const defaultSize = parseDoorSize(doorStandardSizes[0]);
+  const defaultPrice = estimateDoorPrice(material, "standard", defaultSize.width, defaultSize.height, doorStandardSizes[0]);
 
   return `
     <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors ${material} premium" data-subcategory="${material}" data-door-card>
       <div class="media-top catalogue-media door-media">
-        <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel} - ${model.colors[0]}" loading="lazy" decoding="async" data-door-image>
+        <div class="door-view is-active" data-door-view="photo">
+          <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
+        </div>
+        <div class="door-view door-schema-view" data-door-view="schema" hidden>
+          <div class="door-schema">
+            <span class="schema-frame"></span>
+            <span class="schema-panel"></span>
+            <span class="schema-handle"></span>
+            <span class="schema-arc"></span>
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div class="project-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
-        <p>Modele de porte disponible dans les coloris presentes, avec dimension standard selectionnable pour votre demande de devis.</p>
-        <div class="product-config door-config">
-          <div class="tool-field">
-            <label for="door-color-${model.id}">Couleur</label>
-            <select id="door-color-${model.id}" data-door-color>
-              ${colorOptions}
-            </select>
+        <div class="image-toggle door-image-toggle" aria-label="Changer la vue du produit">
+          <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true">Modele</button>
+          <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false">Schema</button>
+        </div>
+        <div class="door-choice-tabs" aria-label="Type de commande">
+          <button class="door-choice-button is-active" type="button" data-door-mode="standard" aria-pressed="true">Standard</button>
+          <button class="door-choice-button" type="button" data-door-mode="custom" aria-pressed="false">Sur mesure</button>
+        </div>
+        <div class="door-panels">
+          <div class="door-panel" data-door-panel="standard">
+            <div class="tool-field">
+              <label for="door-size-${model.id}">Dimension standard</label>
+              <select id="door-size-${model.id}" data-door-size>
+                ${sizeOptions}
+              </select>
+            </div>
           </div>
-          <div class="tool-field">
-            <label for="door-size-${model.id}">Dimension</label>
-            <select id="door-size-${model.id}" data-door-size>
-              ${sizeOptions}
-            </select>
+          <div class="door-panel door-custom-panel" data-door-panel="custom" hidden>
+            <div class="tool-field">
+              <label for="door-width-${model.id}">Largeur en cm</label>
+              <input id="door-width-${model.id}" type="number" min="70" max="160" step="1" value="90" inputmode="numeric" data-door-width>
+            </div>
+            <div class="tool-field">
+              <label for="door-height-${model.id}">Hauteur en cm</label>
+              <input id="door-height-${model.id}" type="number" min="190" max="240" step="1" value="210" inputmode="numeric" data-door-height>
+            </div>
           </div>
         </div>
-        <p class="product-note" data-door-note>Couleur choisie : ${model.colors[0]}. Dimension : ${doorStandardSizes[0]}.</p>
-        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+        <div class="door-price-box">
+          <span>Prix estimatif</span>
+          <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>
+        </div>
+        <p class="product-note" data-door-note>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}. Prix indicatif hors pose.</p>
+        <div class="product-footer"><span class="price-row">Devis final sur mesure</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
   `;
@@ -450,56 +515,75 @@ function setupDoorCatalogue() {
 
   root.querySelectorAll("[data-door-card]").forEach((card, cardIndex) => {
     const model = doorCatalogue[cardIndex];
-    const colorSelect = card.querySelector("[data-door-color]");
+    const material = getDoorMaterial(model);
+    const materialLabel = getDoorMaterialLabel(material);
+    const mediaButtons = card.querySelectorAll("[data-door-media]");
+    const views = card.querySelectorAll("[data-door-view]");
+    const modeButtons = card.querySelectorAll("[data-door-mode]");
+    const panels = card.querySelectorAll("[data-door-panel]");
     const sizeSelect = card.querySelector("[data-door-size]");
-    const image = card.querySelector("[data-door-image]");
+    const widthInput = card.querySelector("[data-door-width]");
+    const heightInput = card.querySelector("[data-door-height]");
+    const price = card.querySelector("[data-door-price]");
     const note = card.querySelector("[data-door-note]");
-    const title = card.querySelector("h3")?.textContent || "Porte d'entree";
+    let activeMode = "standard";
 
-    colorSelect?.classList.add("variant-select");
-    const swatches = document.createElement("div");
-    swatches.className = "variant-swatches";
-    swatches.setAttribute("aria-label", `Couleurs disponibles pour ${title}`);
-
-    Array.from(colorSelect?.options || []).forEach((option, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "color-swatch";
-      button.title = option.dataset.label || option.textContent || "";
-      button.setAttribute("aria-label", button.title);
-      button.style.setProperty("--swatch-color", resolveSwatchColor(option));
-      if (index === 0) button.classList.add("is-active");
-
-      button.addEventListener("click", () => {
-        colorSelect.value = option.value;
-        colorSelect.dispatchEvent(new Event("change", { bubbles: true }));
+    const updateMedia = (nextView) => {
+      views.forEach((view) => {
+        const active = view.dataset.doorView === nextView;
+        view.hidden = !active;
+        view.classList.toggle("is-active", active);
       });
 
-      swatches.appendChild(button);
-    });
-
-    colorSelect?.insertAdjacentElement("afterend", swatches);
-
-    const updateDoor = () => {
-      const selectedIndex = Number.parseInt(colorSelect?.value || "0", 10) || 0;
-      const colorLabel = model.colors[selectedIndex] || model.colors[0];
-      const sizeLabel = sizeSelect?.value || doorStandardSizes[0];
-
-      if (image) {
-        image.src = getDoorImagePath(model, selectedIndex);
-        image.alt = `${title} - ${colorLabel}`;
-      }
-      if (note) {
-        note.textContent = `Couleur choisie : ${colorLabel}. Dimension : ${sizeLabel}.`;
-      }
-
-      swatches.querySelectorAll(".color-swatch").forEach((button, index) => {
-        button.classList.toggle("is-active", index === selectedIndex);
+      mediaButtons.forEach((button) => {
+        const active = button.dataset.doorMedia === nextView;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
       });
     };
 
-    colorSelect?.addEventListener("change", updateDoor);
+    const updateDoor = () => {
+      const standardSize = sizeSelect?.value || doorStandardSizes[0];
+      const parsedStandard = parseDoorSize(standardSize);
+      const customWidth = Number.parseInt(widthInput?.value || "90", 10) || 90;
+      const customHeight = Number.parseInt(heightInput?.value || "210", 10) || 210;
+      const width = activeMode === "custom" ? customWidth : parsedStandard.width;
+      const height = activeMode === "custom" ? customHeight : parsedStandard.height;
+      const priceValue = estimateDoorPrice(material, activeMode, width, height, standardSize);
+
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.doorPanel !== activeMode;
+      });
+
+      modeButtons.forEach((button) => {
+        const active = button.dataset.doorMode === activeMode;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+
+      if (price) price.textContent = formatDoorPrice(priceValue);
+      if (note) {
+        note.textContent = activeMode === "custom"
+          ? `${materialLabel}. Sur mesure : ${width} x ${height} cm. Prix indicatif hors pose.`
+          : `${materialLabel}. Dimension standard : ${standardSize}. Prix indicatif hors pose.`;
+      }
+    };
+
+    mediaButtons.forEach((button) => {
+      button.addEventListener("click", () => updateMedia(button.dataset.doorMedia || "photo"));
+    });
+
+    modeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeMode = button.dataset.doorMode || "standard";
+        updateDoor();
+      });
+    });
+
     sizeSelect?.addEventListener("change", updateDoor);
+    widthInput?.addEventListener("input", updateDoor);
+    heightInput?.addEventListener("input", updateDoor);
+    updateMedia("photo");
     updateDoor();
   });
 }
