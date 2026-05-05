@@ -364,21 +364,9 @@ function getDoorModelSlug(modelId) {
 }
 
 function getDoorImagePath(model, variantIndex) {
-  if (model.id === 1) {
-    if (variantIndex === 1) {
-      return "primausatest/SchemaUsametal.png?v=20260506";
-    }
-
-    return "primausatest/UsaMetal.png?v=20260506";
-  }
-
   const modelSlug = getDoorModelSlug(model.id);
   const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
   return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`;
-}
-
-function getDoorSchemaImagePath(model) {
-  return model.id === 1 ? "primausatest/SchemaUsametal.png?v=20260506" : "";
 }
 
 function getWindowModelSlug(modelId) {
@@ -465,31 +453,24 @@ function buildDoorCatalogueCard(model) {
   return `
     <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors ${material} premium" data-subcategory="${material}" data-door-card>
       <div class="media-top catalogue-media door-media">
-        <div class="door-slider" data-door-slider>
-          <div class="door-slider-track" data-door-slider-track>
-            <div class="door-slide">
-              <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
-            </div>
-            <div class="door-slide">
-              <img src="${getDoorImagePath(model, 1)}" alt="${modelLabel} - variante personnalisee" loading="lazy" decoding="async">
-            </div>
+        <div class="door-view is-active" data-door-view="photo">
+          <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
+        </div>
+        <div class="door-view door-schema-view" data-door-view="schema" hidden>
+          <div class="door-schema">
+            <span class="schema-frame"></span>
+            <span class="schema-panel"></span>
+            <span class="schema-handle"></span>
+            <span class="schema-arc"></span>
           </div>
         </div>
       </div>
       <div class="card-body">
-        <div class="door-image-toggle" aria-label="Changer l'image du produit">
-          <button class="is-active" type="button" data-door-slide="0" aria-label="Voir la version standard" aria-pressed="true"></button>
-          <button type="button" data-door-slide="1" aria-label="Voir la version personnalisée" aria-pressed="false"></button>
-        </div>
-        <div class="door-slider-dots" aria-hidden="true">
-          <span class="is-active"></span>
-          <span></span>
-        </div>
-        <div class="project-topline door-card-topline">Portes d'entree</div>
+        <div class="project-topline">Portes d'entree</div>
         <h3>${modelLabel}</h3>
-        <div class="door-spec-line" aria-label="Résumé du produit">
-          <span class="door-spec-pill">${materialLabel}</span>
-          <span>Dimension standard : ${doorStandardSizes[0]}</span>
+        <div class="image-toggle door-image-toggle" aria-label="Changer la vue du produit">
+          <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true">Modele</button>
+          <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false">Schema</button>
         </div>
         <div class="door-choice-tabs" aria-label="Type de commande">
           <button class="door-choice-button is-active" type="button" data-door-mode="standard" aria-pressed="true">Standard</button>
@@ -505,10 +486,6 @@ function buildDoorCatalogueCard(model) {
             </div>
           </div>
           <div class="door-panel door-custom-panel" data-door-panel="custom" hidden>
-            <div class="tool-field door-color-field">
-              <label for="door-custom-color-${model.id}">Couleur souhaitee</label>
-              <input id="door-custom-color-${model.id}" type="text" placeholder="Ex. noir mat, chene, gris anthracite" data-door-custom-color>
-            </div>
             <div class="tool-field">
               <label for="door-width-${model.id}">Largeur en cm</label>
               <input id="door-width-${model.id}" type="number" min="70" max="160" step="1" value="90" inputmode="numeric" data-door-width>
@@ -519,10 +496,11 @@ function buildDoorCatalogueCard(model) {
             </div>
           </div>
         </div>
-        <p class="door-summary product-note" data-door-note>
-          <span class="door-summary-meta">${materialLabel}. Dimension standard : ${doorStandardSizes[0]}.</span>
-          <span class="door-summary-price">Prix estimatif : <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>, hors pose.</span>
-        </p>
+        <div class="door-price-box">
+          <span>Prix estimatif</span>
+          <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>
+        </div>
+        <p class="product-note" data-door-note>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}. Prix indicatif hors pose.</p>
         <div class="product-footer"><span class="price-row">Devis final sur mesure</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
@@ -539,27 +517,26 @@ function setupDoorCatalogue() {
     const model = doorCatalogue[cardIndex];
     const material = getDoorMaterial(model);
     const materialLabel = getDoorMaterialLabel(material);
-    const sliderTrack = card.querySelector("[data-door-slider-track]");
-    const slideButtons = card.querySelectorAll("[data-door-slide]");
+    const mediaButtons = card.querySelectorAll("[data-door-media]");
+    const views = card.querySelectorAll("[data-door-view]");
     const modeButtons = card.querySelectorAll("[data-door-mode]");
     const panels = card.querySelectorAll("[data-door-panel]");
     const sizeSelect = card.querySelector("[data-door-size]");
-    const colorInput = card.querySelector("[data-door-custom-color]");
     const widthInput = card.querySelector("[data-door-width]");
     const heightInput = card.querySelector("[data-door-height]");
     const price = card.querySelector("[data-door-price]");
     const note = card.querySelector("[data-door-note]");
     let activeMode = "standard";
-    let activeSlide = 0;
 
-    const updateSlide = (nextSlide) => {
-      activeSlide = nextSlide === 1 ? 1 : 0;
-      if (sliderTrack) {
-        sliderTrack.style.transform = `translateX(-${activeSlide * 50}%)`;
-      }
+    const updateMedia = (nextView) => {
+      views.forEach((view) => {
+        const active = view.dataset.doorView === nextView;
+        view.hidden = !active;
+        view.classList.toggle("is-active", active);
+      });
 
-      slideButtons.forEach((button) => {
-        const active = Number.parseInt(button.dataset.doorSlide || "0", 10) === activeSlide;
+      mediaButtons.forEach((button) => {
+        const active = button.dataset.doorMedia === nextView;
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-pressed", String(active));
       });
@@ -570,7 +547,6 @@ function setupDoorCatalogue() {
       const parsedStandard = parseDoorSize(standardSize);
       const customWidth = Number.parseInt(widthInput?.value || "90", 10) || 90;
       const customHeight = Number.parseInt(heightInput?.value || "210", 10) || 210;
-      const customColor = String(colorInput?.value || "").trim();
       const width = activeMode === "custom" ? customWidth : parsedStandard.width;
       const height = activeMode === "custom" ? customHeight : parsedStandard.height;
       const priceValue = estimateDoorPrice(material, activeMode, width, height, standardSize);
@@ -585,21 +561,16 @@ function setupDoorCatalogue() {
         button.setAttribute("aria-pressed", String(active));
       });
 
-      card.querySelector(".door-choice-tabs")?.classList.toggle("is-custom", activeMode === "custom");
-
       if (price) price.textContent = formatDoorPrice(priceValue);
       if (note) {
-        const colorText = customColor ? ` Couleur : ${customColor}.` : "";
-        note.innerHTML = activeMode === "custom"
-          ? `<span class="door-summary-meta">${materialLabel}. Sur mesure : ${width} x ${height} cm.${colorText}</span><span class="door-summary-price">Prix estimatif : <strong data-door-price>${formatDoorPrice(priceValue)}</strong>, hors pose.</span>`
-          : `<span class="door-summary-meta">${materialLabel}. Dimension standard : ${standardSize}.</span><span class="door-summary-price">Prix estimatif : <strong data-door-price>${formatDoorPrice(priceValue)}</strong>, hors pose.</span>`;
+        note.textContent = activeMode === "custom"
+          ? `${materialLabel}. Sur mesure : ${width} x ${height} cm. Prix indicatif hors pose.`
+          : `${materialLabel}. Dimension standard : ${standardSize}. Prix indicatif hors pose.`;
       }
     };
 
-    slideButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        updateSlide(Number.parseInt(button.dataset.doorSlide || "0", 10) || 0);
-      });
+    mediaButtons.forEach((button) => {
+      button.addEventListener("click", () => updateMedia(button.dataset.doorMedia || "photo"));
     });
 
     modeButtons.forEach((button) => {
@@ -610,10 +581,9 @@ function setupDoorCatalogue() {
     });
 
     sizeSelect?.addEventListener("change", updateDoor);
-    colorInput?.addEventListener("input", updateDoor);
     widthInput?.addEventListener("input", updateDoor);
     heightInput?.addEventListener("input", updateDoor);
-    updateSlide(0);
+    updateMedia("photo");
     updateDoor();
   });
 }
@@ -1394,7 +1364,6 @@ function setupAiChatbot() {
   const log = document.querySelector("#ai-chat-log");
   const quickQuestions = document.querySelectorAll("[data-chat-question]");
   let userMessageCount = 0;
-  let chatHistory = [];
 
   if (!form || !input || !log) return;
 
@@ -1544,35 +1513,25 @@ function setupAiChatbot() {
     if (!root || typeof root !== "object") return null;
     return {
       apiUrl: String(root.apiUrl || ""),
-      model: String(root.model || ""),
-      maxHistory: Number.parseInt(String(root.maxHistory || "8"), 10) || 8,
+      model: String(root.model || "gpt-4o-mini"),
     };
   }
 
-  async function getRemoteChatAnswer(question, history) {
+  async function getRemoteChatAnswer(question) {
     const config = getChatConfig();
     if (!config || !config.apiUrl) return null;
 
     try {
-      const payload = {
-        message: question,
-        history: history.slice(-config.maxHistory),
-        context: {
-          page: document.body.dataset.page || "site",
-          path: window.location.pathname,
-        },
-      };
-
-      if (config.model) {
-        payload.model = config.model;
-      }
-
       const response = await fetch(config.apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          message: question,
+          model: config.model,
+          context: "ADAZ RENOV chantier assistant",
+        }),
       });
 
       if (!response.ok) return null;
@@ -1671,20 +1630,10 @@ function setupAiChatbot() {
 
   function appendMessage(role, text) {
     const bubble = document.createElement("div");
-    bubble.className = `chat-message ${role === "user" ? "user" : "assistant"}`;
-    const paragraph = document.createElement("p");
-    paragraph.textContent = text;
-    bubble.appendChild(paragraph);
+    bubble.className = `chat-message ${role}`;
+    bubble.innerHTML = `<p>${text}</p>`;
     log.appendChild(bubble);
     log.scrollTop = log.scrollHeight;
-  }
-
-  function rememberChatMessage(role, text) {
-    chatHistory.push({
-      role: role === "assistant" ? "assistant" : "user",
-      content: String(text || "").trim().slice(0, 1200),
-    });
-    chatHistory = chatHistory.filter((entry) => entry.content).slice(-10);
   }
 
   function getAnswer(question, isFirstUserMessage) {
@@ -1752,11 +1701,9 @@ function setupAiChatbot() {
     appendMessage("user", clean);
 
     const localAnswer = getAnswer(clean, isFirstUserMessage);
-    const remoteAnswer = await getRemoteChatAnswer(clean, chatHistory);
+    const remoteAnswer = await getRemoteChatAnswer(clean);
     const answer = remoteAnswer || localAnswer;
 
-    rememberChatMessage("user", clean);
-    rememberChatMessage("assistant", answer);
     window.setTimeout(() => appendMessage("assistant", answer), 180);
   }
 
