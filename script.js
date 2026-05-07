@@ -25,7 +25,7 @@ function buildHeader(currentPage) {
           <div class="logo-mark" aria-hidden="true">AR</div>
           <div class="logo-word">
             <strong>
-              A<span class="crown-letter">D<span class="crown-glyph" aria-hidden="true"></span></span>A<span class="crown-letter">Z<span class="crown-glyph" aria-hidden="true"></span></span> RENOV
+              ADAZ RENOV
             </strong>
             <span>Renovation &amp; Construction</span>
           </div>
