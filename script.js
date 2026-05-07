@@ -238,29 +238,6 @@ const doorStandardSizes = [
 
 const doorCatalogue = [
   { id: 1, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 2, colors: ["Noir et vert", "Noir et blanc", "Noir et bleu", "Noir et gris"] },
-  { id: 3, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 4, colors: ["Blanc", "Bleu", "Noir mat", "Vert fonce"] },
-  { id: 5, colors: ["Rouge", "Noir mat", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 6, colors: ["Noir avec lignes rouges", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 7, colors: ["Marron", "Noir mat", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 8, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 9, colors: ["Orange", "Noir mat", "Blanc", "Bleu", "Vert fonce"] },
-  { id: 10, colors: ["Blanc", "Noir mat", "Bleu", "Vert fonce", "Gris"] },
-  { id: 11, colors: ["Noyer", "Chene clair", "Chene dore", "Noyer fonce", "Acajou"] },
-  { id: 12, colors: ["Noyer avec insert inox", "Chene clair avec insert inox", "Chene dore avec insert inox", "Noyer fonce avec insert inox", "Acajou avec insert inox"] },
-  { id: 13, colors: ["Noir mat", "Gris anthracite", "Bleu nuit", "Beige gris", "Beige clair"] },
-  { id: 14, colors: ["Bleu", "Noir mat", "Beige gris", "Blanc", "Gris anthracite"] },
-  { id: 15, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
-  { id: 16, colors: ["Chene clair", "Chene dore", "Chene naturel", "Noyer", "Wenge"] },
-  { id: 17, colors: ["Noir mat", "Beige gris", "Gris anthracite", "Bleu nuit"] },
-  { id: 18, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
-  { id: 19, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
-  { id: 20, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Bleu nuit"] },
-  { id: 21, colors: ["Beige gris", "Vert fonce", "Noir mat", "Gris sauge", "Bleu nuit"] },
-  { id: 23, colors: ["Noir mat", "Gris anthracite", "Beige gris", "Vert fonce", "Bleu nuit"] },
-  { id: 24, colors: ["Gris anthracite", "Bleu nuit", "Noir mat", "Beige gris", "Vert fonce"] },
-  { id: 25, colors: ["Gris anthracite", "Noir mat", "Bleu nuit", "Beige gris", "Vert fonce"] },
 ];
 
 const windowCatalogue = [
@@ -364,9 +341,21 @@ function getDoorModelSlug(modelId) {
 }
 
 function getDoorImagePath(model, variantIndex) {
+  if (model.id === 1 && variantIndex === 0) {
+    return "usatest/ChatGPT Image 7 mai 2026, 23_01_07.png";
+  }
+
   const modelSlug = getDoorModelSlug(model.id);
   const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
   return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`;
+}
+
+function getDoorSchemaImagePath(model) {
+  if (model.id === 1) {
+    return "usatest/ChatGPT Image 7 mai 2026, 23_02_07.png";
+  }
+
+  return "";
 }
 
 function getWindowModelSlug(modelId) {
@@ -442,8 +431,10 @@ function estimateDoorPrice(material, mode, width, height, sizeLabel) {
 
 function buildDoorCatalogueCard(model) {
   const modelLabel = `Porte d'entree modele ${String(model.id).padStart(2, "0")}`;
+  const displayModelLabel = `Porte d'entrée modèle ${String(model.id).padStart(2, "0")}`;
   const material = getDoorMaterial(model);
   const materialLabel = getDoorMaterialLabel(material);
+  const schemaImage = getDoorSchemaImagePath(model);
   const sizeOptions = doorStandardSizes
     .map((size) => `<option value="${size}">${size}</option>`)
     .join("");
@@ -457,21 +448,29 @@ function buildDoorCatalogueCard(model) {
           <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
         </div>
         <div class="door-view door-schema-view" data-door-view="schema" hidden>
-          <div class="door-schema">
-            <span class="schema-frame"></span>
-            <span class="schema-panel"></span>
-            <span class="schema-handle"></span>
-            <span class="schema-arc"></span>
-          </div>
+          ${schemaImage
+            ? `<img class="door-schema-image" src="${schemaImage}" alt="${modelLabel} - schema technique" loading="lazy" decoding="async">`
+            : `<div class="door-schema">
+                <span class="schema-frame"></span>
+                <span class="schema-panel"></span>
+                <span class="schema-handle"></span>
+                <span class="schema-arc"></span>
+              </div>`}
         </div>
       </div>
       <div class="card-body">
-        <div class="project-topline">Portes d'entree</div>
-        <h3>${modelLabel}</h3>
         <div class="image-toggle door-image-toggle" aria-label="Changer la vue du produit">
-          <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true">Modele</button>
-          <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false">Schema</button>
+          <div class="door-image-option">
+            <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true" aria-label="Vue standard"></button>
+            <span>Standard</span>
+          </div>
+          <div class="door-image-option">
+            <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false" aria-label="Vue sur mesure"></button>
+            <span>Sur mesure</span>
+          </div>
         </div>
+        <div class="project-topline">Portes d'entrée</div>
+        <h3>${displayModelLabel}</h3>
         <div class="door-choice-tabs" aria-label="Type de commande">
           <button class="door-choice-button is-active" type="button" data-door-mode="standard" aria-pressed="true">Standard</button>
           <button class="door-choice-button" type="button" data-door-mode="custom" aria-pressed="false">Sur mesure</button>
@@ -496,11 +495,10 @@ function buildDoorCatalogueCard(model) {
             </div>
           </div>
         </div>
-        <div class="door-price-box">
-          <span>Prix estimatif</span>
-          <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>
-        </div>
-        <p class="product-note" data-door-note>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}. Prix indicatif hors pose.</p>
+        <p class="product-note door-summary" data-door-note>
+          <span>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}.</span>
+          <span>Prix estimatif : <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>, hors pose.</span>
+        </p>
         <div class="product-footer"><span class="price-row">Devis final sur mesure</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
@@ -524,7 +522,6 @@ function setupDoorCatalogue() {
     const sizeSelect = card.querySelector("[data-door-size]");
     const widthInput = card.querySelector("[data-door-width]");
     const heightInput = card.querySelector("[data-door-height]");
-    const price = card.querySelector("[data-door-price]");
     const note = card.querySelector("[data-door-note]");
     let activeMode = "standard";
 
@@ -561,11 +558,14 @@ function setupDoorCatalogue() {
         button.setAttribute("aria-pressed", String(active));
       });
 
-      if (price) price.textContent = formatDoorPrice(priceValue);
       if (note) {
-        note.textContent = activeMode === "custom"
-          ? `${materialLabel}. Sur mesure : ${width} x ${height} cm. Prix indicatif hors pose.`
-          : `${materialLabel}. Dimension standard : ${standardSize}. Prix indicatif hors pose.`;
+        const detail = activeMode === "custom"
+          ? `Sur mesure : ${width} x ${height} cm.`
+          : `Dimension standard : ${standardSize}.`;
+        note.innerHTML = `
+          <span>${materialLabel}. ${detail}</span>
+          <span>Prix estimatif : <strong data-door-price>${formatDoorPrice(priceValue)}</strong>, hors pose.</span>
+        `;
       }
     };
 
