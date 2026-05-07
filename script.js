@@ -499,7 +499,7 @@ function buildDoorCatalogueCard(model) {
           <span>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}.</span>
           <span>Prix estimatif : <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>, hors pose.</span>
         </p>
-        <div class="product-footer"><span class="price-row">Devis final sur mesure</span><a class="button small light" href="contact.html">Demander</a></div>
+        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
       </div>
     </article>
   `;

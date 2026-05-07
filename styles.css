@@ -1127,54 +1127,13 @@ button {
 }
 
 .door-card .product-footer {
-  position: relative;
   margin: 14px -28px 0;
   padding: 14px 28px 20px;
   border-top-color: rgba(21, 32, 51, 0.08);
 }
 
-.door-card .product-footer::after {
-  content: "";
-  position: absolute;
-  left: 51%;
-  top: 22px;
-  bottom: 26px;
-  width: 1px;
-  background: rgba(21, 32, 51, 0.08);
-}
-
 .door-card .price-row {
-  gap: 10px;
   color: var(--primary);
-  font-size: 0.88rem;
-}
-
-.door-card .price-row::before {
-  content: "";
-  width: 26px;
-  height: 32px;
-  border: 2px solid currentColor;
-  border-radius: 2px;
-  background:
-    linear-gradient(45deg, transparent 0 45%, currentColor 46% 52%, transparent 53%) top right / 10px 10px no-repeat,
-    linear-gradient(currentColor 0 0) 6px 11px / 12px 2px no-repeat,
-    linear-gradient(currentColor 0 0) 6px 17px / 14px 2px no-repeat,
-    linear-gradient(currentColor 0 0) 6px 23px / 10px 2px no-repeat;
-}
-
-.door-card .button.light {
-  min-width: 154px;
-  border-radius: 8px;
-  background: #073967;
-  color: #ffffff;
-  font-size: 0.9rem;
-}
-
-.door-card .button.light::after {
-  content: ">";
-  margin-left: 12px;
-  font-size: 1.25rem;
-  line-height: 1;
 }
 
 .window-specs {
@@ -2429,15 +2388,6 @@ button {
     margin-left: -20px;
     padding-right: 20px;
     padding-left: 20px;
-  }
-
-  .door-card .price-row {
-    max-width: 48%;
-    font-size: 0.84rem;
-  }
-
-  .door-card .button.light {
-    min-width: 132px;
   }
 
   .timeline-item {
