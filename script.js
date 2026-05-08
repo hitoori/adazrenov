@@ -622,45 +622,61 @@ function setupDoorCatalogue() {
   });
 }
 
-function getWindowSlides(model) {
-  const slides = [
-    { key: "vue", label: "1", title: "Vue du modele" },
-    { key: "coloris", label: "2", title: "Coloris disponibles" },
-  ];
+function getWindowTechDetails(model) {
+  const material = getWindowMaterial(model);
+  const defaults = {
+    aluminium: { joints: 3, chambers: 3, depth: "70 mm", glazing: "jusqu'a 48 mm", uw: "0,85", ug: "0,5" },
+    wood: { joints: 2, chambers: 4, depth: "78 mm", glazing: "jusqu'a 44 mm", uw: "0,83", ug: "0,5" },
+    pvc: { joints: 3, chambers: 5, depth: "70 mm", glazing: "jusqu'a 41 mm", uw: "1,0", ug: "0,7" },
+  };
+  const premium = {
+    4: { joints: 3, chambers: 6, depth: "197 mm", glazing: "jusqu'a 52 mm", uw: "0,63", ug: "0,5" },
+    5: { joints: 3, chambers: 6, depth: "85 mm", glazing: "jusqu'a 51 mm", uw: "0,74", ug: "0,5" },
+    12: { joints: 3, chambers: 6, depth: "85 mm", glazing: "jusqu'a 51 mm", uw: "0,74", ug: "0,5" },
+  };
 
-  if (model.hasTechSheet) {
-    slides.push({ key: "fiche", label: "Info", title: "Fiche technique" });
-  }
+  return premium[model.id] || defaults[material] || defaults.pvc;
+}
 
-  return slides;
+function buildWindowSpecs(model) {
+  const details = getWindowTechDetails(model);
+  const materialLabel = getWindowMaterial(model) === "aluminium"
+    ? "Aluminium"
+    : getWindowMaterial(model) === "wood"
+      ? "Bois"
+      : "PVC";
+
+  return `
+    <div class="window-spec-card" aria-label="Caracteristiques techniques">
+      <p class="window-spec-lead">${materialLabel}, ${details.joints} joints, ${details.chambers} chambres, Uw ${details.uw} pour Ug = ${details.ug}.</p>
+      <div class="window-spec-pair">
+        <strong>${details.joints}</strong>
+        <span>Joints</span>
+      </div>
+      <div class="window-spec-pair">
+        <strong>${details.chambers}</strong>
+        <span>Chambres</span>
+      </div>
+      <p>Profondeur de construction : ${details.depth}</p>
+      <p>Epaisseur de vitrage : ${details.glazing} (standard 24 mm)</p>
+      <p class="window-custom-color">Coloris : sur mesure au choix</p>
+    </div>
+  `;
 }
 
 function buildWindowCatalogueCard(model) {
-  const slides = getWindowSlides(model);
   const material = getWindowMaterial(model);
-  const controls = slides
-    .map((slide, index) => {
-      const active = index === 0 ? " is-active" : "";
-      return `<button class="image-toggle-button${active}" type="button" data-window-slide="${index}" aria-pressed="${index === 0}" aria-label="${slide.title}">${slide.label}</button>`;
-    })
-    .join("");
-
-  const specLine = model.specs ? `<p class="product-note window-specs">${model.specs}</p>` : "";
 
   return `
     <article class="card product-card catalogue-card window-card" data-group="products" data-tags="windows fenetres ${material}" data-subcategory="${material}" data-window-card>
       <div class="media-top catalogue-media window-media">
-        <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" decoding="async" data-window-image>
+        <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="project-topline">Fenetres</div>
         <h3>${model.title}</h3>
-        ${specLine}
-        <div class="image-toggle" aria-label="Changer l'image du produit">
-          ${controls}
-        </div>
-        <p class="product-note" data-window-note>Image affichee : vue du modele.</p>
-        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+        ${buildWindowSpecs(model)}
+        <div class="product-footer window-footer"><span class="price-row">Sur devis</span><a class="window-request-link" href="contact.html">Demander <span aria-hidden="true">-&gt;</span></a></div>
       </div>
     </article>
   `;
@@ -671,38 +687,6 @@ function setupWindowCatalogue() {
   if (!root) return;
 
   root.innerHTML = windowCatalogue.map(buildWindowCatalogueCard).join("");
-
-  root.querySelectorAll("[data-window-card]").forEach((card, cardIndex) => {
-    const model = windowCatalogue[cardIndex];
-    const slides = getWindowSlides(model);
-    const image = card.querySelector("[data-window-image]");
-    const note = card.querySelector("[data-window-note]");
-    const buttons = card.querySelectorAll("[data-window-slide]");
-
-    const updateWindow = (nextIndex) => {
-      const slide = slides[nextIndex] || slides[0];
-
-      if (image) {
-        image.src = getWindowImagePath(model, slide.key);
-        image.alt = `${model.title} - ${slide.title.toLowerCase()}`;
-      }
-      if (note) {
-        note.textContent = `Image affichee : ${slide.title.toLowerCase()}.`;
-      }
-
-      buttons.forEach((button, index) => {
-        const active = index === nextIndex;
-        button.classList.toggle("is-active", active);
-        button.setAttribute("aria-pressed", String(active));
-      });
-    };
-
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        updateWindow(Number.parseInt(button.dataset.windowSlide || "0", 10) || 0);
-      });
-    });
-  });
 }
 
 function buildShutterCatalogueCard(model) {
@@ -1021,6 +1005,65 @@ function setupReveal() {
   );
 
   elements.forEach((element) => observer.observe(element));
+}
+
+function setupProjectVideoModal() {
+  const modal = document.querySelector("[data-project-video-modal]");
+  const player = document.querySelector("[data-project-video-player]");
+  const title = document.querySelector("[data-project-video-title]");
+  const triggers = document.querySelectorAll("[data-video-src]");
+  const closeButtons = document.querySelectorAll("[data-project-video-close]");
+
+  if (!modal || !player || !title || !triggers.length) return;
+
+  function closeModal() {
+    player.pause();
+    player.removeAttribute("src");
+    player.load();
+    modal.hidden = true;
+    document.body.classList.remove("video-modal-open");
+  }
+
+  function openModal(trigger) {
+    const src = trigger.dataset.videoSrc || "";
+    const videoTitle = trigger.dataset.videoTitle || "Projet réalisé";
+    if (!src) return;
+
+    title.textContent = videoTitle;
+    player.src = src;
+    modal.hidden = false;
+    document.body.classList.add("video-modal-open");
+    player.play().catch(() => {});
+  }
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => openModal(trigger));
+  });
+
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", closeModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) {
+      closeModal();
+    }
+  });
+}
+
+function setupProjectVideoPreviews() {
+  document.querySelectorAll(".project-video-trigger video:not([poster])").forEach((video) => {
+    video.addEventListener(
+      "loadedmetadata",
+      () => {
+        const targetTime = Math.min(1, Math.max(video.duration * 0.08, 0.2));
+        if (Number.isFinite(targetTime)) {
+          video.currentTime = targetTime;
+        }
+      },
+      { once: true }
+    );
+  });
 }
 
 function formatCurrency(value) {
@@ -2608,6 +2651,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupProductVariants();
   setupContactForm();
   setupReveal();
+  setupProjectVideoPreviews();
+  setupProjectVideoModal();
   setupAiPhotoAnalyzer();
   setupAiMaterialAdvisor();
   setupAiChatbot();
