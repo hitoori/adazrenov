@@ -9,7 +9,7 @@ const navItems = [
 ];
 
 const brandLogoPath = "Pozelogo+altele/Original%20on%20Transparent.png";
-const headerLogoPath = "Pozelogo+altele/LOGOADAZNOU.png";
+const headerLogoPath = "Pozelogo+altele/LOGOADAZNOU-transparent.png";
 
 function buildHeader(currentPage) {
   const links = navItems
