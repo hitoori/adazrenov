@@ -726,14 +726,18 @@ function setupShutterCatalogue() {
 }
 
 function orderProductCatalogueCards() {
-  document.querySelectorAll("[data-door-card]").forEach((card, index) => {
-    card.style.order = String(index * 3 + 1);
+  const doors = document.querySelectorAll("[data-door-card]");
+  const windows = document.querySelectorAll("[data-window-card]");
+  const shutters = document.querySelectorAll("[data-shutter-card]");
+
+  doors.forEach((card, index) => {
+    card.style.order = String(index + 1);
   });
-  document.querySelectorAll("[data-window-card]").forEach((card, index) => {
-    card.style.order = String(index * 3 + 2);
+  windows.forEach((card, index) => {
+    card.style.order = String(doors.length + index + 1);
   });
-  document.querySelectorAll("[data-shutter-card]").forEach((card, index) => {
-    card.style.order = String(index * 3 + 3);
+  shutters.forEach((card, index) => {
+    card.style.order = String(doors.length + windows.length + index + 1);
   });
 }
 
