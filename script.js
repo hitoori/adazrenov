@@ -9,6 +9,7 @@ const navItems = [
 ];
 
 const brandLogoPath = "Pozelogo+altele/Original%20on%20Transparent.png";
+const headerLogoPath = "Pozelogo+altele/LOGOADAZNOU.png";
 
 function buildHeader(currentPage) {
   const links = navItems
@@ -22,7 +23,9 @@ function buildHeader(currentPage) {
     <div class="site-header-shell">
       <div class="container site-nav">
         <a class="brand" href="index.html" aria-label="ADAZ RENOV Accueil">
-          <div class="logo-mark" aria-hidden="true">AR</div>
+          <span class="logo-mark" aria-hidden="true">
+            <img src="${headerLogoPath}" alt="">
+          </span>
           <div class="logo-word">
             <strong>
               ADAZ RENOV
