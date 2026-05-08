@@ -237,7 +237,42 @@ const doorStandardSizes = [
 ];
 
 const doorCatalogue = [
-  { id: 1, colors: ["Noir mat", "Blanc", "Bleu", "Vert fonce"] },
+  {
+    id: 1,
+    colors: ["Noir mat"],
+    imagePath: "usiproduse/Panneau01/Panneau01.png",
+    schemaPath: "usiproduse/Panneau01/Panneau01schema.png",
+  },
+  {
+    id: 2,
+    colors: ["Noir mat"],
+    imagePath: "usiproduse/Panneau02/Panneau02.png",
+    schemaPath: "usiproduse/Panneau02/Panneau02schema.png",
+  },
+  {
+    id: 3,
+    colors: ["Noir mat"],
+    imagePath: "usiproduse/Panneau03/Panneau03.png",
+    schemaPath: "usiproduse/Panneau03/Panneau03SCHEMA.png",
+  },
+  {
+    id: 4,
+    colors: ["Noir mat"],
+    imagePath: "usiproduse/Panneau04/Panneau04.png",
+    schemaPath: "usiproduse/Panneau04/Panneau04schema.png",
+  },
+  {
+    id: 5,
+    colors: ["Noir mat"],
+    imagePath: "usiproduse/Panneau05/Panneau05.png",
+    schemaPath: "usiproduse/Panneau05/Panneau05schema.png",
+  },
+  {
+    id: 6,
+    colors: ["Noir mat"],
+    imagePath: "usiproduse/Panneau06/Panneau06.png",
+    schemaPath: "usiproduse/Panneau06/Panneau06schema.png",
+  },
 ];
 
 const windowCatalogue = [
@@ -341,8 +376,8 @@ function getDoorModelSlug(modelId) {
 }
 
 function getDoorImagePath(model, variantIndex) {
-  if (model.id === 1 && variantIndex === 0) {
-    return "usatest/ChatGPT Image 7 mai 2026, 23_01_07.png";
+  if (model.imagePath && variantIndex === 0) {
+    return model.imagePath;
   }
 
   const modelSlug = getDoorModelSlug(model.id);
@@ -351,11 +386,7 @@ function getDoorImagePath(model, variantIndex) {
 }
 
 function getDoorSchemaImagePath(model) {
-  if (model.id === 1) {
-    return "usatest/ChatGPT Image 7 mai 2026, 23_02_07.png";
-  }
-
-  return "";
+  return model.schemaPath || "";
 }
 
 function getWindowModelSlug(modelId) {
@@ -442,7 +473,7 @@ function buildDoorCatalogueCard(model) {
   const defaultPrice = estimateDoorPrice(material, "standard", defaultSize.width, defaultSize.height, doorStandardSizes[0]);
 
   return `
-    <article class="card product-card catalogue-card door-card reveal" data-group="products" data-tags="doors ${material} premium" data-subcategory="${material}" data-door-card>
+    <article class="card product-card catalogue-card door-card" data-group="products" data-tags="doors ${material} premium" data-subcategory="${material}" data-door-card>
       <div class="media-top catalogue-media door-media">
         <div class="door-view is-active" data-door-view="photo">
           <img src="${getDoorImagePath(model, 0)}" alt="${modelLabel}" loading="lazy" decoding="async">
@@ -614,7 +645,7 @@ function buildWindowCatalogueCard(model) {
   const specLine = model.specs ? `<p class="product-note window-specs">${model.specs}</p>` : "";
 
   return `
-    <article class="card product-card catalogue-card window-card reveal" data-group="products" data-tags="windows fenetres ${material}" data-subcategory="${material}" data-window-card>
+    <article class="card product-card catalogue-card window-card" data-group="products" data-tags="windows fenetres ${material}" data-subcategory="${material}" data-window-card>
       <div class="media-top catalogue-media window-media">
         <img src="${getWindowImagePath(model, "vue")}" alt="${model.title} - vue du modele" loading="lazy" decoding="async" data-window-image>
       </div>
@@ -673,7 +704,7 @@ function setupWindowCatalogue() {
 
 function buildShutterCatalogueCard(model) {
   return `
-    <article class="card product-card catalogue-card shutter-card reveal" data-group="products" data-tags="shutters volets protection" data-shutter-card>
+    <article class="card product-card catalogue-card shutter-card" data-group="products" data-tags="shutters volets protection" data-shutter-card>
       <div class="media-top catalogue-media shutter-media">
         <img src="${getShutterImagePath(model)}" alt="${model.title}" loading="lazy" decoding="async">
       </div>

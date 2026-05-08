@@ -593,11 +593,6 @@ button {
   margin-top: auto;
 }
 
-.catalogue-card {
-  content-visibility: auto;
-  contain-intrinsic-size: 720px;
-}
-
 .door-products-slot,
 .catalogue-products-slot {
   display: contents;
