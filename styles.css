@@ -575,7 +575,13 @@ button {
 }
 
 .product-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+}
+
+.catalogue-card {
+  min-height: 650px;
 }
 
 .project-card {
@@ -601,6 +607,12 @@ button {
 .product-card .card-body,
 .project-card .card-body {
   padding: 24px;
+}
+
+.catalogue-card .card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .icon-badge {
@@ -781,6 +793,7 @@ button {
 }
 
 .catalogue-card .catalogue-media {
+  flex: 0 0 auto;
   background: #ffffff;
   border-bottom: 1px solid rgba(21, 32, 51, 0.08);
 }
@@ -803,7 +816,8 @@ button {
 }
 
 .door-card .door-media {
-  aspect-ratio: 1 / 1.32;
+  aspect-ratio: auto;
+  height: 310px;
   border-bottom: 0;
   background: #ffffff;
 }
@@ -895,7 +909,8 @@ button {
 }
 
 .window-card .window-media {
-  aspect-ratio: 1 / 1.08;
+  aspect-ratio: auto;
+  height: 310px;
 }
 
 .window-card .catalogue-media img {
@@ -929,6 +944,7 @@ button {
 
 .door-card .card-body {
   display: flex;
+  flex: 1;
   flex-direction: column;
   padding: 0 28px 0;
 }
@@ -1011,6 +1027,7 @@ button {
 }
 
 .door-card h3 {
+  min-height: 62px;
   margin: 2px auto 16px;
   color: var(--text);
   font-family: inherit;
@@ -1122,7 +1139,7 @@ button {
 }
 
 .door-card .product-footer {
-  margin: 14px -28px 0;
+  margin: auto -28px 0;
   padding: 14px 28px 20px;
   border-top-color: rgba(21, 32, 51, 0.08);
 }
@@ -1132,12 +1149,14 @@ button {
 }
 
 .window-specs {
+  min-height: 62px;
   color: var(--primary);
   font-weight: 700;
 }
 
 .shutter-card .shutter-media {
-  aspect-ratio: 1 / 1.08;
+  aspect-ratio: auto;
+  height: 310px;
   background: linear-gradient(180deg, #ffffff 0%, #f7f9fb 100%);
 }
 
@@ -1146,6 +1165,7 @@ button {
 }
 
 .shutter-short {
+  min-height: 44px;
   margin-top: 10px;
   color: var(--primary);
   font-weight: 800;
@@ -1255,7 +1275,7 @@ button {
   justify-content: space-between;
   gap: 16px;
   padding-top: 18px;
-  margin-top: 18px;
+  margin-top: auto;
   border-top: 1px solid rgba(21, 32, 51, 0.08);
 }
 
