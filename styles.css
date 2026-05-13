@@ -425,6 +425,10 @@ button {
   box-shadow: var(--shadow-soft);
 }
 
+.product-hero-main {
+  min-width: 0;
+}
+
 .hero-simple h1 {
   margin: 0 0 18px;
   font-size: clamp(2.5rem, 5vw, 4.3rem);
@@ -437,6 +441,10 @@ button {
   max-width: 700px;
   color: rgba(255, 255, 255, 0.84);
   font-size: 1.06rem;
+}
+
+.product-pdf-links {
+  margin-top: 24px;
 }
 
 .stats-grid,
@@ -590,6 +598,90 @@ button {
 
 .catalogue-spotlight-actions .button {
   white-space: nowrap;
+}
+
+.catalogue-download-section {
+  padding-top: 34px;
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(232, 237, 243, 0.46) 100%);
+}
+
+.catalogue-download-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.catalogue-download-card {
+  display: flex;
+  min-height: 310px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 30px;
+  border: 1px solid rgba(21, 32, 51, 0.08);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(212, 175, 122, 0.22), transparent 28%),
+    linear-gradient(145deg, #ffffff 0%, #f8f5ef 100%);
+  box-shadow: 0 26px 70px -44px rgba(20, 40, 64, 0.48);
+}
+
+.catalogue-download-label {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: rgba(30, 58, 95, 0.09);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.catalogue-download-card h3 {
+  margin: 18px 0 12px;
+  color: var(--text);
+  font-size: clamp(1.55rem, 3vw, 2.25rem);
+  line-height: 1.08;
+}
+
+.catalogue-download-card p {
+  margin: 0;
+  max-width: 560px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.catalogue-download-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.catalogue-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-size: 1.03rem;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 18px 36px -28px rgba(20, 40, 64, 0.55);
+}
+
+.catalogue-action.open {
+  background: var(--accent);
+  color: var(--text);
+}
+
+.catalogue-action.download {
+  background: #ffffff;
+  color: var(--primary);
 }
 
 .copy-block h2,
@@ -2439,6 +2531,11 @@ body.video-modal-open {
     justify-content: flex-start;
     min-width: 0;
   }
+
+  .catalogue-download-grid {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 @media (max-width: 920px) {
@@ -2502,9 +2599,27 @@ body.video-modal-open {
   .catalogue-spotlight {
     padding: 28px 24px;
   }
+
+  .catalogue-download-card {
+    min-height: 0;
+    padding: 26px 22px;
+  }
+
+  .catalogue-download-actions {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 @media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: calc(100vw - 32px);
+  }
+
   .site-nav {
     min-height: 76px;
   }
@@ -2546,6 +2661,17 @@ body.video-modal-open {
   .cta-shell,
   .light-panel {
     padding: 28px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .product-pdf-links {
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .product-pdf-links a {
+    width: 100%;
   }
 
   .adazai-home .chat-shell {
