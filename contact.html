@@ -3,14 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Contact | ADAZ RENOV</title>
+    <title>Contact et devis gratuit | ADAZ RENOV</title>
+    <meta name="description" content="Contactez ADAZ RENOV pour un devis gratuit de rénovation, construction, salle de bain, cuisine, fenêtres, portes, volets ou travaux intérieurs.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Contact et devis gratuit | ADAZ RENOV">
+    <meta property="og:description" content="Parlez-nous de votre projet et recevez un accompagnement personnalisé pour vos travaux.">
+    <meta property="og:image" content="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <meta property="og:locale" content="fr_FR">
+    <meta name="theme-color" content="#1e3a5f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260513live2">
+    <link rel="stylesheet" href="styles.css?v=20260518adazai23">
     <link rel="icon" type="image/png" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
     <link rel="apple-touch-icon" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
-    <script src="script.js?v=20260513live2" defer></script>
+    <script src="ai-config.js" defer></script>
+    <script src="script.js?v=20260518adazai23" defer></script>
   </head>
   <body data-page="contact">
     <div class="site-header"></div>
@@ -22,7 +31,7 @@
             <span class="eyebrow">Contact</span>
             <h1>Parlons de votre projet</h1>
             <p>
-              Une question ? Un projet a realiser ? Notre equipe est a votre ecoute pour vous
+              Une question ? Un projet à réaliser ? Notre équipe est à votre écoute pour vous
               accompagner, vous conseiller et vous proposer un devis detaille.
             </p>
           </div>
@@ -34,17 +43,17 @@
           <article class="card contact-card reveal">
             <div class="icon-badge">TL</div>
             <h3>Telephone</h3>
-            <p><a href="tel:+33123456789">01 23 45 67 89</a><br>06 12 34 56 78</p>
+            <p><a href="tel:+33186047468">+33 1 86 04 74 68</a></p>
           </article>
           <article class="card contact-card reveal">
             <div class="icon-badge">EM</div>
             <h3>Email</h3>
-            <p><a href="mailto:contact@adazrenov.fr">contact@adazrenov.fr</a><br>devis@adazrenov.fr</p>
+            <p><a href="mailto:adazrenov@gmail.com">adazrenov@gmail.com</a></p>
           </article>
           <article class="card contact-card reveal">
             <div class="icon-badge">AD</div>
             <h3>Adresse</h3>
-            <p>123 Rue de la Renovation<br>75001 Paris, France</p>
+            <p>1 Place du Vieux Pays<br>94880 Noiseau, France</p>
           </article>
           <article class="card contact-card reveal">
             <div class="icon-badge">HR</div>
@@ -60,7 +69,7 @@
             <span class="eyebrow">Demande de devis</span>
             <h2 style="margin: 18px 0 10px;">Parlez-nous de votre projet</h2>
             <p class="muted" style="margin-bottom: 26px;">
-              Remplissez le formulaire ci-dessous et nous vous repondrons dans les plus brefs delais.
+              Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
             </p>
 
             <div id="contact-success" class="success-card" hidden>
@@ -76,7 +85,7 @@
                 </div>
                 <div class="field">
                   <label for="phone">Telephone *</label>
-                  <input id="phone" name="phone" type="tel" placeholder="06 12 34 56 78" required>
+                  <input id="phone" name="phone" type="tel" placeholder="Votre numéro de téléphone" required>
                 </div>
                 <div class="field full">
                   <label for="email">Email *</label>
@@ -86,8 +95,8 @@
                   <label for="subject">Type de projet *</label>
                   <select id="subject" name="subject" required>
                     <option value="">Selectionnez un service</option>
-                    <option>Renovation interieure</option>
-                    <option>Renovation exterieure</option>
+                    <option>Rénovation intérieure</option>
+                    <option>Rénovation extérieure</option>
                     <option>Construction generale</option>
                     <option>Amenagement cuisine</option>
                     <option>Amenagement salle de bain</option>
@@ -96,7 +105,7 @@
                 </div>
                 <div class="field full">
                   <label for="message">Message *</label>
-                  <textarea id="message" name="message" rows="6" placeholder="Decrivez votre projet en quelques mots..." required></textarea>
+                  <textarea id="message" name="message" rows="6" placeholder="Décrivez votre projet en quelques mots..." required></textarea>
                 </div>
               </div>
               <div style="margin-top: 22px;">
@@ -119,13 +128,22 @@
               </ul>
             </div>
             <div class="card map-card reveal">
-              <div class="map-surface">
+              <div class="map-frame" aria-label="Carte vers le showroom ADAZ RENOV">
+                <iframe
+                  title="Carte ADAZ RENOV - 1 Place du Vieux Pays, 94880 Noiseau"
+                  src="https://www.google.com/maps?q=1%20Place%20du%20Vieux%20Pays%2C%2094880%20Noiseau%2C%20France&output=embed"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <div class="map-surface map-surface-compact">
                 <div>
                   <div class="icon-badge" style="margin: 0 auto 18px;">MP</div>
                   <h3>Notre showroom</h3>
-                  <p class="muted">123 Rue de la Renovation<br>75001 Paris, France</p>
+                  <p class="muted">1 Place du Vieux Pays<br>94880 Noiseau, France</p>
                   <div style="margin-top: 20px;">
-                    <a class="button small light" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">Voir sur la carte</a>
+                    <a class="button small light" href="https://www.google.com/maps/dir/?api=1&destination=1%20Place%20du%20Vieux%20Pays%2C%2094880%20Noiseau%2C%20France" target="_blank" rel="noopener noreferrer">Itineraire vers le showroom</a>
                   </div>
                 </div>
               </div>
@@ -137,8 +155,8 @@
       <section class="section section-muted">
         <div class="container" style="max-width: 860px;">
           <div class="section-head reveal">
-            <h2>Questions frequentes</h2>
-            <p>Retrouvez les reponses aux questions les plus courantes.</p>
+            <h2>Questions fréquentes</h2>
+            <p>Retrouvez les réponses aux questions les plus courantes.</p>
           </div>
           <div class="faq-list">
             <article class="card faq-card reveal">
@@ -165,10 +183,10 @@
         <div class="container">
           <div class="cta-shell section-primary reveal" style="text-align:center;">
             <h2>Besoin d'aide ?</h2>
-            <p class="muted-on-dark">Notre equipe est disponible pour repondre a toutes vos questions.</p>
+            <p class="muted-on-dark">Notre équipe est disponible pour répondre à toutes vos questions.</p>
             <div class="hero-actions" style="justify-content:center;">
-              <a class="button secondary" href="tel:+33123456789">01 23 45 67 89</a>
-              <a class="button light" href="mailto:contact@adazrenov.fr">contact@adazrenov.fr</a>
+              <a class="button secondary" href="tel:+33186047468">+33 1 86 04 74 68</a>
+              <a class="button light" href="mailto:adazrenov@gmail.com">adazrenov@gmail.com</a>
             </div>
           </div>
         </div>

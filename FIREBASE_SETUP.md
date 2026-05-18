@@ -1,9 +1,11 @@
-# Firebase + Calendar setup (AI Aissten)
+# Firebase + ADAZAI setup
 
-This project is now prepared for real booking flow with:
+This project is prepared for a useful ADAZAI flow with:
 - Frontend booking UI in `ia-travaux.html`
 - Frontend logic in `script.js`
 - Cloud Functions in `firebase/functions/index.js`
+- Firestore conversations, appointments and availability slots
+- Optional Apple Calendar availability sync through a published `.ics` calendar URL
 
 ## 1. Create Firebase project
 1. Go to Firebase Console.
@@ -53,12 +55,20 @@ firebase deploy --only functions
 ```
 
 After deploy, copy the endpoints:
+- `getProducts`
 - `getAvailability`
 - `createBooking`
 - `adazChat`
+- `syncAppleAvailability`
 
-## 6.1 Configure OpenAI for real chat
-Set environment variables for Functions runtime:
+## 6.1 ADAZAI chat without OpenAI
+`adazChat` now works without OpenAI. It uses a local ADAZAI intent engine that can:
+- understand common renovation messages;
+- answer about estimates, materials, photos, urgent support and bookings;
+- return action buttons for the frontend;
+- save the conversation to Firestore in `aiConversations`.
+
+OpenAI can still be added later, but it is optional. If you want it later, set:
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL` (optional, default `gpt-4o-mini`)
 
@@ -72,6 +82,7 @@ firebase deploy --only functions
 ## 7. Configure frontend runtime
 Edit `ai-config.js` and set:
 - `window.AI_AISSTEN_FIREBASE_CONFIG` (optional for direct Firestore fallback)
+- `window.AI_AISSTEN_PRODUCTS_CONFIG.apiUrl` (optional, for loading products from Firestore through Cloud Functions)
 - `window.AI_AISSTEN_BOOKING_CONFIG.availabilityApiUrl`
 - `window.AI_AISSTEN_BOOKING_CONFIG.bookingApiUrl`
 - `window.AI_AISSTEN_CHAT_CONFIG.apiUrl`
@@ -95,26 +106,123 @@ window.AI_AISSTEN_BOOKING_CONFIG = {
   bookingApiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/createBooking",
 };
 
+window.AI_AISSTEN_PRODUCTS_CONFIG = {
+  collection: "siteProducts",
+  apiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/getProducts",
+};
+
 window.AI_AISSTEN_CHAT_CONFIG = {
   apiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/adazChat",
-  model: "gpt-4o-mini",
+  model: "local-adazai",
 };
 ```
 
-## 8. Optional Firestore collections
-If you want manual fallback slots without API, create:
+## 8. Firestore collections
+ADAZAI uses these collections:
+- `siteProducts`
+  - stores products displayed on `produits.html`
+  - fields: `category`, `active`, `order`, `id`, `title`, `material`, `imagePath`
+  - for doors: `colors`, `schemaPath`
+  - for windows: `description`, `tech`
+  - for shutters: `feature`
 - `aiAvailabilitySlots`
   - `status`: `open`
   - `startAt`: Timestamp
   - `endAt`: Timestamp
   - `advisor`: string
   - `service`: string
+  - `source`: `manual`, `apple-calendar` or `firebase`
 - `aiAppointments`
   - stores booking requests from form
+- `aiConversations`
+  - one document per chat conversation
+  - each conversation has a `messages` subcollection
+
+### 8.1 Product documents
+Create documents in Firestore collection `siteProducts`. Each document can have any id, for example
+`door-01`, `window-entra`, `shutter-01`.
+
+Door example:
+```json
+{
+  "category": "doors",
+  "active": true,
+  "order": 1,
+  "id": 1,
+  "title": "Porte d'entrée modèle 01",
+  "material": "metal",
+  "colors": ["Noir mat"],
+  "imagePath": "usiproduse/Panneau01/Panneau01.png",
+  "schemaPath": "usiproduse/Panneau01/Panneau01schema.png"
+}
+```
+
+Window example:
+```json
+{
+  "category": "windows",
+  "active": true,
+  "order": 1,
+  "id": 1,
+  "title": "Fenetre aluminium ENTRA",
+  "material": "aluminium",
+  "description": "Profil aluminium moderne avec isolation renforcee.",
+  "imagePath": "assets/catalogue/geamuri/fenetre-modele-01/fenetre-modele-01-vue.webp",
+  "tech": {
+    "joints": 3,
+    "chambers": 3,
+    "depth": "70 mm",
+    "glazing": "jusqu'a 48 mm",
+    "uw": "0,85",
+    "ug": "0,5"
+  }
+}
+```
+
+Shutter example:
+```json
+{
+  "category": "shutters",
+  "active": true,
+  "order": 1,
+  "id": 1,
+  "title": "Volet roulant exterieur modele 01",
+  "feature": "Coffre apparent",
+  "imagePath": "assets/catalogue/volets/volet-roulant-exterieur-modele-01/volet-roulant-exterieur-modele-01.webp"
+}
+```
+
+If the Cloud Function `getProducts` or Firestore config is not available, the site keeps using the
+local catalogue already defined in `script.js`.
 
 ## 9. Apple Calendar support
-Frontend already generates `.ics` file for Apple Calendar import.
-No server setup needed for this part.
+Firebase cannot read your private Apple Calendar by itself. The practical setup is:
+
+1. Create a separate Apple Calendar, for example `ADAZ Disponibil`.
+2. Add events only when you are free for visits.
+3. Publish/share that calendar and copy its `.ics` subscription URL.
+4. Set this environment variable for Cloud Functions:
+
+```bash
+export APPLE_CALENDAR_ICS_URL="https://pXX-caldav.icloud.com/published/..."
+firebase deploy --only functions
+```
+
+Then run the sync endpoint once:
+
+```text
+https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/syncAppleAvailability
+```
+
+The scheduled function `scheduledAppleAvailabilitySync` also refreshes the slots every 15 minutes.
+Imported Apple slots are written into `aiAvailabilitySlots`, and the site reads them through
+`getAvailability` or directly from Firestore if `window.AI_AISSTEN_FIREBASE_CONFIG` is configured.
+
+Optional filter:
+- `APPLE_CALENDAR_FREE_KEYWORDS="disponibil,libre,available"`
+
+If this variable is set, only Apple events whose title contains one of those words are imported.
+If it is not set, all events from the published availability calendar are treated as free slots.
 
 ## 10. Deploy site files
 Push to GitHub Pages as usual.

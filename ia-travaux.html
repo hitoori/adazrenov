@@ -3,15 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IA Travaux | ADAZ RENOV</title>
+    <title>ADAZAI | Assistant IA travaux, cuisine, produits et devis | ADAZ RENOV</title>
+    <meta name="description" content="ADAZAI aide les clients ADAZ RENOV avec idées cuisine, recommandations produits, estimation de prix, support travaux, matériaux et programmation de consultation.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ADAZAI | Assistant IA travaux ADAZ RENOV">
+    <meta property="og:description" content="Chat intelligent pour idées de rénovation, support client, produits du site, budget et programmation.">
+    <meta property="og:image" content="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <meta property="og:locale" content="fr_FR">
+    <meta name="theme-color" content="#1e3a5f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260513live2">
+    <link rel="stylesheet" href="styles.css?v=20260518adazai23">
     <link rel="icon" type="image/png" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
     <link rel="apple-touch-icon" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
     <script src="ai-config.js" defer></script>
-    <script src="script.js?v=20260513live2" defer></script>
+    <script src="script.js?v=20260518adazai23" defer></script>
   </head>
   <body data-page="ai">
     <div class="site-header"></div>
@@ -25,12 +33,17 @@
                 <span class="eyebrow">IA Travaux</span>
                 <h1>Assistant ADAZ RENOV</h1>
                 <p>
-                  Un assistant intelligent pour poser des questions, estimer un prix et proposer des
-                  dates libres pour guider le client dans son projet de renovation.
+                  Décrivez votre projet et recevez rapidement des recommandations,
+                  une estimation indicative et une possibilité de programmer une visite.
                 </p>
+                <div class="hero-actions">
+                  <a class="button" href="#outil-chat">Recevoir une estimation gratuite avec IA</a>
+                  <a class="button light" href="#outil-chat">Parler à l'assistant</a>
+                </div>
                 <div class="shortcut-row" aria-label="Acces rapide aux outils IA">
                   <a class="shortcut-pill" href="#outil-chat">Questions</a>
                   <a class="shortcut-pill" href="#outil-estimateur">Prix</a>
+                  <a class="shortcut-pill" href="#outil-questions">Questions</a>
                   <a class="shortcut-pill" href="#outil-plan">Rendez-vous</a>
                   <a class="shortcut-pill" href="#outil-programmation">Programmer</a>
                 </div>
@@ -41,9 +54,11 @@
                   <li><span class="check">&#10003;</span><span>Poser des questions sur les travaux</span></li>
                   <li><span class="check">&#10003;</span><span>Obtenir une estimation de prix</span></li>
                   <li><span class="check">&#10003;</span><span>Programmer un rendez-vous</span></li>
+                  <li><span class="check">&#10003;</span><span>Préparer les informations utiles pour l'équipe</span></li>
                   <li><span class="check">&#10003;</span><span>Recevoir des dates libres depuis le calendrier</span></li>
                   <li><span class="check">&#10003;</span><span>Préparer le projet avant le devis</span></li>
                 </ul>
+                <p class="ai-disclosure">Vous interagissez avec un assistant IA. Les estimations sont indicatives et seront validées après visite technique.</p>
               </div>
             </div>
           </div>
@@ -56,40 +71,48 @@
             <span class="eyebrow">Assistant IA</span>
             <h2>Un assistant IA pensé pour guider vos clients</h2>
             <p>
-              Cette page aide vos clients à poser leurs questions, recevoir une estimation rapide et
-              réserver une consultation en choisissant parmi les créneaux libres.
+              Décrivez le chantier, recevez une orientation de budget et
+              programmez une visite avec l'équipe. ADAZAI transforme une simple question en parcours
+              guide de consultation.
             </p>
+          </div>
+          <div class="ai-flow-strip reveal" aria-label="Parcours ADAZAI">
+            <div><strong>1</strong><span>Projet</span></div>
+            <div><strong>2</strong><span>Services</span></div>
+            <div><strong>3</strong><span>Estimation</span></div>
+            <div><strong>4</strong><span>Recommandations</span></div>
+            <div><strong>5</strong><span>Rendez-vous</span></div>
           </div>
           <div class="cards-4">
             <article class="card value-card reveal">
               <div class="icon-badge">01</div>
-              <h3>Analyse photo IA</h3>
-              <p>Le visiteur charge une image et obtient une premiere lecture du chantier.</p>
+              <h3>Estimation guidée</h3>
+              <p>Le visiteur choisit son type de projet et obtient une première orientation claire.</p>
             </article>
             <article class="card value-card reveal">
               <div class="icon-badge">02</div>
-              <h3>Conseiller materiaux</h3>
-              <p>Des recommandations produits adaptees au budget, a la performance et au style.</p>
+              <h3>Conseiller matériaux</h3>
+              <p>Des recommandations produits adaptées au budget, à la performance et au style.</p>
             </article>
             <article class="card value-card reveal">
               <div class="icon-badge">03</div>
               <h3>Chatbot construction</h3>
-              <p>Des reponses rapides sur les delais, les garanties, les zones et le catalogue.</p>
+              <p>Des réponses rapides sur les délais, les garanties, les zones et le catalogue.</p>
             </article>
             <article class="card value-card reveal">
               <div class="icon-badge">04</div>
               <h3>Estimateur IA</h3>
-              <p>Un intervalle indicatif de prix et de duree avant la visite technique.</p>
+              <p>Un intervalle indicatif de prix et de durée avant la visite technique.</p>
             </article>
             <article class="card value-card reveal">
               <div class="icon-badge">05</div>
-              <h3>Ideateur design IA</h3>
-              <p>3 pistes de style avec palette harmonisee selon la piece et l'ambiance voulue.</p>
+              <h3>Idéateur design IA</h3>
+              <p>3 pistes de style avec palette harmonisée selon la pièce et l'ambiance voulue.</p>
             </article>
             <article class="card value-card reveal">
               <div class="icon-badge">06</div>
               <h3>Planificateur IA</h3>
-              <p>Un mini-plan de phases travaux avec priorites et delais indicatifs.</p>
+              <p>Un mini-plan de phases travaux avec priorités et délais indicatifs.</p>
             </article>
           </div>
         </div>
@@ -102,63 +125,59 @@
             <div class="chat-status">
               <span class="chat-dot"></span>
               <strong>Assistant en ligne</strong>
-              <span>Reponse rapide sur devis, delais et programmation</span>
+              <span>Réponse rapide sur devis, délais et programmation</span>
             </div>
             <p>
-              Posez une question sur les devis, delais, produits, garanties ou services. Cet
-              assistant est specialise sur l'univers chantier du site.
+              Choisissez une action ou posez une question. L'assistant vous guide ensuite vers
+              l'estimation, les matériaux, les services ou la programmation.
             </p>
+            <div class="adazai-command-grid" aria-label="Commandes rapides ADAZAI">
+              <button type="button" data-chat-question="Je veux une estimation de prix pour mon projet">Estimation de prix</button>
+              <button type="button" data-chat-question="Je veux programmer une visite technique">Programmer une visite</button>
+              <button type="button" data-chat-question="Je veux une recommandation de matériaux pour mon projet">Recommandation matériaux</button>
+              <button type="button" data-chat-question="Je veux parler avec un consultant ADAZ RENOV">Parler a un consultant</button>
+              <button type="button" data-chat-question="J'ai des questions sur les services ADAZ RENOV">Questions services</button>
+            </div>
             <div id="ai-chat-log" class="chat-log" aria-live="polite">
               <div class="chat-message assistant">
-                <p>Bonjour, je suis ADAZAI, assistant travaux ADAZ RENOV. Je peux vous aider sur les devis, les delais, les garanties, les produits et les services.</p>
+                <p><strong>ADAZAI</strong><br>Bonjour ! Je suis ADAZAI, votre assistant personnel. Je peux vous aider avec :</p>
+                <ul>
+                  <li>une estimation orientative de budget ;</li>
+                  <li>le choix des matériaux ;</li>
+                  <li>les étapes de votre chantier ;</li>
+                  <li>les services Adazrenov ;</li>
+                  <li>la préparation d'une visite technique.</li>
+                </ul>
               </div>
             </div>
             <form id="ai-chat-form" class="chat-form">
-              <input id="ai-chat-input" type="text" placeholder="Ex: combien coute une renovation complete de 70 m2 ?">
+              <input id="ai-chat-input" type="text" autocomplete="off" placeholder="Ex: cuisine 34 m2 premium, je veux prix + delai">
               <button class="button small" type="submit">Envoyer</button>
             </form>
           </article>
 
           <article class="tool-panel reveal" id="outil-questions">
-            <h3>Questions utiles pour ADAZAI</h3>
+            <h3>Ce que ADAZAI sait faire</h3>
             <p>
-              Exemples de questions que vous pouvez ecrire librement dans le chat pour des reponses personnalisees.
+              Les outils ci-dessous peuvent être lancés depuis le chat ou ouverts directement pour une saisie plus précise.
             </p>
-            <div class="chat-guide-table-wrap">
-              <table class="chat-guide-table" aria-label="Questions recommandées pour ADAZAI">
-                <thead>
-                  <tr>
-                    <th>Question exemple</th>
-                    <th>Type de reponse</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Je veux une cuisine de 34 m2, quel serait le cout ?</td>
-                    <td>Estimation budget + duree</td>
-                  </tr>
-                  <tr>
-                    <td>Salle de bain avec fenetre et cabine en verre: quels materiaux recommandez-vous ?</td>
-                    <td>Materiaux recommandes</td>
-                  </tr>
-                  <tr>
-                    <td>Quel budget pour une renovation complete de 70 m2 ?</td>
-                    <td>Fourchette de cout total</td>
-                  </tr>
-                  <tr>
-                    <td>Comment reserver une consultation etape par etape ?</td>
-                    <td>Etapes de reservation</td>
-                  </tr>
-                  <tr>
-                    <td>Quels materiaux recommandez-vous pour une cuisine premium ?</td>
-                    <td>Recommandations personnalisees</td>
-                  </tr>
-                  <tr>
-                    <td>Pouvons-nous integrer un vrai ChatGPT dans ce chat ?</td>
-                    <td>Integration IA reelle</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="adazai-capability-list">
+              <button type="button" data-chat-question="J'ai une petite cuisine, je veux plus de rangement et un style moderne">
+                <strong>Idées cuisine</strong>
+                <span>Agencement, couleurs, matériaux, rangement, lumière et budget.</span>
+              </button>
+              <button type="button" data-chat-question="Quels produits ADAZ RENOV recommandes-tu pour isolation, fenêtres et porte ?">
+                <strong>Produits connectés</strong>
+                <span>Recommandations basées sur les catégories présentes sur le site.</span>
+              </button>
+              <button type="button" data-chat-question="Mon evier fuit et ma machine a laver ne vidange plus, que faire ?">
+                <strong>Support client</strong>
+                <span>Premiers gestes, sécurité, diagnostic et quand demander une intervention.</span>
+              </button>
+              <button type="button" data-chat-question="Je veux refaire ma cuisine, quel budget et quelles etapes ?">
+                <strong>Budget + étapes</strong>
+                <span>Estimation, ordre des travaux, délais et programmation.</span>
+              </button>
             </div>
           </article>
         </div>
@@ -167,19 +186,19 @@
       <section class="section section-muted">
         <div class="container tool-grid">
           <article class="tool-panel reveal" id="outil-materiaux">
-            <h3>Recommandateur IA de materiaux</h3>
+            <h3>Recommandateur IA de matériaux</h3>
             <p>
               Orientez le visiteur vers les produits les plus pertinents selon le besoin, la
-              priorite technique, le budget et le niveau de finition.
+              priorité technique, le budget et le niveau de finition.
             </p>
             <form id="ai-material-form" class="tool-form">
               <div class="tool-form-row">
                 <div class="tool-field">
                   <label for="ai-zone">Zone du projet</label>
                   <select id="ai-zone" name="zone" required>
-                    <option value="fenetres">Fenetres</option>
+                    <option value="fenetres">Fenêtres</option>
                     <option value="portes">Portes</option>
-                    <option value="interieur">Interieur</option>
+                    <option value="interieur">Intérieur</option>
                     <option value="cuisine">Cuisine</option>
                     <option value="salle-de-bain">Salle de bain</option>
                     <option value="facade">Facade</option>
@@ -187,7 +206,7 @@
                   </select>
                 </div>
                 <div class="tool-field">
-                  <label for="ai-priority">Priorite</label>
+                  <label for="ai-priority">Priorité</label>
                   <select id="ai-priority" name="priority" required>
                     <option value="budget">Budget</option>
                     <option value="isolation">Isolation</option>
@@ -219,94 +238,32 @@
             <div id="ai-material-result" class="tool-inline-result" hidden></div>
           </article>
 
-          <article class="tool-panel reveal" id="outil-photo">
-            <h3>Analyse photo IA pour travaux</h3>
-            <p>
-              Uploadez une photo, indiquez la zone concernee et recevez une pre-analyse des
-              priorites, des risques visibles et des services a activer.
-            </p>
-            <form id="ai-photo-form" class="tool-form">
-              <div class="tool-upload">
-                <label for="ai-photo-file"><strong>Photo du chantier</strong></label>
-                <input id="ai-photo-file" name="photo" type="file" accept="image/*" required>
-                <span>Image utilisee uniquement dans cette page de demo, localement dans le navigateur.</span>
-              </div>
-              <div id="ai-photo-preview-wrap" class="tool-preview" hidden>
-                <img id="ai-photo-preview" alt="Apercu du chantier">
-              </div>
-              <div class="tool-form-row">
-                <div class="tool-field">
-                  <label for="ai-project-type">Zone a analyser</label>
-                  <select id="ai-project-type" name="project_type" required>
-                    <option value="cuisine">Cuisine</option>
-                    <option value="salle-de-bain">Salle de bain</option>
-                    <option value="facade">Facade</option>
-                    <option value="toiture">Toiture</option>
-                    <option value="fenetres">Fenetres</option>
-                    <option value="autre">Autre zone</option>
-                  </select>
-                </div>
-                <div class="tool-field">
-                  <label for="ai-objective">Objectif</label>
-                  <select id="ai-objective" name="objective" required>
-                    <option value="diagnostic">Diagnostic</option>
-                    <option value="rafraichissement">Rafraichissement rapide</option>
-                    <option value="renovation">Renovation complete</option>
-                  </select>
-                </div>
-              </div>
-              <div class="tool-form-row">
-                <div class="tool-field">
-                  <label for="ai-urgency">Urgence</label>
-                  <select id="ai-urgency" name="urgency" required>
-                    <option value="basse">Basse</option>
-                    <option value="normale">Normale</option>
-                    <option value="haute">Haute</option>
-                  </select>
-                </div>
-                <div class="tool-field">
-                  <label for="ai-surface">Surface approximative (m2)</label>
-                  <input id="ai-surface" name="surface" type="number" min="1" placeholder="35">
-                </div>
-              </div>
-              <fieldset class="tool-checks">
-                <legend>Symptomes visibles</legend>
-                <div class="tool-check-grid">
-                  <label class="tool-check-option"><input type="checkbox" name="issues" value="humidite"> Humidite / moisissure</label>
-                  <label class="tool-check-option"><input type="checkbox" name="issues" value="fissures"> Fissures / structure</label>
-                  <label class="tool-check-option"><input type="checkbox" name="issues" value="energie"> Inconfort thermique</label>
-                  <label class="tool-check-option"><input type="checkbox" name="issues" value="finition"> Finitions abimees</label>
-                  <label class="tool-check-option"><input type="checkbox" name="issues" value="circulation"> Implantation peu pratique</label>
-                  <label class="tool-check-option"><input type="checkbox" name="issues" value="vieillissement"> Materiaux vieillissants</label>
-                </div>
-              </fieldset>
-              <button class="button" type="submit">Lancer l'analyse IA</button>
-              <p class="subtle-note">La version actuelle utilise une logique intelligente cote site et reste prete pour une connexion a une IA reelle.</p>
-            </form>
-            <div id="ai-photo-result" class="tool-inline-result" hidden></div>
-          </article>
         </div>
       </section>
 
       <section class="section" id="outil-estimateur">
         <div class="container tool-grid">
           <article class="tool-panel reveal">
-            <h3>Estimateur IA budget &amp; duree</h3>
+            <h3>Estimateur IA budget &amp; durée</h3>
             <p>
               Donnez quelques informations sur votre projet et obtenez un premier intervalle de
-              prix ainsi qu'une duree probable de chantier.
+              prix ainsi qu'une durée probable de chantier.
             </p>
             <form id="ai-estimator-form" class="tool-form">
               <div class="tool-form-row">
                 <div class="tool-field">
                   <label for="ai-work-type">Type de chantier</label>
                   <select id="ai-work-type" name="work_type" required>
-                    <option value="interieur">Renovation interieure</option>
+                    <option value="interieur">Rénovation intérieure</option>
                     <option value="salle-de-bain">Salle de bain</option>
                     <option value="cuisine">Cuisine sur mesure</option>
+                    <option value="fenetres">Fenêtres</option>
+                    <option value="portes">Portes</option>
+                    <option value="electricite">Installation électrique</option>
                     <option value="facade">Facade</option>
+                    <option value="toiture">Toiture</option>
                     <option value="construction">Construction / extension</option>
-                    <option value="amenagement">Amenagement sur mesure</option>
+                    <option value="amenagement">Aménagement sur mesure</option>
                   </select>
                 </div>
                 <div class="tool-field">
@@ -316,7 +273,22 @@
               </div>
               <div class="tool-form-row">
                 <div class="tool-field">
-                  <label for="ai-complexity">Complexite</label>
+                  <label for="ai-est-city">Ville / zone</label>
+                  <input id="ai-est-city" name="city" type="text" placeholder="Ex: Noiseau, Creteil, Paris">
+                </div>
+                <div class="tool-field">
+                  <label for="ai-project-state">État actuel</label>
+                  <select id="ai-project-state" name="project_state" required>
+                    <option value="renovation-complete">Rénovation complète</option>
+                    <option value="reparation">Réparation</option>
+                    <option value="montage">Montage / pose</option>
+                    <option value="remplacement">Remplacement</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-complexity">Complexité</label>
                   <select id="ai-complexity" name="complexity" required>
                     <option value="simple">Simple</option>
                     <option value="standard">Standard</option>
@@ -327,21 +299,42 @@
                   <label for="ai-est-finish">Finition</label>
                   <select id="ai-est-finish" name="finish" required>
                     <option value="essentiel">Essentiel</option>
-                    <option value="equilibre">Equilibre</option>
+                    <option value="equilibre">Équilibre</option>
                     <option value="premium">Premium</option>
                     <option value="prestige">Prestige</option>
                   </select>
                 </div>
               </div>
+              <div class="tool-form-row">
+                <div class="tool-field">
+                  <label for="ai-occupancy">Logement pendant les travaux</label>
+                  <select id="ai-occupancy" name="occupancy" required>
+                    <option value="libre">Logement libre</option>
+                    <option value="occupe">Logement occupé</option>
+                  </select>
+                </div>
+                <div class="tool-field">
+                  <label for="ai-deadline">Délai souhaité</label>
+                  <select id="ai-deadline" name="deadline" required>
+                    <option value="urgent">Urgent</option>
+                    <option value="mois">Ce mois-ci</option>
+                    <option value="1-3-mois">Dans 1 a 3 mois</option>
+                    <option value="plus-tard">Plus tard</option>
+                  </select>
+                </div>
+              </div>
               <div class="tool-field">
-                <label for="ai-occupancy">Logement pendant les travaux</label>
-                <select id="ai-occupancy" name="occupancy" required>
-                  <option value="libre">Logement libre</option>
-                  <option value="occupe">Logement occupe</option>
+                <label for="ai-desired-budget">Budget orientatif</label>
+                <select id="ai-desired-budget" name="desired_budget" required>
+                  <option value="a-definir">À définir</option>
+                  <option value="moins-5000">Moins de 5 000 EUR</option>
+                  <option value="5000-15000">5 000 - 15 000 EUR</option>
+                  <option value="15000-40000">15 000 - 40 000 EUR</option>
+                  <option value="plus-40000">Plus de 40 000 EUR</option>
                 </select>
               </div>
               <button class="button" type="submit">Calculer l'estimation</button>
-              <p class="subtle-note">Cette estimation est indicative et sert a pre-qualifier la demande.</p>
+              <p class="subtle-note">Estimation orientative uniquement. L'offre finale dépend des mesures, de l'accès, de l'état actuel et des matériaux choisis.</p>
             </form>
             <div id="ai-estimator-result" class="tool-inline-result" hidden></div>
           </article>
@@ -349,15 +342,15 @@
           <article class="tool-panel reveal" id="outil-plan">
             <h3>Planificateur IA du chantier</h3>
             <p>
-              Obtenez un phasage indicatif et les priorites critiques pour votre projet, selon le
-              type de travaux, l'intensite et l'urgence.
+              Obtenez un phasage indicatif et les priorités critiques pour votre projet, selon le
+              type de travaux, l'intensité et l'urgence.
             </p>
             <form id="ai-roadmap-form" class="tool-form">
               <div class="tool-form-row">
                 <div class="tool-field">
                   <label for="ai-roadmap-type">Type de chantier</label>
                   <select id="ai-roadmap-type" name="type" required>
-                    <option value="interieur">Interieur</option>
+                    <option value="interieur">Intérieur</option>
                     <option value="salle-de-bain">Salle de bain</option>
                     <option value="cuisine">Cuisine</option>
                     <option value="facade">Facade</option>
@@ -365,10 +358,10 @@
                   </select>
                 </div>
                 <div class="tool-field">
-                  <label for="ai-roadmap-scope">Intensite</label>
+                  <label for="ai-roadmap-scope">Intensité</label>
                   <select id="ai-roadmap-scope" name="scope" required>
-                    <option value="rafraichissement">Rafraichissement</option>
-                    <option value="renovation">Renovation complete</option>
+                    <option value="rafraichissement">Rafraîchissement</option>
+                    <option value="renovation">Rénovation complète</option>
                     <option value="lourd">Lourd / structurel</option>
                   </select>
                 </div>
@@ -377,7 +370,7 @@
                 <div class="tool-field">
                   <label for="ai-roadmap-urgency">Urgence</label>
                   <select id="ai-roadmap-urgency" name="urgency" required>
-                    <option value="basse">Planifie</option>
+                    <option value="basse">Planifié</option>
                     <option value="normale">Standard</option>
                     <option value="haute">Prioritaire</option>
                   </select>
@@ -386,7 +379,7 @@
                   <label for="ai-roadmap-occupancy">Logement</label>
                   <select id="ai-roadmap-occupancy" name="occupancy" required>
                     <option value="libre">Logement libre</option>
-                    <option value="occupe">Logement occupe</option>
+                    <option value="occupe">Logement occupé</option>
                   </select>
                 </div>
               </div>
@@ -404,19 +397,19 @@
       <section class="section section-muted" id="outil-idees">
         <div class="container tool-grid">
           <article class="tool-panel reveal">
-            <h3>Ideateur design IA</h3>
+            <h3>Idéateur design IA</h3>
             <p>
-              Choisissez la piece, le style et l'ambiance. L'IA propose trois pistes d'inspiration
-              coherentes, avec palette et materiaux a privilegier.
+              Choisissez la pièce, le style et l'ambiance. L'IA propose trois pistes d'inspiration
+              cohérentes, avec palette et matériaux à privilégier.
             </p>
             <form id="ai-concept-form" class="tool-form">
               <div class="tool-form-row">
                 <div class="tool-field">
-                  <label for="ai-concept-room">Piece</label>
+                  <label for="ai-concept-room">Pièce</label>
                   <select id="ai-concept-room" name="room" required>
                     <option value="cuisine">Cuisine</option>
                     <option value="salle-de-bain">Salle de bain</option>
-                    <option value="salon">Salon / sejour</option>
+                    <option value="salon">Salon / séjour</option>
                     <option value="facade">Facade</option>
                     <option value="chambre">Chambre</option>
                   </select>
@@ -425,7 +418,7 @@
                   <label for="ai-concept-style">Style cible</label>
                   <select id="ai-concept-style" name="style" required>
                     <option value="moderne">Moderne lumineux</option>
-                    <option value="naturel">Naturel / boise</option>
+                    <option value="naturel">Naturel / boisé</option>
                     <option value="haussmann">Haussmann chic</option>
                     <option value="minimal">Minimal / zen</option>
                   </select>
@@ -437,7 +430,7 @@
                   <select id="ai-concept-mood" name="mood" required>
                     <option value="lumineux">Lumineuse</option>
                     <option value="chaleureux">Chaleureuse</option>
-                    <option value="contrast">Contrastee</option>
+                    <option value="contrast">Contrastée</option>
                     <option value="spa">Apaisante / spa</option>
                   </select>
                 </div>
@@ -445,7 +438,7 @@
                   <label for="ai-concept-budget">Niveau budget</label>
                   <select id="ai-concept-budget" name="budget" required>
                     <option value="essentiel">Essentiel</option>
-                    <option value="equilibre">Equilibre</option>
+                    <option value="equilibre">Équilibre</option>
                     <option value="premium">Premium</option>
                   </select>
                 </div>
@@ -454,7 +447,7 @@
                 <label for="ai-concept-notes">Contraintes ou envies</label>
                 <input id="ai-concept-notes" name="notes" type="text" placeholder="Ex: douche italienne, ilot central, pierre claire">
               </div>
-              <button class="button" type="submit">Generer 3 idees</button>
+              <button class="button" type="submit">Générer 3 idées</button>
             </form>
             <div id="ai-concept-result" class="tool-inline-result" hidden></div>
           </article>
@@ -462,13 +455,13 @@
           <article class="tool-panel reveal" id="outil-programmation">
             <h3>Programmation de consultation</h3>
             <p>
-              Laissez vos coordonnees et le systeme vous proposera des dates libres. Les demandes
-              peuvent ensuite etre sauvegardees dans Firebase et synchronisees vers Google Calendar.
+              Laissez vos coordonnées et le système vous proposera des dates libres. Les demandes
+              peuvent ensuite être sauvegardées dans Firebase et synchronisées vers Google Calendar.
             </p>
             <form id="ai-booking-form" class="tool-form">
               <div class="tool-form-row">
                 <div class="tool-field">
-                  <label for="ai-booking-firstname">Prenom</label>
+                  <label for="ai-booking-firstname">Prénom</label>
                   <input id="ai-booking-firstname" name="firstname" type="text" placeholder="Jean" required>
                 </div>
                 <div class="tool-field">
@@ -478,8 +471,8 @@
               </div>
               <div class="tool-form-row">
                 <div class="tool-field">
-                  <label for="ai-booking-phone">Telephone</label>
-                  <input id="ai-booking-phone" name="phone" type="tel" placeholder="06 12 34 56 78" required>
+                  <label for="ai-booking-phone">Téléphone</label>
+                  <input id="ai-booking-phone" name="phone" type="tel" placeholder="Votre numéro de téléphone" required>
                 </div>
                 <div class="tool-field">
                   <label for="ai-booking-email">Email</label>
@@ -508,29 +501,48 @@
                 </div>
               </div>
               <div class="tool-field">
-                <label>Dates proposees</label>
+                <label>Dates proposées</label>
                 <div id="ai-slot-list" class="slot-list" aria-live="polite"></div>
                 <input id="ai-booking-slot" name="slot" type="hidden" required>
               </div>
               <div class="tool-field">
-                <label for="ai-booking-notes">Message ou besoin precise</label>
+                <label for="ai-booking-notes">Message ou besoin précis</label>
                 <textarea id="ai-booking-notes" name="notes" rows="4" placeholder="Expliquez votre projet en quelques mots..."></textarea>
               </div>
+              <label class="privacy-consent">
+                <input type="checkbox" name="privacy_consent" required>
+                <span>J'accepte que mes coordonnées et les informations du projet soient utilisées pour traiter ma demande de consultation. Voir la <a href="politique-confidentialite.html">politique de confidentialité</a>.</span>
+              </label>
               <button class="button" type="submit">Demander une programmation</button>
-              <p class="subtle-note">Le systeme vous montre des dates libres avant confirmation. Une integration Firebase permet ensuite de reserver et de synchroniser les demandes.</p>
+              <p class="subtle-note">Le système vous montre des dates libres avant confirmation. Une intégration Firebase permet ensuite de réserver et de synchroniser les demandes.</p>
             </form>
             <div id="ai-booking-result" class="tool-inline-result" hidden></div>
           </article>
         </div>
       </section>
 
+      <section class="section">
+        <div class="container">
+          <div class="ai-legal-panel reveal">
+            <span class="eyebrow">Transparence IA</span>
+            <h2>ADAZAI assiste, l'équipe valide</h2>
+            <p>
+              ADAZAI est un assistant automatisé. Il aide à comprendre les étapes, comparer les
+              matériaux, préparer une estimation orientative et organiser une visite. Les prix,
+              délais et recommandations finales sont confirmés après vérification technique,
+              mesures sur place et choix des matériaux.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section class="section section-primary">
         <div class="container">
           <div class="cta-shell reveal" style="text-align:center;">
-            <h2>Vous voulez transformer ces outils en vraie IA connectee ?</h2>
+            <h2>Vous voulez transformer ces outils en vraie IA connectée ?</h2>
             <p class="muted-on-dark">
               La page est deja prete. L'etape suivante consiste a connecter un petit backend
-              securise pour l'analyse d'image reelle, un chatbot GPT et des recommandations
+              securise pour un chatbot GPT, les demandes de rappel et des recommandations
               dynamiques.
             </p>
             <div class="hero-actions" style="justify-content:center;">
