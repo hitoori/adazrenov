@@ -1941,12 +1941,13 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
 
   function getChatConfig() {
     const root = window.AI_AISSTEN_CHAT_CONFIG || null;
-    if (!root || typeof root !== "object") return null;
+    if (!root || typeof root !== "object" || root.enablePageChat !== true) return null;
     return {
       apiUrl: String(root.apiUrl || ""),
-      model: String(root.model || "gpt-4o-mini"),
     };
   }
+
+  let conversationId = "";
 
   async function getRemoteChatAnswer(question) {
     const config = getChatConfig();
@@ -1960,7 +1961,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
         },
         body: JSON.stringify({
           message: question,
-          model: config.model,
+          conversationId,
           context: "ADAZ RENOV chantier assistant",
           page: document.body.dataset.page || "",
           url: window.location.href,
@@ -1972,6 +1973,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
       const data = await response.json();
       const text = String(data.answer || data.message || data.output || "").trim();
       const nextConversationId = String(data.conversationId || "").trim();
+      if (nextConversationId) conversationId = nextConversationId;
       return text
         ? {
             answer: text,
@@ -2196,7 +2198,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
           )
           .join("")}</div>`
       : "";
-    bubble.innerHTML = `${source}<p>${escapeHtml(text)}</p>${actionHtml}`;
+    bubble.innerHTML = `${source}<p>${formatChatMessage(text)}</p>${actionHtml}`;
     log.appendChild(bubble);
     bubble.querySelectorAll("[data-chat-action]").forEach((button) => {
       button.addEventListener("click", () => runChatAction(button.dataset.chatAction || "", button.dataset.chatContext || ""));
@@ -2833,6 +2835,10 @@ function escapeHtml(text) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function formatChatMessage(text) {
+  return escapeHtml(text).replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
 }
 
 function formatBookingSlot(date) {
@@ -3527,6 +3533,7 @@ function setupGlobalAdazaiWidget() {
       selectedWorkType: "",
       selectedFinishLevel: "",
       selectedServiceType: "",
+      conversationId: "",
       leadName: "",
       leadPhone: "",
       quickReplies: [],
@@ -3560,7 +3567,7 @@ function setupGlobalAdazaiWidget() {
   function appendMessage(role, text, persist = true, type = "message") {
     const row = document.createElement("div");
     row.className = `adazai-message-row ${role}`;
-    row.innerHTML = `<div class="adazai-message-stack"><div class="chat-message ${role}"><p>${escapeHtml(text)}</p></div></div>`;
+    row.innerHTML = `<div class="adazai-message-stack"><div class="chat-message ${role}"><p>${formatChatMessage(text)}</p></div></div>`;
     log.appendChild(row);
     scrollLog();
 
@@ -4019,15 +4026,57 @@ function setupGlobalAdazaiWidget() {
     window.setTimeout(() => window.focus(), 0);
   }
 
-  function handleFreeText(message) {
+  async function getRemoteWidgetAnswer(message) {
+    const apiUrl = String(window.AI_AISSTEN_CHAT_CONFIG?.apiUrl || "");
+    if (!apiUrl) throw new Error("Chat API is not configured.");
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        conversationId: state.conversationId,
+        context: "ADAZ RENOV global website assistant",
+        page: document.body.dataset.page || "",
+        url: window.location.href,
+      }),
+    });
+
+    if (!response.ok) throw new Error(`Chat API unavailable: ${response.status}`);
+    const data = await response.json();
+    const answer = String(data.answer || "").trim();
+    if (!answer) throw new Error("Chat API returned an empty answer.");
+    state.conversationId = String(data.conversationId || state.conversationId || "");
+    return answer;
+  }
+
+  async function handleFreeText(message) {
     const clean = String(message || "").trim();
     if (!clean) return;
     addUserMessage(clean);
-    routeIntent(detectIntent(clean));
+    state.quickReplies = [];
+    renderQuickReplies();
+    showTyping();
+
+    try {
+      const answer = await getRemoteWidgetAnswer(clean);
+      hideTyping();
+      appendMessage("assistant", answer);
+      state.quickReplies = [
+        { label: "Obtenir une estimation", action: "estimate" },
+        { label: "Être rappelé", action: "lead" },
+        { label: "Retour au menu", action: "menu" },
+      ];
+      renderQuickReplies();
+    } catch (error) {
+      console.warn("ADAZAI API unavailable, using the local assistant.", error);
+      hideTyping();
+      routeIntent(detectIntent(clean));
+    }
   }
 
-  function handleUserMessage(message) {
-    handleFreeText(message);
+  async function handleUserMessage(message) {
+    await handleFreeText(message);
   }
 
   function openWidget() {
@@ -4050,10 +4099,16 @@ function setupGlobalAdazaiWidget() {
 
   closeButton.addEventListener("click", closeWidget);
   newButton.addEventListener("click", resetToMenu);
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    handleUserMessage(input.value);
+    const message = input.value;
     input.value = "";
+    input.disabled = true;
+    form.querySelector("button").disabled = true;
+    await handleUserMessage(message);
+    input.disabled = false;
+    form.querySelector("button").disabled = false;
+    input.focus();
   });
 
   document.addEventListener("keydown", (event) => {

@@ -20,10 +20,8 @@ window.AI_AISSTEN_PRODUCTS_CONFIG = {
 };
 
 window.AI_AISSTEN_CHAT_CONFIG = {
-  // Optional endpoint for the ADAZAI backend. It works without OpenAI and saves
-  // the conversation in Firestore. OpenAI can be added later server-side only.
-  // apiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/adazChat",
+  apiUrl: "https://adazai-api.adazrenov.workers.dev/chat",
+  enablePageChat: false,
   // Optional endpoint for sending Assistant Construction lead summaries by email.
   // leadApiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/sendChatLead",
-  model: "local-adazai",
 };
