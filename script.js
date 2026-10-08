@@ -52,7 +52,8 @@ function buildHeader(currentPage) {
   const links = navItems
     .map((item) => {
       const active = item.page === currentPage ? "is-active" : "";
-      return `<a class="${active}" href="${item.href}">${item.label}</a>`;
+      const label = currentPage === "home" && item.page === "ai" ? "Assistant IA" : item.label;
+      return `<a class="${active}" href="${item.href}">${label}</a>`;
     })
     .join("");
 
@@ -92,7 +93,12 @@ function buildHeader(currentPage) {
   `;
 }
 
-function buildFooter() {
+function buildFooter(currentPage = "") {
+  const description = currentPage === "home"
+    ? "ADAZ RENOV, entreprise de rénovation et de construction basée à Noiseau. Fourniture et pose de fenêtres, portes et volets. Intervention à Paris, en Île-de-France et dans toute la France."
+    : "ADAZ RENOV, entreprise de rénovation et de construction basée à Noiseau. Fourniture et pose de fenêtres, portes et volets.";
+  const assistantLabel = currentPage === "home" ? "Assistant IA" : "IA Travaux";
+  const emailLabel = currentPage === "home" ? "E-mail" : "Gmail";
   return `
     <footer class="footer-shell">
       <div class="container footer-grid">
@@ -101,7 +107,7 @@ function buildFooter() {
             <img class="brand-logo" src="${brandLogoPath}" alt="Logo ADAZ RENOV">
           </a>
           <p>
-            ADAZ RENOV, entreprise de rénovation et de construction basée à Noiseau. Fourniture et pose de fenêtres, portes et volets.
+            ${description}
           </p>
           <div class="social-row" aria-label="Réseaux sociaux">
             <a class="social-pill" href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Facebook ADAZ RENOV"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z"/></svg></a>
@@ -117,7 +123,7 @@ function buildFooter() {
             <a href="produits.html">Produits</a>
             <a href="projets.html">Projets</a>
             <a href="a-propos.html">À propos</a>
-            <a href="ia-travaux.html">IA Travaux</a>
+            <a href="ia-travaux.html">${assistantLabel}</a>
             <a href="contact.html">Contact</a>
           </div>
         </nav>
@@ -137,7 +143,7 @@ function buildFooter() {
           <dl class="footer-contact">
             <div><dt>Adresse</dt><dd><address>1 Place du Vieux Pays<br>94880 Noiseau, France</address></dd></div>
             <div><dt>Téléphone</dt><dd><a href="${companyPhoneHref}">${companyPhoneDisplay}</a></dd></div>
-            <div><dt>Gmail</dt><dd><a href="mailto:${companyEmail}">${companyEmail}</a></dd></div>
+            <div><dt>${emailLabel}</dt><dd><a href="mailto:${companyEmail}">${companyEmail}</a></dd></div>
           </dl>
         </div>
       </div>
@@ -4428,6 +4434,14 @@ function setupGlobalAdazaiWidget() {
   `;
 
   document.body.appendChild(widget);
+  if (document.body.dataset.page === "home") {
+    widget.querySelector(".adazai-floating-cta").setAttribute("aria-label", "Ouvrir Assistant IA");
+    widget.querySelector(".adazai-floating-cta-icon").textContent = "IA";
+    widget.querySelector(".adazai-floating-cta-title").textContent = "Assistant IA";
+    widget.querySelector(".adazai-widget-panel").setAttribute("aria-label", "Assistant IA Adazrenov");
+    widget.querySelector(".adazai-chat-title span").textContent = "Assistant IA";
+    widget.querySelector(".adazai-widget-close").setAttribute("aria-label", "Fermer Assistant IA");
+  }
 
   const toggle = widget.querySelector(".adazai-floating-cta");
   const panel = widget.querySelector(".adazai-widget-panel");
@@ -4604,7 +4618,7 @@ function setupSiteShell() {
   const footerRoot = document.querySelector(".site-footer");
 
   if (headerRoot && !headerRoot.children.length) headerRoot.innerHTML = buildHeader(currentPage);
-  if (footerRoot && !footerRoot.children.length) footerRoot.innerHTML = buildFooter();
+  if (footerRoot && !footerRoot.children.length) footerRoot.innerHTML = buildFooter(currentPage);
 
   const toggle = document.querySelector(".nav-toggle");
   if (toggle) {

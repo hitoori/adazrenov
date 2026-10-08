@@ -41,14 +41,14 @@ function createRuntime(source, replacements) {
     definitions, catalogues,
     launcher: `<div data-adazai-launcher>${launcher}</div>`,
     header: page => evaluate(`buildHeader(${JSON.stringify(page)})`),
-    footer: evaluate('buildFooter()').replace('<span id="year"></span>', `<span id="year">${new Date().getFullYear()}</span>`),
+    footer: page => evaluate(`buildFooter(${JSON.stringify(page)})`).replace('<span id="year"></span>', `<span id="year">${new Date().getFullYear()}</span>`),
   };
 }
 
 function prerender(html, runtime) {
   const currentPage = html.match(/data-page="([^"]+)"/)?.[1] || 'home';
   html = html.replace('<div class="site-header"></div>', `<div class="site-header">${runtime.header(currentPage)}</div>`)
-    .replace('<div class="site-footer"></div>', `<div class="site-footer">${runtime.footer}</div>`)
+    .replace('<div class="site-footer"></div>', `<div class="site-footer">${runtime.footer(currentPage)}</div>`)
     .replace(/<a class="is-active"/g, '<a class="is-active" aria-current="page"');
   for (const catalogue of runtime.catalogues) {
     const pattern = new RegExp(`(<div id="${catalogue.root}"[^>]*)(>)(</div>)`);
@@ -56,7 +56,13 @@ function prerender(html, runtime) {
     const cards = catalogue.records.map(record => record.html.replace('<article ', `<article id="${record.id}" `)).join('');
     html = html.replace(pattern, (_, opening) => `${opening} data-prerendered="true">${cards}</div>`);
   }
-  return html.replace('</body>', `${runtime.launcher}\n</body>`);
+  const launcher = currentPage === 'home'
+    ? runtime.launcher
+      .replace('Ouvrir AI Assistant', 'Ouvrir Assistant IA')
+      .replace('aria-hidden="true">AI</span>', 'aria-hidden="true">IA</span>')
+      .replace('adazai-floating-cta-title">Assistant</span>', 'adazai-floating-cta-title">Assistant IA</span>')
+    : runtime.launcher;
+  return html.replace('</body>', `${launcher}\n</body>`);
 }
 
 function structuredData(html, page, canonical, domain, runtime) {
