@@ -186,7 +186,6 @@ async function build() {
     'https://:version.:project.pages.dev/*', '  X-Robots-Tag: noindex', '',
   ].join('\n');
   await fs.writeFile(path.join(OUTPUT, '_headers'), headers);
-  await fs.writeFile(path.join(OUTPUT, '_redirects'), `https://www.adazrenov.fr/* ${DOMAIN}/:splat 301\n`);
   const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     pages.map(page => `  <url><loc>${canonicalUrl(page)}</loc></url>`).join('\n') + '\n</urlset>\n';
   await fs.writeFile(path.join(OUTPUT, 'sitemap.xml'), sitemap);

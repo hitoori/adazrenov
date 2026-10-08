@@ -64,8 +64,10 @@ MX/TXT necesare.
 
 Configurarea DNS, certificatul HTTPS, redirectarea `www` către domeniul principal
 și testarea serviciilor externe se verifică după conectarea conturilor.
-Regula de redirectare `www` este inclusă în build, în `_redirects`; ambele domenii
-trebuie mai întâi conectate la Pages.
+Redirectarea `www` către domeniul principal se configurează în Cloudflare,
+folosind o regulă de redirectare la nivel de domeniu. Fișierul Pages `_redirects`
+acceptă căi relative ca sursă și nu poate defini această regulă între domenii.
+Vezi [ghidul oficial pentru redirectarea www](https://developers.cloudflare.com/pages/how-to/www-redirect/).
 
 ## Verificări SEO după conectarea domeniului
 
