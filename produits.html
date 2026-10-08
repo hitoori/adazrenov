@@ -9,15 +9,12 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Catalogue portes, fenêtres et volets | ADAZ RENOV">
     <meta property="og:description" content="Consultez les portes, fenêtres PVC, aluminium, bois et volets disponibles pour votre projet.">
-    <meta property="og:image" content="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <meta property="og:image" content="assets/brand/adaz-renov-logo.png">
     <meta property="og:locale" content="fr_FR">
     <meta name="theme-color" content="#1e3a5f">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260518adazai23">
-    <link rel="icon" type="image/png" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
-    <link rel="apple-touch-icon" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <link rel="icon" type="image/png" href="assets/brand/adaz-renov-logo.png">
+    <link rel="apple-touch-icon" href="assets/brand/adaz-renov-logo.png">
     <script src="ai-config.js" defer></script>
     <script src="script.js?v=20260518adazai23" defer></script>
   </head>
@@ -25,23 +22,23 @@
     <div class="site-header"></div>
 
     <main>
-      <section class="hero-simple" id="catalogues-adaz-renov">
+      <section class="hero-simple catalogue-hero page-hero-banner" id="catalogues-adaz-renov" aria-labelledby="catalogue-title">
         <div class="container">
           <div class="hero-card product-hero-card reveal">
             <div class="product-hero-main">
               <span class="eyebrow">Catalogue produits</span>
-            <h1>Portes, fenêtres et volets sur mesure</h1>
+              <h1 id="catalogue-title"><span>Portes, fenêtres et volets</span> <span>sur mesure.</span></h1>
               <p>
-                Decouvrez notre selection de portes d'entree, fenetres et volets roulants exterieurs.
-                Choisissez la reference qui vous interesse avant de demander un devis personnalise.
+                <span>Découvrez nos portes, fenêtres et volets pour votre habitat.</span>
+                <span>Sélectionnez votre modèle et demandez un devis personnalisé.</span>
               </p>
 
               <div class="hero-actions product-pdf-links" aria-label="Catalogues PDF ADAZ RENOV">
-                <a class="button small outline" href="https://drive.google.com/file/d/13oly9Yhmtc875pbHrkzV4SS73QKi7xXg/view?usp=sharing" target="_blank" rel="noopener">
-                  Voir le catalogue portes
+                <a class="button secondary" href="https://drive.google.com/file/d/13oly9Yhmtc875pbHrkzV4SS73QKi7xXg/view?usp=sharing" target="_blank" rel="noopener">
+                  Voir le catalogue portes <span aria-hidden="true">→</span>
                 </a>
-                <a class="button small outline" href="https://drive.google.com/file/d/1ZWh3pR9Pyc2Y0Je7kfby4i7aeVlpYma5/view?usp=sharing" target="_blank" rel="noopener">
-                  Voir le catalogue materiaux
+                <a class="button outline" href="https://drive.google.com/file/d/1ZWh3pR9Pyc2Y0Je7kfby4i7aeVlpYma5/view?usp=sharing" target="_blank" rel="noopener">
+                  Voir le catalogue matériaux <span aria-hidden="true">→</span>
                 </a>
               </div>
             </div>
@@ -49,24 +46,27 @@
         </div>
       </section>
 
-      <section class="section" id="produits-disponibles">
+      <section class="section text-filters" id="produits-disponibles">
         <div class="container">
-          <div class="filter-bar reveal" data-filter-group="products">
+          <div class="filter-bar reveal" data-filter-group="products" role="group" aria-label="Filtrer les produits par catégorie">
             <span class="filter-lead">Filtrer par :</span>
             <button class="filter-chip" type="button" data-filter="all" aria-pressed="false">Tous les produits</button>
-            <button class="filter-chip" type="button" data-filter="doors" aria-pressed="false">Portes d'entree</button>
-            <button class="filter-chip" type="button" data-filter="windows" aria-pressed="false">Fenetres</button>
+            <button class="filter-chip" type="button" data-filter="doors" aria-pressed="false">Portes d’entrée</button>
+            <button class="filter-chip" type="button" data-filter="windows" aria-pressed="false">Fenêtres</button>
             <button class="filter-chip" type="button" data-filter="shutters" aria-pressed="false">Volets</button>
           </div>
 
           <div class="product-subfilters reveal" data-product-subfilters hidden>
-            <div class="subcategory-panel" data-subfilter-panel="doors" hidden>
+            <div class="subcategory-panel" data-subfilter-panel="doors" role="group" aria-label="Filtrer les portes par type" hidden>
+              <span class="filter-lead">Type de porte :</span>
               <button class="filter-chip subfilter-chip" type="button" data-subfilter="metal" aria-pressed="false">Portes metalliques</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="glass" aria-pressed="false">Portes en bois vitrees</button>
               <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Portes en bois</button>
               <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">Portes PVC</button>
             </div>
 
-            <div class="subcategory-panel" data-subfilter-panel="windows" hidden>
+            <div class="subcategory-panel" data-subfilter-panel="windows" role="group" aria-label="Filtrer les fenêtres par matériau" hidden>
+              <span class="filter-lead">Matériau :</span>
               <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">Fenetres PVC</button>
               <button class="filter-chip subfilter-chip" type="button" data-subfilter="aluminium" aria-pressed="false">Fenetres aluminium</button>
               <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Fenetres bois</button>

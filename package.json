@@ -4,6 +4,9 @@
   "private": true,
   "description": "Static renovation site with Firebase booking support for ADAZ RENOV.",
   "scripts": {
+    "build": "node scripts/build-site.cjs",
+    "preview": "node scripts/preview-site.cjs",
+    "media:optimize": "python3 scripts/optimize-media.py",
     "firebase:login": "firebase login",
     "firebase:use": "firebase use --add",
     "firebase:deploy:functions": "firebase deploy --only functions",
@@ -22,6 +25,7 @@
   },
   "homepage": "https://github.com/hitoori/adazrenov#readme",
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "firebase-tools": "^15.12.0"
   }
 }

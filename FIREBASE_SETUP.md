@@ -59,33 +59,71 @@ After deploy, copy the endpoints:
 - `getAvailability`
 - `createBooking`
 - `adazChat`
+- `submitContactRequest`
+- `sendChatLead`
 - `syncAppleAvailability`
 
-## 6.1 ADAZAI chat without OpenAI
+## 6.1 Configure email notifications
+Contact forms, ADAZAI leads and booking requests are saved in Firestore and can be emailed to:
+
+```text
+octavian.chiticgd@gmail.com
+```
+
+Set the SMTP environment variables before deploy:
+
+```bash
+export LEAD_TO_EMAIL="octavian.chiticgd@gmail.com"
+export MAIL_FROM="ADAZ RENOV <your-sender@email.com>"
+export SMTP_HOST="smtp.gmail.com"
+export SMTP_PORT="587"
+export SMTP_USER="your-sender@gmail.com"
+export SMTP_PASS="your-google-app-password"
+export ADMIN_SYNC_TOKEN="choose-a-long-random-token"
+firebase deploy --only functions
+```
+
+For Gmail, `SMTP_PASS` should be a Google App Password, not the normal account password.
+If SMTP is not configured, requests are still saved in Firestore, but email delivery is marked as not sent.
+
+## 6.2 ADAZAI chat with OpenAI
 `adazChat` now works without OpenAI. It uses a local ADAZAI intent engine that can:
 - understand common renovation messages;
 - answer about estimates, materials, photos, urgent support and bookings;
 - return action buttons for the frontend;
 - save the conversation to Firestore in `aiConversations`.
 
-OpenAI can still be added later, but it is optional. If you want it later, set:
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL` (optional, default `gpt-4o-mini`)
+OpenAI is called only from the Firebase backend. Conversations are stored in
+Firestore under `aiConversations`; OpenAI response storage is disabled with
+`store: false`. The local ADAZAI engine remains available as a fallback.
 
-Example (local deploy shell):
+Create a fresh OpenAI key, then store it directly in Google Secret Manager:
 ```bash
-export OPENAI_API_KEY="sk-..."
-export OPENAI_MODEL="gpt-4o-mini"
+firebase functions:secrets:set OPENAI_API_KEY
 firebase deploy --only functions
+```
+
+The CLI asks for the value privately. Never put the key in `ai-config.js`,
+Git, screenshots, chat messages, or a public environment file.
+
+Optional non-secret settings in `firebase/functions/.env`:
+```text
+OPENAI_MODEL=gpt-5.4-mini
+OPENAI_MAX_OUTPUT_TOKENS=500
+ADAZAI_RATE_LIMIT_PER_10_MINUTES=30
 ```
 
 ## 7. Configure frontend runtime
 Edit `ai-config.js` and set:
+- `window.AI_AISSTEN_FUNCTIONS_BASE_URL` (recommended single base URL for Cloud Functions)
 - `window.AI_AISSTEN_FIREBASE_CONFIG` (optional for direct Firestore fallback)
+- `window.AI_AISSTEN_CONTACT_CONFIG.apiUrl`
+- `window.AI_AISSTEN_CONTACT_CONFIG.web3FormsAccessKey` (Spark-friendly email delivery)
 - `window.AI_AISSTEN_PRODUCTS_CONFIG.apiUrl` (optional, for loading products from Firestore through Cloud Functions)
 - `window.AI_AISSTEN_BOOKING_CONFIG.availabilityApiUrl`
 - `window.AI_AISSTEN_BOOKING_CONFIG.bookingApiUrl`
 - `window.AI_AISSTEN_CHAT_CONFIG.apiUrl`
+- `window.AI_AISSTEN_CHAT_CONFIG.leadApiUrl`
 
 Example:
 ```js
@@ -96,6 +134,13 @@ window.AI_AISSTEN_FIREBASE_CONFIG = {
   storageBucket: "...",
   messagingSenderId: "...",
   appId: "...",
+};
+
+window.AI_AISSTEN_FUNCTIONS_BASE_URL = "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net";
+
+window.AI_AISSTEN_CONTACT_CONFIG = {
+  recipientEmail: "octavian.chiticgd@gmail.com",
+  web3FormsAccessKey: "YOUR_WEB3FORMS_ACCESS_KEY",
 };
 
 window.AI_AISSTEN_BOOKING_CONFIG = {
@@ -113,9 +158,14 @@ window.AI_AISSTEN_PRODUCTS_CONFIG = {
 
 window.AI_AISSTEN_CHAT_CONFIG = {
   apiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/adazChat",
+  leadApiUrl: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net/sendChatLead",
   model: "local-adazai",
 };
 ```
+
+For the Spark plan, keep `window.AI_AISSTEN_FUNCTIONS_BASE_URL = ""` and use
+`web3FormsAccessKey`. Contact form submissions, ADAZAI widget leads and booking
+requests are then sent by Web3Forms directly from the browser.
 
 ## 8. Firestore collections
 ADAZAI uses these collections:
@@ -137,6 +187,10 @@ ADAZAI uses these collections:
 - `aiConversations`
   - one document per chat conversation
   - each conversation has a `messages` subcollection
+- `contactRequests`
+  - stores contact form submissions
+- `siteLeads`
+  - stores ADAZAI widget lead requests
 
 ### 8.1 Product documents
 Create documents in Firestore collection `siteProducts`. Each document can have any id, for example
@@ -152,8 +206,8 @@ Door example:
   "title": "Porte d'entrée modèle 01",
   "material": "metal",
   "colors": ["Noir mat"],
-  "imagePath": "usiproduse/Panneau01/Panneau01.png",
-  "schemaPath": "usiproduse/Panneau01/Panneau01schema.png"
+  "imagePath": "assets/catalogue/panneaux/panneau-01/porte.png",
+  "schemaPath": "assets/catalogue/panneaux/panneau-01/schema.png"
 }
 ```
 

@@ -1,5 +1,17 @@
 window.AI_AISSTEN_FIREBASE_CONFIG = null;
 
+// After Firebase Functions are deployed, set this once and the site will use it
+// for getProducts, getAvailability, createBooking, adazChat, contact and leads.
+// Example: "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net"
+window.AI_AISSTEN_FUNCTIONS_BASE_URL = "";
+
+window.AI_AISSTEN_CONTACT_CONFIG = {
+  recipientEmail: "octavian.chiticgd@gmail.com",
+  web3FormsAccessKey: "c651e977-90dd-44a5-b74f-7b3690d0a4f6",
+  // Optional direct endpoint. If empty, FUNCTIONS_BASE_URL + /submitContactRequest is used.
+  // apiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/submitContactRequest",
+};
+
 window.AI_AISSTEN_BOOKING_CONFIG = {
   slotCount: 6,
   availabilityCollection: "aiAvailabilitySlots",
@@ -20,10 +32,8 @@ window.AI_AISSTEN_PRODUCTS_CONFIG = {
 };
 
 window.AI_AISSTEN_CHAT_CONFIG = {
-  // Optional endpoint for the ADAZAI backend. It works without OpenAI and saves
-  // the conversation in Firestore. OpenAI can be added later server-side only.
-  // apiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/adazChat",
+  apiUrl: "https://adazai-api.adazrenov.workers.dev/chat",
+  enablePageChat: false,
   // Optional endpoint for sending Assistant Construction lead summaries by email.
   // leadApiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/sendChatLead",
-  model: "local-adazai",
 };

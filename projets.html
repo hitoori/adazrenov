@@ -9,15 +9,12 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Projets de rénovation | ADAZ RENOV">
     <meta property="og:description" content="Rénovations, cuisines, salles de bain et transformations réalisées par ADAZ RENOV.">
-    <meta property="og:image" content="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <meta property="og:image" content="assets/brand/adaz-renov-logo.png">
     <meta property="og:locale" content="fr_FR">
     <meta name="theme-color" content="#1e3a5f">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260518adazai23">
-    <link rel="icon" type="image/png" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
-    <link rel="apple-touch-icon" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <link rel="icon" type="image/png" href="assets/brand/adaz-renov-logo.png">
+    <link rel="apple-touch-icon" href="assets/brand/adaz-renov-logo.png">
     <script src="ai-config.js" defer></script>
     <script src="script.js?v=20260518adazai23" defer></script>
   </head>
@@ -25,25 +22,27 @@
     <div class="site-header"></div>
 
     <main>
-      <section class="hero-simple">
+      <section class="hero-simple projects-hero page-hero-banner" aria-labelledby="projects-title">
         <div class="container">
           <div class="hero-card reveal">
-            <span class="eyebrow">Nos realisations</span>
-            <h1>Des transformations qui parlent d'elles-mêmes</h1>
+            <span class="eyebrow">Nos réalisations</span>
+            <h1 id="projects-title"><span>Des transformations</span> <span>qui parlent d’elles-mêmes</span></h1>
             <p>
-              Decouvrez nos projets de renovation et construction qui temoignent de notre
+              Découvrez nos projets de rénovation et construction qui témoignent de notre
               savoir-faire, de notre exigence et de notre engagement envers l'excellence.
             </p>
+            <a class="button" href="#projets-disponibles">Découvrir nos projets <span aria-hidden="true">↓</span></a>
           </div>
         </div>
       </section>
 
-      <section class="section section-muted" style="padding-bottom: 40px;">
+      <section class="section projects-filters text-filters" id="projets-disponibles">
         <div class="container">
-          <div class="filter-bar reveal" data-filter-group="projects">
+          <div class="filter-bar reveal" data-filter-group="projects" role="group" aria-label="Filtrer les projets par catégorie">
+            <span class="filter-lead">Filtrer par :</span>
             <button class="filter-chip" type="button" data-filter="all" aria-pressed="false">Tous les projets</button>
-            <button class="filter-chip" type="button" data-filter="interior" aria-pressed="false">Interieur</button>
-            <button class="filter-chip" type="button" data-filter="exterior" aria-pressed="false">Exterieur</button>
+            <button class="filter-chip" type="button" data-filter="interior" aria-pressed="false">Intérieur</button>
+            <button class="filter-chip" type="button" data-filter="exterior" aria-pressed="false">Extérieur</button>
             <button class="filter-chip" type="button" data-filter="renovation" aria-pressed="false">Rénovation</button>
             <button class="filter-chip" type="button" data-filter="construction" aria-pressed="false">Construction</button>
           </div>
@@ -52,7 +51,7 @@
 
       <section class="section" style="padding-top: 20px;">
         <div class="container">
-          <div class="cards-3">
+          <div class="cards-3 work-cards-grid">
             <article class="card project-card reveal" data-group="projects" data-tags="interior renovation">
               <div class="media-top project-video-media project-image-kitchen">
                 <img src="assets/projets/covers/cuisine-sur-mesure-cover.webp?v=ratio43" alt="Cuisine moderne en bois avec ilot central" loading="lazy">
@@ -63,7 +62,7 @@
                 <p>Amenagement d'une cuisine design avec ilot central et equipements haut de gamme.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 6 semaines</span>
-                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-01.mp4" data-video-title="Cuisine moderne sur mesure" aria-label="Voir la vidéo du projet Cuisine moderne sur mesure">Vidéo</button>
+                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-01.mp4" data-video-title="Cuisine moderne sur mesure" aria-label="Voir la vidéo du projet Cuisine moderne sur mesure"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
@@ -78,7 +77,7 @@
                 <p>Rénovation complète d'un appartement avec finitions soignées et espaces modernisés.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 4 mois</span>
-                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-02.mp4" data-video-title="Appartement renove Paris 16e" aria-label="Voir la vidéo du projet Appartement renove Paris 16e">Vidéo</button>
+                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-02.mp4" data-video-title="Appartement renove Paris 16e" aria-label="Voir la vidéo du projet Appartement renove Paris 16e"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
@@ -93,13 +92,13 @@
                 <p>Réaménagement d'un espace de vie avec sol clair, grandes ouvertures et finitions propres.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 3 semaines</span>
-                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-03.mp4" data-video-title="Salon lumineux renove" aria-label="Voir la vidéo du projet Salon lumineux renove">Vidéo</button>
+                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-03.mp4" data-video-title="Salon lumineux renove" aria-label="Voir la vidéo du projet Salon lumineux renove"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
 
             <article class="card project-card project-photo-card reveal" data-group="projects" data-tags="interior renovation">
-              <div class="media-top project-image-tall project-image-portrait-left">
+              <div class="media-top project-video-media project-image-tall project-image-portrait-left">
                 <img src="assets/projets/covers/salle-de-bain-lumineuse-cover.webp?v=ratio43" alt="Salle de bain lumineuse avec baignoire et meubles en bois" loading="lazy">
               </div>
               <div class="card-body">
@@ -108,13 +107,13 @@
                 <p>Rénovation complète avec baignoire, meuble double vasque et finitions bois.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 3 semaines</span>
-                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true">Vidéo</button>
+                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-salle-de-bain-lumineuse.mp4" data-video-title="Salle de bain lumineuse" aria-label="Voir la vidéo du projet Salle de bain lumineuse"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
 
             <article class="card project-card project-photo-card reveal" data-group="projects" data-tags="interior renovation">
-              <div class="media-top project-image-wide">
+              <div class="media-top project-video-media project-image-wide">
                 <img src="assets/projets/covers/salle-de-bain-moderne-cover.webp?v=ratio43" alt="Salle de bain moderne avec douche italienne" loading="lazy">
               </div>
               <div class="card-body">
@@ -123,7 +122,7 @@
                 <p>Transformation d'une pièce d'eau avec douche italienne et rangements intégrés.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 4 semaines</span>
-                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true">Vidéo</button>
+                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-salle-de-bain-moderne.mp4" data-video-title="Salle de bain moderne" aria-label="Voir la vidéo du projet Salle de bain moderne"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
@@ -138,7 +137,7 @@
                 <p>Finitions soignées, équipements contemporains et optimisation de l'espace.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 3 semaines</span>
-                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true">Vidéo</button>
+                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
@@ -153,13 +152,13 @@
                 <p>Création d'un meuble mural avec rangements, niches décoratives et intégration propre.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 2 semaines</span>
-                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true">Vidéo</button>
+                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
 
             <article class="card project-card project-photo-card reveal" data-group="projects" data-tags="exterior renovation">
-              <div class="media-top project-image-wide">
+              <div class="media-top project-video-media project-image-wide">
                 <img src="assets/projets/covers/terrasse-renovee-cover.webp?v=ratio43" alt="Terrasse extérieure rénovée" loading="lazy">
               </div>
               <div class="card-body">
@@ -168,7 +167,7 @@
                 <p>Aménagement extérieur propre, durable et pensé pour un usage quotidien confortable.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 2 semaines</span>
-                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true">Vidéo</button>
+                  <button class="project-video-button" type="button" data-video-src="assets/projets/videos/projet-video-terrasse-renovee.mp4" data-video-title="Terrasse renovee" aria-label="Voir la vidéo du projet Terrasse renovee"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
@@ -183,7 +182,7 @@
                 <p>Pose et finition de portes intérieures avec alignements nets et rendu homogène.</p>
                 <div class="project-footer">
                   <span class="project-meta">Durée: 1 semaine</span>
-                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true">Vidéo</button>
+                  <button class="project-video-button project-video-button-pending" type="button" disabled aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7Z"/></svg><span>Vidéo</span></button>
                 </div>
               </div>
             </article>
@@ -203,7 +202,7 @@
           <div class="comparison-grid comparison-showcase-grid">
             <article class="card comparison-card comparison-showcase-card reveal">
               <div class="comparison-image">
-                <img src="PozeInainteSiDupa/baieinatesidupa.png" alt="Avant apres salle de bain lumineuse" loading="lazy">
+                <img src="assets/projets/avant-apres/salle-de-bain.png" alt="Avant apres salle de bain lumineuse" loading="lazy">
                 <span class="comparison-label comparison-label-before">Avant</span>
                 <span class="comparison-label comparison-label-after">Apres</span>
               </div>
@@ -212,7 +211,7 @@
 
             <article class="card comparison-card comparison-showcase-card reveal">
               <div class="comparison-image">
-                <img src="PozeInainteSiDupa/Pozeinaintesibucatarie.png" alt="Avant apres cuisine moderne sur mesure" loading="lazy">
+                <img src="assets/projets/avant-apres/cuisine.png" alt="Avant apres cuisine moderne sur mesure" loading="lazy">
                 <span class="comparison-label comparison-label-before">Avant</span>
                 <span class="comparison-label comparison-label-after">Apres</span>
               </div>
@@ -221,7 +220,7 @@
 
             <article class="card comparison-card comparison-showcase-card reveal">
               <div class="comparison-image">
-                <img src="PozeInainteSiDupa/pozainaintescara.png" alt="Avant apres escalier et interieur renove" loading="lazy">
+                <img src="assets/projets/avant-apres/escalier.png" alt="Avant apres escalier et interieur renove" loading="lazy">
                 <span class="comparison-label comparison-label-before">Avant</span>
                 <span class="comparison-label comparison-label-after">Apres</span>
               </div>
@@ -230,7 +229,7 @@
 
             <article class="card comparison-card comparison-showcase-card reveal">
               <div class="comparison-image">
-                <img src="PozeInainteSiDupa/pozainaitnesidupaterasa.png" alt="Avant apres terrasse et facade contemporaine" loading="lazy">
+                <img src="assets/projets/avant-apres/terrasse.png" alt="Avant apres terrasse et facade contemporaine" loading="lazy">
                 <span class="comparison-label comparison-label-before">Avant</span>
                 <span class="comparison-label comparison-label-after">Apres</span>
               </div>
@@ -241,16 +240,18 @@
       </section>
 
       <section class="section">
-        <div class="container metrics-grid">
-          <article class="stat reveal"><strong>100+</strong><span>Projets realises</span></article>
-          <article class="stat reveal"><strong>200+</strong><span>Clients satisfaits</span></article>
-          <article class="stat reveal"><strong>15</strong><span>Professionnels qualifies</span></article>
+        <div class="container">
+          <div class="metrics-grid work-cards-grid">
+            <article class="stat reveal"><strong>100+</strong><span>Projets realises</span></article>
+            <article class="stat reveal"><strong>200+</strong><span>Clients satisfaits</span></article>
+            <article class="stat reveal"><strong>15</strong><span>Professionnels qualifies</span></article>
+          </div>
         </div>
       </section>
 
-      <section class="section section-primary">
+      <section class="section">
         <div class="container">
-          <div class="cta-shell reveal" style="text-align:center;">
+          <div class="cta-shell section-primary page-cta reveal" style="text-align:center;">
             <h2>Votre projet sera le prochain</h2>
             <p class="muted-on-dark">
               Faites confiance a ADAZ RENOV pour donner vie a vos projets de renovation et

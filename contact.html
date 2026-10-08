@@ -9,15 +9,12 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Contact et devis gratuit | ADAZ RENOV">
     <meta property="og:description" content="Parlez-nous de votre projet et recevez un accompagnement personnalisé pour vos travaux.">
-    <meta property="og:image" content="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <meta property="og:image" content="assets/brand/adaz-renov-logo.png">
     <meta property="og:locale" content="fr_FR">
     <meta name="theme-color" content="#1e3a5f">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260518adazai23">
-    <link rel="icon" type="image/png" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
-    <link rel="apple-touch-icon" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <link rel="icon" type="image/png" href="assets/brand/adaz-renov-logo.png">
+    <link rel="apple-touch-icon" href="assets/brand/adaz-renov-logo.png">
     <script src="ai-config.js" defer></script>
     <script src="script.js?v=20260518adazai23" defer></script>
   </head>
@@ -25,56 +22,59 @@
     <div class="site-header"></div>
 
     <main>
-      <section class="hero-simple">
+      <section class="hero-simple contact-hero page-hero-banner" aria-labelledby="contact-title">
         <div class="container">
           <div class="hero-card reveal">
             <span class="eyebrow">Contact</span>
-            <h1>Parlons de votre projet</h1>
+            <h1 id="contact-title">Parlons de votre projet</h1>
             <p>
               Une question ? Un projet à réaliser ? Notre équipe est à votre écoute pour vous
-              accompagner, vous conseiller et vous proposer un devis detaille.
+              accompagner, vous conseiller et vous proposer un devis détaillé.
             </p>
+            <a class="button secondary" href="#contact-devis">Demander un devis gratuit <span aria-hidden="true">↓</span></a>
           </div>
         </div>
       </section>
 
-      <section class="section section-muted" style="padding-bottom: 40px;">
-        <div class="container cards-4">
+      <section class="section section-muted contact-details" aria-label="Nos coordonnées">
+        <div class="container">
+          <div class="cards-4 contact-details-grid">
           <article class="card contact-card reveal">
-            <div class="icon-badge">TL</div>
-            <h3>Telephone</h3>
+            <div class="icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L9 10.9a16 16 0 0 0 4.1 4.1l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 2.7 2z"/></svg></div>
+            <h3>Téléphone</h3>
             <p><a href="tel:+33186047468">+33 1 86 04 74 68</a></p>
           </article>
           <article class="card contact-card reveal">
-            <div class="icon-badge">EM</div>
-            <h3>Email</h3>
+            <div class="icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg></div>
+            <h3>Gmail</h3>
             <p><a href="mailto:adazrenov@gmail.com">adazrenov@gmail.com</a></p>
           </article>
           <article class="card contact-card reveal">
-            <div class="icon-badge">AD</div>
+            <div class="icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
             <h3>Adresse</h3>
             <p>1 Place du Vieux Pays<br>94880 Noiseau, France</p>
           </article>
           <article class="card contact-card reveal">
-            <div class="icon-badge">HR</div>
+            <div class="icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
             <h3>Horaires</h3>
-            <p>Lun - Ven: 8h00 - 18h00<br>Sam: 9h00 - 13h00</p>
+            <p>Lun – Ven : 8h00 – 18h00<br>Sam : 9h00 – 13h00</p>
           </article>
+          </div>
         </div>
       </section>
 
-      <section class="section" style="padding-top: 20px;">
+      <section class="section" id="contact-devis" style="padding-top: 20px;">
         <div class="container contact-grid">
-          <div class="card form-shell reveal">
+          <div class="card form-shell contact-form-card reveal">
             <span class="eyebrow">Demande de devis</span>
-            <h2 style="margin: 18px 0 10px;">Parlez-nous de votre projet</h2>
-            <p class="muted" style="margin-bottom: 26px;">
-              Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+            <h2>Parlez-nous de votre projet</h2>
+            <p class="muted contact-form-description">
+              Décrivez vos travaux pour préparer votre demande de devis avec notre équipe.
             </p>
 
             <div id="contact-success" class="success-card" hidden>
-              <strong>Message envoye !</strong>
-              Merci pour votre demande. Nous vous contacterons tres prochainement.
+              <strong>Message envoyé !</strong>
+              Merci pour votre demande. Nous vous contacterons très prochainement.
             </div>
 
             <form id="contact-form">
@@ -84,23 +84,25 @@
                   <input id="name" name="name" type="text" placeholder="Jean Dupont" required>
                 </div>
                 <div class="field">
-                  <label for="phone">Telephone *</label>
-                  <input id="phone" name="phone" type="tel" placeholder="Votre numéro de téléphone" required>
+                  <label for="phone">Téléphone *</label>
+                  <input id="phone" name="phone" type="tel" placeholder="Votre numéro" required>
                 </div>
-                <div class="field full">
-                  <label for="email">Email *</label>
-                  <input id="email" name="email" type="email" placeholder="jean.dupont@email.com" required>
+                <div class="field">
+                  <label for="email">Gmail *</label>
+                  <input id="email" name="email" type="email" placeholder="jean.dupont@gmail.com" required>
                 </div>
-                <div class="field full">
+                <div class="field">
                   <label for="subject">Type de projet *</label>
                   <select id="subject" name="subject" required>
-                    <option value="">Selectionnez un service</option>
-                    <option>Rénovation intérieure</option>
-                    <option>Rénovation extérieure</option>
-                    <option>Construction generale</option>
-                    <option>Amenagement cuisine</option>
-                    <option>Amenagement salle de bain</option>
-                    <option>Autre demande</option>
+                    <option value="">Choisissez votre projet</option>
+                    <option>Fourniture et pose de fenêtres</option>
+                    <option>Rénovation de salle de bain</option>
+                    <option>Installation d’interphone ou de visiophone</option>
+                    <option>Installation électrique</option>
+                    <option>Travaux de maçonnerie</option>
+                    <option>Peinture et décoration</option>
+                    <option>Portes et volets sur mesure</option>
+                    <option>Rénovation complète ou autre projet</option>
                   </select>
                 </div>
                 <div class="field full">
@@ -108,23 +110,23 @@
                   <textarea id="message" name="message" rows="6" placeholder="Décrivez votre projet en quelques mots..." required></textarea>
                 </div>
               </div>
-              <div style="margin-top: 22px;">
+              <div class="contact-form-actions">
                 <button class="button" type="submit">Envoyer ma demande</button>
               </div>
               <p class="form-footnote">
-                En soumettant ce formulaire, vous acceptez que vos donnees soient utilisees pour
-                vous recontacter. Vos informations ne seront jamais partagees avec des tiers.
+                En soumettant ce formulaire, vous acceptez que vos données soient utilisées pour
+                vous recontacter. Vos informations ne seront jamais partagées avec des tiers.
               </p>
             </form>
           </div>
 
-          <div style="display:grid; gap: 24px;">
+          <div class="contact-sidebar">
             <div class="card value-card reveal">
               <h3>Pourquoi nous choisir ?</h3>
               <ul class="feature-list">
-                <li><span class="check">&#10003;</span><span><strong>Devis gratuit et sans engagement</strong><br>Nous etudions votre projet et vous proposons un devis detaille gratuitement.</span></li>
-                <li><span class="check">&#10003;</span><span><strong>Reponse rapide</strong><br>Nous nous engageons a vous repondre sous 24 heures ouvrees.</span></li>
-                <li><span class="check">&#10003;</span><span><strong>Accompagnement personnalise</strong><br>Un interlocuteur dedie vous accompagne tout au long du projet.</span></li>
+                <li><span class="check">&#10003;</span><span><strong>Devis gratuit et sans engagement</strong><br>Une étude de votre projet et un devis détaillé, sans frais.</span></li>
+                <li><span class="check">&#10003;</span><span><strong>Réponse rapide</strong><br>Une réponse sous 24 heures ouvrées.</span></li>
+                <li><span class="check">&#10003;</span><span><strong>Accompagnement personnalisé</strong><br>Un interlocuteur dédié à chaque étape de votre projet.</span></li>
               </ul>
             </div>
             <div class="card map-card reveal">
@@ -137,51 +139,57 @@
                   allowfullscreen
                 ></iframe>
               </div>
-              <div class="map-surface map-surface-compact">
-                <div>
-                  <div class="icon-badge" style="margin: 0 auto 18px;">MP</div>
-                  <h3>Notre showroom</h3>
-                  <p class="muted">1 Place du Vieux Pays<br>94880 Noiseau, France</p>
-                  <div style="margin-top: 20px;">
-                    <a class="button small light" href="https://www.google.com/maps/dir/?api=1&destination=1%20Place%20du%20Vieux%20Pays%2C%2094880%20Noiseau%2C%20France" target="_blank" rel="noopener noreferrer">Itineraire vers le showroom</a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section section-muted">
+      <section class="section section-muted contact-faq" aria-labelledby="contact-faq-title">
         <div class="container" style="max-width: 860px;">
           <div class="section-head reveal">
-            <h2>Questions fréquentes</h2>
+            <h2 id="contact-faq-title">Questions fréquentes</h2>
             <p>Retrouvez les réponses aux questions les plus courantes.</p>
           </div>
           <div class="faq-list">
-            <article class="card faq-card reveal">
-              <h3>Quel est le delai pour recevoir un devis ?</h3>
-              <p>Nous nous engageons a vous envoyer un devis detaille sous 48 heures apres notre premiere rencontre ou visite technique.</p>
-            </article>
-            <article class="card faq-card reveal">
-              <h3>Intervenez-vous partout en France ?</h3>
-              <p>Nous intervenons principalement en Ile-de-France et dans les grandes villes francaises. Contactez-nous pour verifier notre zone d'intervention.</p>
-            </article>
-            <article class="card faq-card reveal">
-              <h3>Quelles garanties proposez-vous ?</h3>
-              <p>Tous nos travaux sont couverts par une garantie decennale. Nous sommes egalement assures en responsabilite civile professionnelle.</p>
-            </article>
-            <article class="card faq-card reveal">
-              <h3>Proposez-vous un financement ?</h3>
-              <p>Oui, nous travaillons avec des partenaires financiers pour vous proposer des solutions adaptees a votre budget.</p>
-            </article>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Quelles informations préparer pour demander un devis ?</h3></summary>
+              <p>Précisez les travaux souhaités, la surface approximative, la localisation et votre calendrier. Quelques photos préparées pour notre échange peuvent aussi aider à comprendre votre projet.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Quel est le délai pour recevoir un devis ?</h3></summary>
+              <p>Nous nous engageons à vous envoyer un devis détaillé sous 48 heures après notre première rencontre ou visite technique.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Faut-il prévoir une visite avant le début des travaux ?</h3></summary>
+              <p>Une visite permet de vérifier les mesures, l’état des lieux et les contraintes techniques. Contactez notre équipe pour déterminer si elle est nécessaire et convenir d’un rendez-vous.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Intervenez-vous partout en France ?</h3></summary>
+              <p>Nous intervenons principalement en Île-de-France et dans les grandes villes françaises. Contactez-nous pour vérifier notre zone d’intervention.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Quelles garanties proposez-vous ?</h3></summary>
+              <p>Tous nos travaux sont couverts par une garantie décennale. Nous sommes également assurés en responsabilité civile professionnelle.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Combien de temps durent les travaux ?</h3></summary>
+              <p>La durée dépend de l’ampleur du chantier, des matériaux choisis et des contraintes techniques. Le planning est précisé avec vous selon les interventions et les approvisionnements nécessaires.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Puis-je rester dans mon logement pendant les travaux ?</h3></summary>
+              <p>Cela dépend des pièces concernées, de l’accès au chantier et des éventuelles coupures d’eau ou d’électricité. Ce point est étudié avec vous avant les travaux pour prévoir une organisation adaptée.</p>
+            </details>
+            <details class="card faq-card reveal" name="contact-faq">
+              <summary><h3>Proposez-vous un financement ?</h3></summary>
+              <p>Oui, nous travaillons avec des partenaires financiers pour vous proposer des solutions adaptées à votre budget.</p>
+            </details>
           </div>
         </div>
       </section>
 
       <section class="section">
         <div class="container">
-          <div class="cta-shell section-primary reveal" style="text-align:center;">
+          <div class="cta-shell section-primary page-cta reveal" style="text-align:center;">
             <h2>Besoin d'aide ?</h2>
             <p class="muted-on-dark">Notre équipe est disponible pour répondre à toutes vos questions.</p>
             <div class="hero-actions" style="justify-content:center;">

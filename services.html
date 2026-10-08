@@ -9,15 +9,12 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Services rénovation et construction | ADAZ RENOV">
     <meta property="og:description" content="Découvrez les prestations ADAZ RENOV pour rénover, moderniser et améliorer votre habitat.">
-    <meta property="og:image" content="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <meta property="og:image" content="assets/brand/adaz-renov-logo.png">
     <meta property="og:locale" content="fr_FR">
     <meta name="theme-color" content="#1e3a5f">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260518adazai23">
-    <link rel="icon" type="image/png" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
-    <link rel="apple-touch-icon" href="Pozelogo+altele/LOGOADAZNOU-transparent.png">
+    <link rel="icon" type="image/png" href="assets/brand/adaz-renov-logo.png">
+    <link rel="apple-touch-icon" href="assets/brand/adaz-renov-logo.png">
     <script src="ai-config.js" defer></script>
     <script src="script.js?v=20260518adazai23" defer></script>
   </head>
@@ -25,29 +22,29 @@
     <div class="site-header"></div>
 
     <main>
-      <section class="hero-simple">
+      <section class="hero-simple services-hero page-hero-banner" aria-labelledby="services-title">
         <div class="container">
           <div class="hero-card reveal">
             <span class="eyebrow">Nos services</span>
-            <h1>Des prestations claires, soignées et adaptées à votre projet</h1>
+            <h1 id="services-title"><span>Des prestations soignées,</span> <span>adaptées à votre projet.</span></h1>
             <p>
-              ADAZ RENOV vous accompagne sur les travaux essentiels de rénovation et d'amélioration
-              de votre habitat, avec une approche rapide, propre et professionnelle.
+              ADAZ RENOV vous accompagne dans vos travaux de rénovation et d’amélioration
+              de l’habitat, avec une approche soignée et professionnelle.
             </p>
+            <a class="button" href="#services-prestations">Découvrir nos services <span aria-hidden="true">↓</span></a>
           </div>
         </div>
       </section>
 
-      <section class="section">
+      <section class="section services-list" id="services-prestations" aria-labelledby="services-prestations-title">
         <div class="container">
           <div class="section-head reveal">
-            <span class="eyebrow">Prestations</span>
-            <h2>Les services que nous proposons</h2>
-            <p>Voici nos interventions principales, expliquées simplement pour mieux préparer votre demande.</p>
+            <span class="eyebrow">Nos prestations</span>
+            <h2 id="services-prestations-title">Des solutions pour vos travaux</h2>
           </div>
 
-          <div class="cards-3">
-            <article class="card project-card reveal">
+          <div class="cards-3 work-cards-grid">
+            <article class="card project-card reveal" id="service-fenetres">
               <div class="media-top">
                 <img
                   src="assets/services/covers/service-fenetres-cover.webp?v=services1"
@@ -58,19 +55,14 @@
               <div class="card-body">
                 <div class="project-topline">01 - Fenêtres</div>
                 <h3>Fourniture de fenêtres et pose</h3>
-                <p>
-                  Remplacement et pose de fenêtres pour améliorer l’isolation thermique et phonique de
-                  votre habitation. ADAZ RENOV vous accompagne avec une installation propre, rapide et
-                  adaptée à vos besoins de rénovation énergétique.
-                </p>
+                <p>Fourniture et pose de fenêtres sur mesure pour améliorer l’isolation thermique et phonique de votre habitat, avec une installation soignée.</p>
                 <div class="project-footer">
-                  <span class="project-meta">Sur mesure</span>
-                  <span class="project-year">Qualité</span>
+                  <a class="inline-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </article>
 
-            <article class="card project-card reveal">
+            <article class="card project-card reveal" id="service-salle-de-bain">
               <div class="media-top">
                 <img
                   src="assets/services/covers/service-salle-de-bain-cover.webp?v=services1"
@@ -81,19 +73,14 @@
               <div class="card-body">
                 <div class="project-topline">02 - Salle de bain</div>
                 <h3>Salle de bain</h3>
-                <p>
-                  Rénovation de salle de bain complète ou partielle avec plomberie, carrelage et finitions
-                  soignées. Nous créons un espace fonctionnel, esthétique et durable, pensé pour votre
-                  confort au quotidien.
-                </p>
+                <p>Rénovation complète ou partielle de votre salle de bain : plomberie, carrelage et finitions pour un espace confortable, fonctionnel et durable.</p>
                 <div class="project-footer">
-                  <span class="project-meta">Rénovation</span>
-                  <span class="project-year">Design</span>
+                  <a class="inline-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </article>
 
-            <article class="card project-card reveal">
+            <article class="card project-card reveal" id="service-interphone">
               <div class="media-top">
                 <img
                   src="assets/services/covers/service-interphone-visiophone-cover.webp?v=services1"
@@ -104,19 +91,14 @@
               <div class="card-body">
                 <div class="project-topline">03 - Sécurité</div>
                 <h3>Interphone et visiophone</h3>
-                <p>
-                  Installation d’interphones et visiophones pour sécuriser l’accès à votre logement et
-                  faciliter la communication avec vos visiteurs. Une solution moderne, fiable et adaptée
-                  à vos usages.
-                </p>
+                <p>Installation d’interphones et visiophones pour sécuriser votre entrée et communiquer facilement avec vos visiteurs, avec des équipements adaptés à votre logement.</p>
                 <div class="project-footer">
-                  <span class="project-meta">Confort</span>
-                  <span class="project-year">Connecté</span>
+                  <a class="inline-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </article>
 
-            <article class="card project-card reveal">
+            <article class="card project-card reveal" id="service-electricite">
               <div class="media-top">
                 <img
                   src="assets/services/covers/service-installation-electrique-cover.webp?v=services1"
@@ -127,19 +109,14 @@
               <div class="card-body">
                 <div class="project-topline">04 - Électricité</div>
                 <h3>Installation Électrique</h3>
-                <p>
-                  Travaux d’électricité pour moderniser, sécuriser ou mettre aux normes votre installation.
-                  Nous intervenons avec sérieux pour garantir fiabilité, confort et conformité dans votre
-                  habitat.
-                </p>
+                <p>Modernisation, sécurisation et mise aux normes de votre installation électrique pour améliorer la fiabilité et le confort de votre habitat.</p>
                 <div class="project-footer">
-                  <span class="project-meta">Sécurité</span>
-                  <span class="project-year">Normes</span>
+                  <a class="inline-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </article>
 
-            <article class="card project-card reveal">
+            <article class="card project-card reveal" id="service-maconnerie">
               <div class="media-top">
                 <img
                   src="assets/services/covers/service-maconnerie-cover.webp?v=services1"
@@ -150,19 +127,14 @@
               <div class="card-body">
                 <div class="project-topline">05 - Maçonnerie</div>
                 <h3>Travaux Maçonnerie</h3>
-                <p>
-                  Travaux de maçonnerie pour murs, cloisons, agrandissements ou petites démolitions.
-                  ADAZ RENOV réalise des prestations solides et durables pour transformer ou renforcer
-                  votre maison.
-                </p>
+                <p>Murs, cloisons, agrandissements et petites démolitions : des travaux de maçonnerie solides et soignés pour transformer ou renforcer votre maison.</p>
                 <div class="project-footer">
-                  <span class="project-meta">Structure</span>
-                  <span class="project-year">Durable</span>
+                  <a class="inline-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </article>
 
-            <article class="card project-card reveal">
+            <article class="card project-card reveal" id="service-peinture">
               <div class="media-top">
                 <img
                   src="assets/services/covers/service-peinture-decoration-cover.webp?v=services1"
@@ -173,14 +145,9 @@
               <div class="card-body">
                 <div class="project-topline">06 - Finitions</div>
                 <h3>Peinture et décoration</h3>
-                <p>
-                  Peinture intérieure et extérieure avec des finitions soignées et des couleurs adaptées à
-                  votre style. Donnez une nouvelle identité à votre maison avec une décoration élégante et
-                  propre.
-                </p>
+                <p>Peinture intérieure et extérieure, décoration et finitions soignées pour rafraîchir votre habitat et créer une ambiance adaptée à votre style.</p>
                 <div class="project-footer">
-                  <span class="project-meta">Finition</span>
-                  <span class="project-year">Style</span>
+                  <a class="inline-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a>
                 </div>
               </div>
             </article>
@@ -222,7 +189,7 @@
 
       <section class="section">
         <div class="container">
-          <div class="cta-shell section-primary reveal" style="text-align:center;">
+          <div class="cta-shell section-primary page-cta reveal" style="text-align:center;">
             <h2>Prêt à concrétiser votre projet ?</h2>
             <p class="muted-on-dark">
               Contactez-nous des maintenant pour une consultation gratuite et un devis

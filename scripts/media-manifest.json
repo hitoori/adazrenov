@@ -1,0 +1,1497 @@
+{
+  "version": 1,
+  "media": {
+    "assets/about/equipe-adaz-renov.webp": {
+      "path": "assets/optimized/about/equipe-adaz-renov.2b0c170d9f11.webp",
+      "width": 1600,
+      "height": 1100,
+      "originalBytes": 166830,
+      "bytes": 128624,
+      "variants": [
+        {
+          "path": "assets/optimized/about/equipe-adaz-renov.2b0c170d9f11-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/equipe-adaz-renov.2b0c170d9f11-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/hero-principal-adaz.webp": {
+      "path": "assets/optimized/about/hero-principal-adaz.1e12e3c2cbbf.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 156852,
+      "bytes": 108742,
+      "variants": [
+        {
+          "path": "assets/optimized/about/hero-principal-adaz.1e12e3c2cbbf-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/hero-principal-adaz.1e12e3c2cbbf-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/materiale-showroom.webp": {
+      "path": "assets/optimized/about/materiale-showroom.076a7a392682.webp",
+      "width": 900,
+      "height": 1200,
+      "originalBytes": 131794,
+      "bytes": 88312,
+      "variants": []
+    },
+    "assets/about/office-main-clean.webp": {
+      "path": "assets/optimized/about/office-main-clean.12a31b78819a.webp",
+      "width": 1067,
+      "height": 1600,
+      "originalBytes": 412910,
+      "bytes": 125178,
+      "variants": [
+        {
+          "path": "assets/optimized/about/office-main-clean.12a31b78819a-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/office-main-clean.12a31b78819a-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/portrait-anatolie-new.webp": {
+      "path": "assets/optimized/about/portrait-anatolie-new.2b23eb98f2eb.webp",
+      "width": 1122,
+      "height": 1402,
+      "originalBytes": 63334,
+      "bytes": 45154,
+      "variants": [
+        {
+          "path": "assets/optimized/about/portrait-anatolie-new.2b23eb98f2eb-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/portrait-anatolie-new.2b23eb98f2eb-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/portrait-daniel-new.webp": {
+      "path": "assets/optimized/about/portrait-daniel-new.6ad3d50d421b.webp",
+      "width": 1122,
+      "height": 1402,
+      "originalBytes": 65966,
+      "bytes": 45906,
+      "variants": [
+        {
+          "path": "assets/optimized/about/portrait-daniel-new.6ad3d50d421b-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/portrait-daniel-new.6ad3d50d421b-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/artisan-travaux.jpg": {
+      "path": "assets/optimized/about/team/artisan-travaux.671bc9ef57d1.webp",
+      "width": 1066,
+      "height": 1600,
+      "originalBytes": 553488,
+      "bytes": 91148,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/artisan-travaux.671bc9ef57d1-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/artisan-travaux.671bc9ef57d1-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/chantier-interieur.png": {
+      "path": "assets/optimized/about/team/chantier-interieur.240125d1e8dc.webp",
+      "width": 1122,
+      "height": 1402,
+      "originalBytes": 2093457,
+      "bytes": 81066,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/chantier-interieur.240125d1e8dc-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/chantier-interieur.240125d1e8dc-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/finition.png": {
+      "path": "assets/optimized/about/team/finition.b670fa371eaa.webp",
+      "width": 1086,
+      "height": 1448,
+      "originalBytes": 2286013,
+      "bytes": 144966,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/finition.b670fa371eaa-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/finition.b670fa371eaa-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/intervention-exterieure.png": {
+      "path": "assets/optimized/about/team/intervention-exterieure.cec02fd883fc.webp",
+      "width": 941,
+      "height": 558,
+      "originalBytes": 727801,
+      "bytes": 56102,
+      "variants": []
+    },
+    "assets/about/team/intervention.png": {
+      "path": "assets/optimized/about/team/intervention.f1937e47504d.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 1822174,
+      "bytes": 36010,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/intervention.f1937e47504d-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/intervention.f1937e47504d-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/pose-finition.png": {
+      "path": "assets/optimized/about/team/pose-finition.8172e0755b5b.webp",
+      "width": 1086,
+      "height": 1448,
+      "originalBytes": 2579620,
+      "bytes": 223916,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/pose-finition.8172e0755b5b-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/pose-finition.8172e0755b5b-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/pose-menuiserie.jpg": {
+      "path": "assets/optimized/about/team/pose-menuiserie.0c5b6182eb54.webp",
+      "width": 1600,
+      "height": 1067,
+      "originalBytes": 809963,
+      "bytes": 66356,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/pose-menuiserie.0c5b6182eb54-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/pose-menuiserie.0c5b6182eb54-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/pose-technique.png": {
+      "path": "assets/optimized/about/team/pose-technique.95de0bd18520.webp",
+      "width": 1086,
+      "height": 1448,
+      "originalBytes": 2530613,
+      "bytes": 220438,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/pose-technique.95de0bd18520-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/pose-technique.95de0bd18520-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/preparation-technique.jpg": {
+      "path": "assets/optimized/about/team/preparation-technique.aea1d7f58090.webp",
+      "width": 1066,
+      "height": 1600,
+      "originalBytes": 437231,
+      "bytes": 80182,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/preparation-technique.aea1d7f58090-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/preparation-technique.aea1d7f58090-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/about/team/renovation-murale.png": {
+      "path": "assets/optimized/about/team/renovation-murale.14ce5c42a4eb.webp",
+      "width": 900,
+      "height": 1600,
+      "originalBytes": 1859409,
+      "bytes": 72944,
+      "variants": []
+    },
+    "assets/about/team/travaux-interieurs.jpg": {
+      "path": "assets/optimized/about/team/travaux-interieurs.72f3df4f67e3.webp",
+      "width": 1067,
+      "height": 1600,
+      "originalBytes": 920328,
+      "bytes": 110566,
+      "variants": [
+        {
+          "path": "assets/optimized/about/team/travaux-interieurs.72f3df4f67e3-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/about/team/travaux-interieurs.72f3df4f67e3-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/brand/adaz-renov-logo.png": {
+      "path": "assets/optimized/brand/adaz-renov-logo.a3c5efcfb585.webp",
+      "width": 711,
+      "height": 800,
+      "originalBytes": 691592,
+      "bytes": 110960,
+      "variants": []
+    },
+    "assets/brand/adaz-renov-wordmark.png": {
+      "path": "assets/optimized/brand/adaz-renov-wordmark.69922f72dea6.webp",
+      "width": 800,
+      "height": 404,
+      "originalBytes": 227657,
+      "bytes": 34832,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-01/fenetre-modele-01-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-01/fenetre-modele-01-vue.81c7e76ce889.webp",
+      "width": 579,
+      "height": 900,
+      "originalBytes": 15140,
+      "bytes": 15140,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-02/fenetre-modele-02-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-02/fenetre-modele-02-vue.9a7df3ca8b70.webp",
+      "width": 670,
+      "height": 900,
+      "originalBytes": 29834,
+      "bytes": 29834,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-03/fenetre-modele-03-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-03/fenetre-modele-03-vue.deef1cab2fea.webp",
+      "width": 526,
+      "height": 900,
+      "originalBytes": 15084,
+      "bytes": 15084,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-04/fenetre-modele-04-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-04/fenetre-modele-04-vue.2530dd60a490.webp",
+      "width": 559,
+      "height": 900,
+      "originalBytes": 29564,
+      "bytes": 29564,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-05/fenetre-modele-05-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-05/fenetre-modele-05-vue.f0f57545d66c.webp",
+      "width": 655,
+      "height": 900,
+      "originalBytes": 13950,
+      "bytes": 13950,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-06/fenetre-modele-06-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-06/fenetre-modele-06-vue.cd7130c31c80.webp",
+      "width": 535,
+      "height": 900,
+      "originalBytes": 12864,
+      "bytes": 12864,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-07/fenetre-modele-07-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-07/fenetre-modele-07-vue.3580bfa06c76.webp",
+      "width": 586,
+      "height": 900,
+      "originalBytes": 12164,
+      "bytes": 12164,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-08/fenetre-modele-08-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-08/fenetre-modele-08-vue.b2b345a9c421.webp",
+      "width": 601,
+      "height": 900,
+      "originalBytes": 15900,
+      "bytes": 15900,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-09/fenetre-modele-09-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-09/fenetre-modele-09-vue.c7b6ddb02936.webp",
+      "width": 900,
+      "height": 900,
+      "originalBytes": 28618,
+      "bytes": 28618,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-10/fenetre-modele-10-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-10/fenetre-modele-10-vue.d19b7aa478a7.webp",
+      "width": 720,
+      "height": 900,
+      "originalBytes": 12566,
+      "bytes": 12566,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-11/fenetre-modele-11-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-11/fenetre-modele-11-vue.cd7130c31c80.webp",
+      "width": 535,
+      "height": 900,
+      "originalBytes": 12864,
+      "bytes": 12864,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-12/fenetre-modele-12-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-12/fenetre-modele-12-vue.ad478243887a.webp",
+      "width": 900,
+      "height": 900,
+      "originalBytes": 17756,
+      "bytes": 17756,
+      "variants": []
+    },
+    "assets/catalogue/geamuri/fenetre-modele-13/fenetre-modele-13-vue.webp": {
+      "path": "assets/optimized/catalogue/geamuri/fenetre-modele-13/fenetre-modele-13-vue.00f60785579a.webp",
+      "width": 900,
+      "height": 900,
+      "originalBytes": 12296,
+      "bytes": 12296,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-01/porte.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-01/porte.1ca2c34423c2.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 2318694,
+      "bytes": 175676,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-01/schema.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-01/schema.377d95b962c0.webp",
+      "width": 1474,
+      "height": 1067,
+      "originalBytes": 789023,
+      "bytes": 544114,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-02/porte.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-02/porte.2be6cf8b9f35.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 2258408,
+      "bytes": 197476,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-02/schema.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-02/schema.b9c39fce1a7d.webp",
+      "width": 1413,
+      "height": 1113,
+      "originalBytes": 809766,
+      "bytes": 541810,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-03/porte.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-03/porte.a33fd19ad619.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 2279722,
+      "bytes": 182094,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-03/schema.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-03/schema.2f4cf6681c5a.webp",
+      "width": 1411,
+      "height": 1114,
+      "originalBytes": 856897,
+      "bytes": 584888,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-04/porte.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-04/porte.25b498716510.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 2247729,
+      "bytes": 183876,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-04/schema.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-04/schema.71fada1d3dcf.webp",
+      "width": 1421,
+      "height": 1107,
+      "originalBytes": 858201,
+      "bytes": 587238,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-05/porte.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-05/porte.ecde142af98b.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 2288759,
+      "bytes": 204246,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-05/schema.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-05/schema.bc3f8cad8d07.webp",
+      "width": 1376,
+      "height": 1143,
+      "originalBytes": 901888,
+      "bytes": 619260,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-06/porte.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-06/porte.640f0773d4b9.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 2248142,
+      "bytes": 207460,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-06/schema.png": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-06/schema.5f5e98f16dc2.webp",
+      "width": 1404,
+      "height": 1120,
+      "originalBytes": 816584,
+      "bytes": 555916,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-07/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-07/porte.249301580a59.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 35116,
+      "bytes": 27306,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-07/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-07/schema.177bc3e91ad1.webp",
+      "width": 1400,
+      "height": 1120,
+      "originalBytes": 41856,
+      "bytes": 41856,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-08/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-08/porte.2cc5b21f25b1.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 38132,
+      "bytes": 20788,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-08/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-08/schema.6d65bbe4ea06.webp",
+      "width": 1400,
+      "height": 1120,
+      "originalBytes": 50642,
+      "bytes": 50642,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-09/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-09/porte.62c92d912bd6.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 34646,
+      "bytes": 26758,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-09/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-09/schema.c8514c48b2e0.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 32584,
+      "bytes": 32584,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-10/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-10/porte.3ecc0091dead.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 26820,
+      "bytes": 20534,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-10/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-10/schema.dcc3fed2816e.webp",
+      "width": 1400,
+      "height": 1120,
+      "originalBytes": 46490,
+      "bytes": 46490,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-11/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-11/porte.725b45af77ed.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 32158,
+      "bytes": 17728,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-11/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-11/schema.5ad99941c61b.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 36494,
+      "bytes": 36494,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-12/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-12/porte.3f3eabb371dd.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 41170,
+      "bytes": 20214,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-12/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-12/schema.bd7e627ffd86.webp",
+      "width": 1400,
+      "height": 1120,
+      "originalBytes": 65804,
+      "bytes": 65804,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-13/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-13/porte.5b109542ddd0.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 26574,
+      "bytes": 19710,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-13/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-13/schema.647263a05034.webp",
+      "width": 1400,
+      "height": 1120,
+      "originalBytes": 57802,
+      "bytes": 57802,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-14/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-14/porte.4fe5a8dc41d3.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 21004,
+      "bytes": 16062,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-14/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-14/schema.7703cb7b8c91.webp",
+      "width": 1400,
+      "height": 1120,
+      "originalBytes": 45790,
+      "bytes": 45790,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-15/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-15/porte.95f3dbd1a27f.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 29812,
+      "bytes": 24594,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-15/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-15/schema.eea31e997079.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 44882,
+      "bytes": 44882,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-16/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-16/porte.068fde8c5d89.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 19290,
+      "bytes": 14014,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-16/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-16/schema.c6eff880d331.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 24580,
+      "bytes": 24580,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-17/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-17/porte.a51a9c295cf1.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 13374,
+      "bytes": 10942,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-17/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-17/schema.5b65cb37200e.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 22196,
+      "bytes": 22196,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-18/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-18/porte.ff81f6d02b72.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 26876,
+      "bytes": 20868,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-18/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-18/schema.6e058ea28b0c.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 37940,
+      "bytes": 37940,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-19/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-19/porte.8c2d93098700.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 16962,
+      "bytes": 13258,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-19/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-19/schema.b439628f5788.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 48334,
+      "bytes": 48334,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-20/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-20/porte.3b16c679b88f.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 16620,
+      "bytes": 12802,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-20/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-20/schema.aca29da59afe.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 23598,
+      "bytes": 23598,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-21/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-21/porte.126aefb06777.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 64664,
+      "bytes": 41428,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-21/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-21/schema.f13173c16654.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 22074,
+      "bytes": 22074,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-22/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-22/porte.6396debfd149.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 58336,
+      "bytes": 41786,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-22/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-22/schema.403e570c3458.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 20584,
+      "bytes": 20584,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-23/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-23/porte.782b8f1e4b50.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 54588,
+      "bytes": 35040,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-23/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-23/schema.e90735f671da.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 25024,
+      "bytes": 25024,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-24/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-24/porte.d0d4ce09892e.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 58570,
+      "bytes": 43304,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-24/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-24/schema.76454b1eca04.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 23092,
+      "bytes": 23092,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-25/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-25/porte.d36640eaab1d.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 65116,
+      "bytes": 49702,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-25/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-25/schema.86771912bfac.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 24932,
+      "bytes": 24932,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-26/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-26/porte.adb37e33ebf8.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 58038,
+      "bytes": 37544,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-26/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-26/schema.4af59720e0ae.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 23180,
+      "bytes": 23180,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-27/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-27/porte.a53a49425a51.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 56684,
+      "bytes": 33434,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-27/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-27/schema.35dc01fd179a.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 21292,
+      "bytes": 21292,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-28/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-28/porte.4469a0e43c32.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 55148,
+      "bytes": 36736,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-28/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-28/schema.9832c6060d7d.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 22916,
+      "bytes": 22916,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-29/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-29/porte.690b8398d82f.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 62048,
+      "bytes": 45466,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-29/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-29/schema.f826cf894b31.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 24808,
+      "bytes": 24808,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-30/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-30/porte.3615be6c96d8.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 10414,
+      "bytes": 7392,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-30/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-30/schema.b66f9f092b5b.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 16614,
+      "bytes": 16614,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-31/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-31/porte.5f0fda149fa9.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 15266,
+      "bytes": 11240,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-31/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-31/schema.783176057ddb.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 16860,
+      "bytes": 16860,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-32/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-32/porte.48901ee3637e.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 14848,
+      "bytes": 11070,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-32/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-32/schema.c331c738e9fc.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 17292,
+      "bytes": 17292,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-33/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-33/porte.fc0994f6aa96.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 15840,
+      "bytes": 11410,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-33/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-33/schema.4e2e1bfe44bd.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 19358,
+      "bytes": 19358,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-34/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-34/porte.490bd53c2450.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 12430,
+      "bytes": 8280,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-34/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-34/schema.83195b4c3872.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 18270,
+      "bytes": 18270,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-35/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-35/porte.b512c2e7bc73.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 16960,
+      "bytes": 12298,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-35/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-35/schema.1d1d688e9088.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 18998,
+      "bytes": 18998,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-36/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-36/porte.a4a8a72c156b.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 14574,
+      "bytes": 10464,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-36/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-36/schema.39839f689dba.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 17988,
+      "bytes": 17988,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-37/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-37/porte.48921aa1d253.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 15902,
+      "bytes": 11466,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-37/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-37/schema.e90e484c1f71.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 18688,
+      "bytes": 18688,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-38/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-38/porte.477d22ce4610.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 18564,
+      "bytes": 13028,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-38/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-38/schema.4bbb752c452e.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 20284,
+      "bytes": 20284,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-39/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-39/porte.67b2e3ebbd65.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 12406,
+      "bytes": 8788,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-39/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-39/schema.b3b5cbadfb04.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 19528,
+      "bytes": 19528,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-40/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-40/porte.c6942fa895af.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 17268,
+      "bytes": 12134,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-40/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-40/schema.aed26e633532.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 21470,
+      "bytes": 21470,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-41/porte.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-41/porte.1eb7213d72b5.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 15354,
+      "bytes": 10912,
+      "variants": []
+    },
+    "assets/catalogue/panneaux/panneau-41/schema.webp": {
+      "path": "assets/optimized/catalogue/panneaux/panneau-41/schema.06a5dc943b3a.webp",
+      "width": 1024,
+      "height": 1536,
+      "originalBytes": 21676,
+      "bytes": 21676,
+      "variants": []
+    },
+    "assets/catalogue/volets/volet-roulant-exterieur-modele-01/volet-roulant-exterieur-modele-01.webp": {
+      "path": "assets/optimized/catalogue/volets/volet-roulant-exterieur-modele-01/volet-roulant-exterieur-modele-01.1cb2577efa58.webp",
+      "width": 809,
+      "height": 900,
+      "originalBytes": 40126,
+      "bytes": 40126,
+      "variants": []
+    },
+    "assets/catalogue/volets/volet-roulant-exterieur-modele-02/volet-roulant-exterieur-modele-02.webp": {
+      "path": "assets/optimized/catalogue/volets/volet-roulant-exterieur-modele-02/volet-roulant-exterieur-modele-02.780f363eaaf1.webp",
+      "width": 695,
+      "height": 900,
+      "originalBytes": 61976,
+      "bytes": 61976,
+      "variants": []
+    },
+    "assets/catalogue/volets/volet-roulant-exterieur-modele-03/volet-roulant-exterieur-modele-03.webp": {
+      "path": "assets/optimized/catalogue/volets/volet-roulant-exterieur-modele-03/volet-roulant-exterieur-modele-03.ba04ca3ae573.webp",
+      "width": 719,
+      "height": 900,
+      "originalBytes": 40790,
+      "bytes": 40790,
+      "variants": []
+    },
+    "assets/catalogue/volets/volet-roulant-exterieur-modele-04/volet-roulant-exterieur-modele-04.webp": {
+      "path": "assets/optimized/catalogue/volets/volet-roulant-exterieur-modele-04/volet-roulant-exterieur-modele-04.9a678632277b.webp",
+      "width": 712,
+      "height": 900,
+      "originalBytes": 34172,
+      "bytes": 34172,
+      "variants": []
+    },
+    "assets/catalogue/volets/volet-roulant-exterieur-modele-05/volet-roulant-exterieur-modele-05.webp": {
+      "path": "assets/optimized/catalogue/volets/volet-roulant-exterieur-modele-05/volet-roulant-exterieur-modele-05.a94710f9cd36.webp",
+      "width": 618,
+      "height": 900,
+      "originalBytes": 48228,
+      "bytes": 48228,
+      "variants": []
+    },
+    "assets/catalogue/volets/volet-roulant-exterieur-modele-06/volet-roulant-exterieur-modele-06.webp": {
+      "path": "assets/optimized/catalogue/volets/volet-roulant-exterieur-modele-06/volet-roulant-exterieur-modele-06.0c8e1545eba6.webp",
+      "width": 679,
+      "height": 900,
+      "originalBytes": 41962,
+      "bytes": 41962,
+      "variants": []
+    },
+    "assets/home/chantier-construction.webp": {
+      "path": "assets/optimized/home/chantier-construction.f180a7da5e85.webp",
+      "width": 1067,
+      "height": 1600,
+      "originalBytes": 496452,
+      "bytes": 135870,
+      "variants": [
+        {
+          "path": "assets/optimized/home/chantier-construction.f180a7da5e85-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/home/chantier-construction.f180a7da5e85-768w.webp",
+          "width": 768
+        },
+        {
+          "path": "assets/optimized/home/chantier-construction.f180a7da5e85-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/home/maison-renovee.webp": {
+      "path": "assets/optimized/home/maison-renovee.e09e918467e3.webp",
+      "width": 1600,
+      "height": 1067,
+      "originalBytes": 353334,
+      "bytes": 154164,
+      "variants": [
+        {
+          "path": "assets/optimized/home/maison-renovee.e09e918467e3-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/home/maison-renovee.e09e918467e3-768w.webp",
+          "width": 768
+        },
+        {
+          "path": "assets/optimized/home/maison-renovee.e09e918467e3-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/avant-apres/cuisine.png": {
+      "path": "assets/optimized/projets/avant-apres/cuisine.1d30016794b3.webp",
+      "width": 1600,
+      "height": 855,
+      "originalBytes": 1865799,
+      "bytes": 103532,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/avant-apres/cuisine.1d30016794b3-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/avant-apres/cuisine.1d30016794b3-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/avant-apres/escalier.png": {
+      "path": "assets/optimized/projets/avant-apres/escalier.ff32e3161e0d.webp",
+      "width": 1600,
+      "height": 900,
+      "originalBytes": 2487877,
+      "bytes": 159612,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/avant-apres/escalier.ff32e3161e0d-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/avant-apres/escalier.ff32e3161e0d-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/avant-apres/salle-de-bain.png": {
+      "path": "assets/optimized/projets/avant-apres/salle-de-bain.3f516f6579e4.webp",
+      "width": 1600,
+      "height": 900,
+      "originalBytes": 1843506,
+      "bytes": 86278,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/avant-apres/salle-de-bain.3f516f6579e4-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/avant-apres/salle-de-bain.3f516f6579e4-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/avant-apres/terrasse.png": {
+      "path": "assets/optimized/projets/avant-apres/terrasse.5dd88ec76cd9.webp",
+      "width": 1600,
+      "height": 900,
+      "originalBytes": 2553426,
+      "bytes": 210290,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/avant-apres/terrasse.5dd88ec76cd9-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/avant-apres/terrasse.5dd88ec76cd9-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/appartement-renove-cover.webp": {
+      "path": "assets/optimized/projets/covers/appartement-renove-cover.e9f88a6914ee.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 209580,
+      "bytes": 157994,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/appartement-renove-cover.e9f88a6914ee-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/appartement-renove-cover.e9f88a6914ee-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/bibliotheque-sur-mesure-cover.webp": {
+      "path": "assets/optimized/projets/covers/bibliotheque-sur-mesure-cover.bdef64de0564.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 83636,
+      "bytes": 56610,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/bibliotheque-sur-mesure-cover.bdef64de0564-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/bibliotheque-sur-mesure-cover.bdef64de0564-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/cuisine-sur-mesure-cover.webp": {
+      "path": "assets/optimized/projets/covers/cuisine-sur-mesure-cover.4641fc1c21ef.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 185544,
+      "bytes": 135278,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/cuisine-sur-mesure-cover.4641fc1c21ef-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/cuisine-sur-mesure-cover.4641fc1c21ef-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/portes-interieures-cover.webp": {
+      "path": "assets/optimized/projets/covers/portes-interieures-cover.ed71e2128478.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 170804,
+      "bytes": 117804,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/portes-interieures-cover.ed71e2128478-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/portes-interieures-cover.ed71e2128478-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/salle-de-bain-lumineuse-cover.webp": {
+      "path": "assets/optimized/projets/covers/salle-de-bain-lumineuse-cover.eccef45d292c.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 72112,
+      "bytes": 51462,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/salle-de-bain-lumineuse-cover.eccef45d292c-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/salle-de-bain-lumineuse-cover.eccef45d292c-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/salle-de-bain-moderne-cover.webp": {
+      "path": "assets/optimized/projets/covers/salle-de-bain-moderne-cover.c7e5f812118e.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 119140,
+      "bytes": 86928,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/salle-de-bain-moderne-cover.c7e5f812118e-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/salle-de-bain-moderne-cover.c7e5f812118e-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/salle-de-bain-premium-cover.webp": {
+      "path": "assets/optimized/projets/covers/salle-de-bain-premium-cover.0cb1e1770562.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 113240,
+      "bytes": 78452,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/salle-de-bain-premium-cover.0cb1e1770562-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/salle-de-bain-premium-cover.0cb1e1770562-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/salon-lumineux-cover.webp": {
+      "path": "assets/optimized/projets/covers/salon-lumineux-cover.fb7d8113044a.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 212544,
+      "bytes": 161220,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/salon-lumineux-cover.fb7d8113044a-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/salon-lumineux-cover.fb7d8113044a-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/covers/terrasse-renovee-cover.webp": {
+      "path": "assets/optimized/projets/covers/terrasse-renovee-cover.67e6c5f40685.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 520930,
+      "bytes": 402480,
+      "variants": [
+        {
+          "path": "assets/optimized/projets/covers/terrasse-renovee-cover.67e6c5f40685-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/projets/covers/terrasse-renovee-cover.67e6c5f40685-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/projets/videos/projet-video-01.mp4": {
+      "path": "assets/optimized/projets/videos/projet-video-01.20b14f7faabd.mp4",
+      "duration": 87.15,
+      "originalBytes": 52006174,
+      "bytes": 6114978
+    },
+    "assets/projets/videos/projet-video-02.mp4": {
+      "path": "assets/optimized/projets/videos/projet-video-02.f1606065a1f8.mp4",
+      "duration": 172.54,
+      "originalBytes": 53824148,
+      "bytes": 4682343
+    },
+    "assets/projets/videos/projet-video-03.mp4": {
+      "path": "assets/optimized/projets/videos/projet-video-03.b2d8291606bb.mp4",
+      "duration": 62.1,
+      "originalBytes": 37086679,
+      "bytes": 3860155
+    },
+    "assets/projets/videos/projet-video-salle-de-bain-lumineuse.mp4": {
+      "path": "assets/optimized/projets/videos/projet-video-salle-de-bain-lumineuse.a2d066b23305.mp4",
+      "duration": 33.27,
+      "originalBytes": 4040680,
+      "bytes": 4443524
+    },
+    "assets/projets/videos/projet-video-salle-de-bain-moderne.mp4": {
+      "path": "assets/optimized/projets/videos/projet-video-salle-de-bain-moderne.d283d8335053.mp4",
+      "duration": 18.8,
+      "originalBytes": 2799155,
+      "bytes": 2705984
+    },
+    "assets/projets/videos/projet-video-terrasse-renovee.mp4": {
+      "path": "assets/optimized/projets/videos/projet-video-terrasse-renovee.fd03a117cbd7.mp4",
+      "duration": 20.07,
+      "originalBytes": 6142906,
+      "bytes": 6013621
+    },
+    "assets/services/covers/service-fenetres-cover.webp": {
+      "path": "assets/optimized/services/covers/service-fenetres-cover.43ed41dad90a.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 138342,
+      "bytes": 102386,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-fenetres-cover.43ed41dad90a-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-fenetres-cover.43ed41dad90a-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-installation-electrique-cover.webp": {
+      "path": "assets/optimized/services/covers/service-installation-electrique-cover.8005b0f2a2cf.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 127972,
+      "bytes": 93088,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-installation-electrique-cover.8005b0f2a2cf-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-installation-electrique-cover.8005b0f2a2cf-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-interphone-visiophone-cover.webp": {
+      "path": "assets/optimized/services/covers/service-interphone-visiophone-cover.6e52de2dbf91.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 153760,
+      "bytes": 97228,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-interphone-visiophone-cover.6e52de2dbf91-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-interphone-visiophone-cover.6e52de2dbf91-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-maconnerie-cover.webp": {
+      "path": "assets/optimized/services/covers/service-maconnerie-cover.9ad3c87f00e1.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 310290,
+      "bytes": 243214,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-maconnerie-cover.9ad3c87f00e1-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-maconnerie-cover.9ad3c87f00e1-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-peinture-decoration-cover.webp": {
+      "path": "assets/optimized/services/covers/service-peinture-decoration-cover.8d21e07f23c0.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 68978,
+      "bytes": 42148,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-peinture-decoration-cover.8d21e07f23c0-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-peinture-decoration-cover.8d21e07f23c0-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-salle-de-bain-cover.webp": {
+      "path": "assets/optimized/services/covers/service-salle-de-bain-cover.0f9ceb494487.webp",
+      "width": 1600,
+      "height": 1200,
+      "originalBytes": 113204,
+      "bytes": 71706,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-salle-de-bain-cover.0f9ceb494487-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-salle-de-bain-cover.0f9ceb494487-960w.webp",
+          "width": 960
+        }
+      ]
+    }
+  },
+  "icons": {
+    "favicon.png": "assets/optimized/brand/favicon.1d6c8209ac95.png",
+    "apple-touch-icon.png": "assets/optimized/brand/apple-touch-icon.9ac76dda8d10.png",
+    "header-logo.webp": "assets/optimized/brand/header-logo.f78c6ef4f411.webp"
+  }
+}

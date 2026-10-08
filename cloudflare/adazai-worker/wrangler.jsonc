@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "adazai-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-08",
+  "workers_dev": true,
+  "vars": {
+    "OPENAI_MODEL": "gpt-4o-mini",
+    "OPENAI_FALLBACK_MODEL": "gpt-5.4-mini",
+    "ALLOWED_ORIGINS": "https://adazrenov.fr,https://www.adazrenov.fr,https://hitoori.github.io,http://localhost:8765,http://127.0.0.1:8765",
+    "MAX_OUTPUT_TOKENS": "500"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "adazai-conversations",
+      "database_id": "53882073-81e0-42a6-8bff-90d5b549f022"
+    }
+  ],
+  "secrets": {
+    "required": [
+      "OPENAI_API_KEY"
+    ]
+  }
+}

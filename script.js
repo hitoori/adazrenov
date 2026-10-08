@@ -8,8 +8,8 @@ const navItems = [
   { page: "contact", href: "contact.html", label: "Contact" },
 ];
 
-const brandLogoPath = "Pozelogo+altele/Original%20on%20Transparent.png";
-const headerLogoPath = "Pozelogo+altele/LOGOADAZNOU-transparent.png";
+const brandLogoPath = "assets/brand/adaz-renov-wordmark.png";
+const headerLogoPath = "assets/brand/adaz-renov-logo.png";
 const companyPhoneDisplay = "+33 1 86 04 74 68";
 const companyPhoneHref = "tel:+33186047468";
 const companyEmail = "adazrenov@gmail.com";
@@ -18,6 +18,35 @@ const socialLinks = {
   instagram: "https://www.instagram.com/adaz_renov?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
   tiktok: "https://www.tiktok.com/@adaz_renov?is_from_webapp=1&sender_device=pc",
 };
+
+function getConfiguredFunctionUrl(functionName, explicitUrl = "") {
+  if (explicitUrl) return String(explicitUrl);
+  const baseUrl = String(window.AI_AISSTEN_FUNCTIONS_BASE_URL || "").replace(/\/$/, "");
+  return baseUrl ? `${baseUrl}/${functionName}` : "";
+}
+
+function getWeb3FormsAccessKey() {
+  return String(window.AI_AISSTEN_CONTACT_CONFIG?.web3FormsAccessKey || "").trim();
+}
+
+async function submitToWeb3Forms(fields) {
+  const accessKey = getWeb3FormsAccessKey();
+  if (!accessKey) throw new Error("Web3Forms access key is not configured.");
+
+  const response = await fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      access_key: accessKey,
+      ...fields,
+    }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.success === false) {
+    throw new Error(data.message || `Web3Forms unavailable: ${response.status}`);
+  }
+  return data;
+}
 
 function buildHeader(currentPage) {
   const links = navItems
@@ -30,7 +59,7 @@ function buildHeader(currentPage) {
   return `
     <div class="site-header-shell">
       <div class="container site-nav">
-        <a class="brand" href="index.html" aria-label="ADAZ RENOV Accueil">
+        <a class="brand" href="index.html" aria-label="ADAZ RENOV Renovation &amp; Construction - Accueil">
           <span class="logo-mark" aria-hidden="true">
             <img src="${headerLogoPath}" alt="">
           </span>
@@ -67,20 +96,20 @@ function buildFooter() {
   return `
     <footer class="footer-shell">
       <div class="container footer-grid">
-        <div class="footer-block">
-          <div class="brand">
+        <div class="footer-block footer-brand">
+          <a class="brand" href="index.html" aria-label="ADAZ RENOV, accueil">
             <img class="brand-logo" src="${brandLogoPath}" alt="Logo ADAZ RENOV">
-          </div>
+          </a>
           <p>
-            Votre partenaire de confiance pour tous vos projets de renovation et construction en France.
+            Votre partenaire de confiance pour vos projets de rénovation et construction en France.
           </p>
-          <div class="social-row" aria-label="Reseaux sociaux">
-            <a class="social-pill" href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Facebook ADAZ RENOV">Fb</a>
-            <a class="social-pill" href="${socialLinks.instagram}" target="_blank" rel="noopener noreferrer" aria-label="Instagram ADAZ RENOV">Ig</a>
-            <a class="social-pill" href="${socialLinks.tiktok}" target="_blank" rel="noopener noreferrer" aria-label="TikTok ADAZ RENOV">Tk</a>
+          <div class="social-row" aria-label="Réseaux sociaux">
+            <a class="social-pill" href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Facebook ADAZ RENOV"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z"/></svg></a>
+            <a class="social-pill" href="${socialLinks.instagram}" target="_blank" rel="noopener noreferrer" aria-label="Instagram ADAZ RENOV"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M224.3 141a115 115 0 1 0 -.6 230 115 115 0 1 0 .6-230zm-.6 40.4a74.6 74.6 0 1 1 .6 149.2 74.6 74.6 0 1 1 -.6-149.2zm93.4-45.1a26.8 26.8 0 1 1 53.6 0 26.8 26.8 0 1 1 -53.6 0zm129.7 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM399 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
+            <a class="social-pill" href="${socialLinks.tiktok}" target="_blank" rel="noopener noreferrer" aria-label="TikTok ADAZ RENOV"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M448.5 209.9c-44 .1-87-13.6-122.8-39.2l0 178.7c0 33.1-10.1 65.4-29 92.6s-45.6 48-76.6 59.6-64.8 13.5-96.9 5.3-60.9-25.9-82.7-50.8-35.3-56-39-88.9 2.9-66.1 18.6-95.2 40-52.7 69.6-67.7 62.9-20.5 95.7-16l0 89.9c-15-4.7-31.1-4.6-46 .4s-27.9 14.6-37 27.3-14 28.1-13.9 43.9 5.2 31 14.5 43.7 22.4 22.1 37.4 26.9 31.1 4.8 46-.1 28-14.4 37.2-27.1 14.2-28.1 14.2-43.8l0-349.4 88 0c-.1 7.4 .6 14.9 1.9 22.2 3.1 16.3 9.4 31.9 18.7 45.7s21.3 25.6 35.2 34.6c19.9 13.1 43.2 20.1 67 20.1l0 87.4z"/></svg></a>
           </div>
         </div>
-        <div class="footer-block">
+        <nav class="footer-block footer-navigation" aria-label="Navigation du pied de page">
           <h3>Navigation</h3>
           <div class="footer-links">
             <a href="index.html">Accueil</a>
@@ -91,32 +120,32 @@ function buildFooter() {
             <a href="ia-travaux.html">IA Travaux</a>
             <a href="contact.html">Contact</a>
           </div>
-        </div>
-        <div class="footer-block">
+        </nav>
+        <div class="footer-block footer-services">
           <h3>Services</h3>
           <ul class="footer-links">
-            <li>Renovation interieure</li>
-            <li>Renovation exterieure</li>
-            <li>Construction generale</li>
-            <li>Amenagement sur mesure</li>
-            <li>Vente de matériaux</li>
-            <li>Outils IA chantier</li>
+            <li><a href="services.html#service-fenetres">Fourniture et pose de fenêtres</a></li>
+            <li><a href="services.html#service-salle-de-bain">Rénovation de salle de bain</a></li>
+            <li><a href="services.html#service-interphone">Interphone et visiophone</a></li>
+            <li><a href="services.html#service-electricite">Installation électrique</a></li>
+            <li><a href="services.html#service-maconnerie">Travaux de maçonnerie</a></li>
+            <li><a href="services.html#service-peinture">Peinture et décoration</a></li>
           </ul>
         </div>
-        <div class="footer-block">
+        <div class="footer-block footer-contact-block">
           <h3>Contact</h3>
-          <div class="footer-contact">
-            <span>1 Place du Vieux Pays<br>94880 Noiseau, France</span>
-            <a href="${companyPhoneHref}">${companyPhoneDisplay}</a>
-            <a href="mailto:${companyEmail}">${companyEmail}</a>
-          </div>
+          <dl class="footer-contact">
+            <div><dt>Adresse</dt><dd><address>1 Place du Vieux Pays<br>94880 Noiseau, France</address></dd></div>
+            <div><dt>Téléphone</dt><dd><a href="${companyPhoneHref}">${companyPhoneDisplay}</a></dd></div>
+            <div><dt>Gmail</dt><dd><a href="mailto:${companyEmail}">${companyEmail}</a></dd></div>
+          </dl>
         </div>
       </div>
       <div class="container footer-bottom">
-        <span>&copy; <span id="year"></span> ADAZ RENOV. Tous droits reserves.</span>
+        <span>&copy; <span id="year"></span> ADAZ RENOV. Tous droits réservés.</span>
         <div class="footer-legal">
-          <a href="#">Mentions legales</a>
-          <a href="politique-confidentialite.html">Politique de confidentialite</a>
+          <a href="#">Mentions légales</a>
+          <a href="politique-confidentialite.html">Politique de confidentialité</a>
           <a href="#">CGV</a>
         </div>
       </div>
@@ -130,7 +159,7 @@ function setupFilters() {
   groups.forEach((group) => {
     const key = group.dataset.filterGroup;
     const buttons = group.querySelectorAll("[data-filter]");
-    const cards = document.querySelectorAll(`[data-group="${key}"]`);
+    const selects = group.querySelectorAll("[data-filter-select]");
     const emptyState = document.querySelector(`[data-empty="${key}"]`);
 
     function apply(filter) {
@@ -142,7 +171,11 @@ function setupFilters() {
         button.setAttribute("aria-pressed", String(active));
       });
 
-      cards.forEach((card) => {
+      selects.forEach((select) => {
+        select.value = filter;
+      });
+
+      document.querySelectorAll(`[data-group="${key}"]`).forEach((card) => {
         const tags = (card.dataset.tags || "").split(" ");
         const show = filter === "all" || tags.includes(filter);
         card.hidden = !show;
@@ -162,6 +195,14 @@ function setupFilters() {
       button.addEventListener("click", () => apply(button.dataset.filter || "all"));
     });
 
+    selects.forEach((select) => {
+      select.addEventListener("change", () => apply(select.value || "all"));
+    });
+
+    document.addEventListener("productcataloguechange", () => {
+      const active = group.querySelector('[data-filter][aria-pressed="true"]');
+      apply(active?.dataset.filter || "all");
+    });
     apply("all");
   });
 }
@@ -172,7 +213,7 @@ function setupProductSubfilters() {
 
   const panels = root.querySelectorAll("[data-subfilter-panel]");
   const buttons = root.querySelectorAll("[data-subfilter]");
-  const cards = document.querySelectorAll('[data-group="products"]');
+  const selects = root.querySelectorAll("[data-subfilter-select]");
   const emptyState = document.querySelector('[data-empty="products"]');
   let activeMain = "all";
   let activeSub = "all";
@@ -194,6 +235,14 @@ function setupProductSubfilters() {
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
+
+    selects.forEach((select) => {
+      if (select.dataset.subfilterSelect === activeMain) {
+        select.value = activeSub;
+      } else {
+        select.value = "all";
+      }
+    });
   }
 
   function applySubfilter(nextSub = activeSub) {
@@ -201,7 +250,7 @@ function setupProductSubfilters() {
     let visible = 0;
     const needsSubfilter = activeMain === "doors" || activeMain === "windows";
 
-    cards.forEach((card) => {
+    document.querySelectorAll('[data-group="products"]').forEach((card) => {
       const tags = (card.dataset.tags || "").split(" ");
       const matchesMain = activeMain === "all" || tags.includes(activeMain);
       const matchesSub = !needsSubfilter || activeSub === "all" || card.dataset.subcategory === activeSub;
@@ -231,6 +280,10 @@ function setupProductSubfilters() {
     button.addEventListener("click", () => applySubfilter(button.dataset.subfilter || "all"));
   });
 
+  selects.forEach((select) => {
+    select.addEventListener("change", () => applySubfilter(select.value || "all"));
+  });
+
   document.addEventListener("productsfilterchange", (event) => {
     setMainFilter(event.detail?.filter || "all");
   });
@@ -251,38 +304,318 @@ let doorCatalogue = [
   {
     id: 1,
     colors: ["Noir mat"],
-    imagePath: "usiproduse/Panneau01/Panneau01.png",
-    schemaPath: "usiproduse/Panneau01/Panneau01schema.png",
+    imagePath: "assets/catalogue/panneaux/panneau-01/porte.png",
+    schemaPath: "assets/catalogue/panneaux/panneau-01/schema.png",
   },
   {
     id: 2,
     colors: ["Noir mat"],
-    imagePath: "usiproduse/Panneau02/Panneau02.png",
-    schemaPath: "usiproduse/Panneau02/Panneau02schema.png",
+    imagePath: "assets/catalogue/panneaux/panneau-02/porte.png",
+    schemaPath: "assets/catalogue/panneaux/panneau-02/schema.png",
   },
   {
     id: 3,
     colors: ["Noir mat"],
-    imagePath: "usiproduse/Panneau03/Panneau03.png",
-    schemaPath: "usiproduse/Panneau03/Panneau03SCHEMA.png",
+    imagePath: "assets/catalogue/panneaux/panneau-03/porte.png",
+    schemaPath: "assets/catalogue/panneaux/panneau-03/schema.png",
   },
   {
     id: 4,
     colors: ["Noir mat"],
-    imagePath: "usiproduse/Panneau04/Panneau04.png",
-    schemaPath: "usiproduse/Panneau04/Panneau04schema.png",
+    imagePath: "assets/catalogue/panneaux/panneau-04/porte.png",
+    schemaPath: "assets/catalogue/panneaux/panneau-04/schema.png",
   },
   {
     id: 5,
     colors: ["Noir mat"],
-    imagePath: "usiproduse/Panneau05/Panneau05.png",
-    schemaPath: "usiproduse/Panneau05/Panneau05schema.png",
+    imagePath: "assets/catalogue/panneaux/panneau-05/porte.png",
+    schemaPath: "assets/catalogue/panneaux/panneau-05/schema.png",
   },
   {
     id: 6,
     colors: ["Noir mat"],
-    imagePath: "usiproduse/Panneau06/Panneau06.png",
-    schemaPath: "usiproduse/Panneau06/Panneau06schema.png",
+    imagePath: "assets/catalogue/panneaux/panneau-06/porte.png",
+    schemaPath: "assets/catalogue/panneaux/panneau-06/schema.png",
+  },
+  {
+    id: 7,
+    title: "Porte d'entrée métallique modèle 07",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-07/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-07/schema.webp",
+  },
+  {
+    id: 8,
+    title: "Porte d'entrée métallique modèle 08",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-08/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-08/schema.webp",
+  },
+  {
+    id: 9,
+    title: "Porte d'entrée métallique modèle 09",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-09/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-09/schema.webp",
+  },
+  {
+    id: 10,
+    title: "Porte d'entrée métallique modèle 10",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-10/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-10/schema.webp",
+  },
+  {
+    id: 11,
+    title: "Porte d'entrée métallique modèle 11",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-11/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-11/schema.webp",
+  },
+  {
+    id: 12,
+    title: "Porte d'entrée métallique modèle 12",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-12/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-12/schema.webp",
+  },
+  {
+    id: 13,
+    title: "Porte d'entrée métallique modèle 13",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-13/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-13/schema.webp",
+  },
+  {
+    id: 14,
+    title: "Porte d'entrée métallique modèle 14",
+    material: "metal",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-14/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-14/schema.webp",
+  },
+  {
+    id: 15,
+    title: "Porte en bois vitrée modèle 15",
+    material: "glass",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-15/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-15/schema.webp",
+  },
+  {
+    id: 16,
+    title: "Porte en bois vitrée modèle 16",
+    material: "glass",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-16/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-16/schema.webp",
+  },
+  {
+    id: 17,
+    title: "Porte en bois vitrée modèle 17",
+    material: "glass",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-17/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-17/schema.webp",
+  },
+  {
+    id: 18,
+    title: "Porte en bois vitrée modèle 18",
+    material: "glass",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-18/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-18/schema.webp",
+  },
+  {
+    id: 19,
+    title: "Porte en bois vitrée modèle 19",
+    material: "glass",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-19/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-19/schema.webp",
+  },
+  {
+    id: 20,
+    title: "Porte en bois vitrée modèle 20",
+    material: "glass",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-20/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-20/schema.webp",
+  },
+  {
+    id: 21,
+    title: "Porte d'entrée MDF/XPS modèle 21",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-21/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-21/schema.webp",
+  },
+  {
+    id: 22,
+    title: "Porte d'entrée MDF/XPS modèle 22",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-22/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-22/schema.webp",
+  },
+  {
+    id: 23,
+    title: "Porte d'entrée MDF/XPS modèle 23",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-23/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-23/schema.webp",
+  },
+  {
+    id: 24,
+    title: "Porte d'entrée MDF/XPS modèle 24",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-24/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-24/schema.webp",
+  },
+  {
+    id: 25,
+    title: "Porte d'entrée MDF/XPS modèle 25",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-25/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-25/schema.webp",
+  },
+  {
+    id: 26,
+    title: "Porte d'entrée MDF/XPS modèle 26",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-26/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-26/schema.webp",
+  },
+  {
+    id: 27,
+    title: "Porte d'entrée MDF/XPS modèle 27",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-27/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-27/schema.webp",
+  },
+  {
+    id: 28,
+    title: "Porte d'entrée MDF/XPS modèle 28",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-28/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-28/schema.webp",
+  },
+  {
+    id: 29,
+    title: "Porte d'entrée MDF/XPS modèle 29",
+    material: "wood",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-29/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-29/schema.webp",
+  },
+  {
+    id: 30,
+    title: "Porte d'entrée PVC modèle 30",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-30/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-30/schema.webp",
+  },
+  {
+    id: 31,
+    title: "Porte d'entrée PVC modèle 31",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-31/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-31/schema.webp",
+  },
+  {
+    id: 32,
+    title: "Porte d'entrée PVC modèle 32",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-32/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-32/schema.webp",
+  },
+  {
+    id: 33,
+    title: "Porte d'entrée PVC modèle 33",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-33/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-33/schema.webp",
+  },
+  {
+    id: 34,
+    title: "Porte d'entrée PVC modèle 34",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-34/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-34/schema.webp",
+  },
+  {
+    id: 35,
+    title: "Porte d'entrée PVC modèle 35",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-35/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-35/schema.webp",
+  },
+  {
+    id: 36,
+    title: "Porte d'entrée PVC modèle 36",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-36/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-36/schema.webp",
+  },
+  {
+    id: 37,
+    title: "Porte d'entrée PVC modèle 37",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-37/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-37/schema.webp",
+  },
+  {
+    id: 38,
+    title: "Porte d'entrée PVC modèle 38",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-38/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-38/schema.webp",
+  },
+  {
+    id: 39,
+    title: "Porte d'entrée PVC modèle 39",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-39/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-39/schema.webp",
+  },
+  {
+    id: 40,
+    title: "Porte d'entrée PVC modèle 40",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-40/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-40/schema.webp",
+  },
+  {
+    id: 41,
+    title: "Porte d'entrée PVC modèle 41",
+    material: "pvc",
+    colors: ["Noir mat"],
+    imagePath: "assets/catalogue/panneaux/panneau-41/porte.webp",
+    schemaPath: "assets/catalogue/panneaux/panneau-41/schema.webp",
   },
 ];
 
@@ -476,18 +809,21 @@ async function loadProductCataloguesFromFirestore() {
 
 async function loadProductCatalogues() {
   const config = getAiProductsConfig();
+  const productsApiUrl = getConfiguredFunctionUrl("getProducts", config.apiUrl || "");
 
   try {
-    const payload = config.apiUrl
-      ? await loadProductCataloguesFromApi(config.apiUrl)
+    const payload = productsApiUrl
+      ? await loadProductCataloguesFromApi(productsApiUrl)
       : await loadProductCataloguesFromFirestore();
 
     if (payload && applyRemoteProductCatalogue(payload)) {
-      document.documentElement.dataset.productsSource = config.apiUrl ? "api" : "firestore";
+      document.documentElement.dataset.productsSource = productsApiUrl ? "api" : "firestore";
+      return true;
     }
   } catch (error) {
     console.warn("Products database unavailable, using local catalogue.", error);
   }
+  return false;
 }
 
 function slugifyDoorColor(value) {
@@ -503,18 +839,22 @@ function getDoorModelSlug(modelId) {
   return `porte-entree-modele-${String(modelId).padStart(2, "0")}`;
 }
 
+function getOptimizedImagePath(path) {
+  return window.ADAZ_OPTIMIZED_MEDIA?.[String(path).split("?")[0]] || path;
+}
+
 function getDoorImagePath(model, variantIndex) {
   if (model.imagePath && variantIndex === 0) {
-    return model.imagePath;
+    return getOptimizedImagePath(model.imagePath);
   }
 
   const modelSlug = getDoorModelSlug(model.id);
   const colorSlug = slugifyDoorColor(model.colors[variantIndex] || model.colors[0]);
-  return `assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`;
+  return getOptimizedImagePath(`assets/catalogue/usi/${modelSlug}/${modelSlug}-${colorSlug}.webp?v=white-bg`);
 }
 
 function getDoorSchemaImagePath(model) {
-  return model.schemaPath || "";
+  return model.schemaPath ? getOptimizedImagePath(model.schemaPath) : "";
 }
 
 function getWindowModelSlug(modelId) {
@@ -522,9 +862,9 @@ function getWindowModelSlug(modelId) {
 }
 
 function getWindowImagePath(model, slideKey) {
-  if (model.imagePath) return model.imagePath;
+  if (model.imagePath) return getOptimizedImagePath(model.imagePath);
   const modelSlug = getWindowModelSlug(model.id);
-  return `assets/catalogue/geamuri/${modelSlug}/${modelSlug}-${slideKey}.webp?v=20260503`;
+  return getOptimizedImagePath(`assets/catalogue/geamuri/${modelSlug}/${modelSlug}-${slideKey}.webp?v=20260503`);
 }
 
 function getShutterModelSlug(modelId) {
@@ -532,9 +872,9 @@ function getShutterModelSlug(modelId) {
 }
 
 function getShutterImagePath(model) {
-  if (model.imagePath) return model.imagePath;
+  if (model.imagePath) return getOptimizedImagePath(model.imagePath);
   const modelSlug = getShutterModelSlug(model.id);
-  return `assets/catalogue/volets/${modelSlug}/${modelSlug}.webp?v=20260503`;
+  return getOptimizedImagePath(`assets/catalogue/volets/${modelSlug}/${modelSlug}.webp?v=20260503`);
 }
 
 function normalizeProductMaterial(value, allowed, fallback) {
@@ -549,7 +889,7 @@ function normalizeProductMaterial(value, allowed, fallback) {
 }
 
 function getDoorMaterial(model) {
-  if (model.material) return normalizeProductMaterial(model.material, ["metal", "wood", "pvc"], "metal");
+  if (model.material) return normalizeProductMaterial(model.material, ["metal", "glass", "wood", "pvc"], "metal");
   const modelId = Number(model.id);
   if ([11, 12, 16].includes(modelId)) return "wood";
   if ([13, 14, 15, 17, 18, 19, 20, 21, 23, 24, 25].includes(modelId)) return "pvc";
@@ -565,12 +905,14 @@ function getWindowMaterial(model) {
 }
 
 function getDoorMaterialLabel(material) {
+  if (material === "glass") return "Bois vitré";
   if (material === "wood") return "Bois";
   if (material === "pvc") return "PVC";
   return "Acier";
 }
 
 function getDoorBasePrice(material) {
+  if (material === "glass") return 1550;
   if (material === "wood") return 1650;
   if (material === "pvc") return 1150;
   return 1450;
@@ -640,12 +982,12 @@ function buildDoorCatalogueCard(model) {
       <div class="card-body">
         <div class="image-toggle door-image-toggle" aria-label="Changer la vue du produit">
           <div class="door-image-option">
-            <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true" aria-label="Vue standard"></button>
-            <span>Standard</span>
+            <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true" aria-label="Vue produit"></button>
+            <span>Produit</span>
           </div>
           <div class="door-image-option">
-            <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false" aria-label="Vue sur mesure"></button>
-            <span>Sur mesure</span>
+            <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false" aria-label="Dessin technique"></button>
+            <span>Dessin</span>
           </div>
         </div>
         <div class="project-topline">Portes d'entrée</div>
@@ -678,7 +1020,7 @@ function buildDoorCatalogueCard(model) {
           <span>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}.</span>
           <span>Prix estimatif : <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>, hors pose.</span>
         </p>
-        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+        <div class="product-footer"><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
       </div>
     </article>
   `;
@@ -688,7 +1030,9 @@ function setupDoorCatalogue() {
   const root = document.querySelector("#door-products");
   if (!root) return;
 
-  root.innerHTML = doorCatalogue.map(buildDoorCatalogueCard).join("");
+  if (root.dataset.prerendered !== "true") {
+    root.innerHTML = doorCatalogue.map(buildDoorCatalogueCard).join("");
+  }
 
   root.querySelectorAll("[data-door-card]").forEach((card, cardIndex) => {
     const model = doorCatalogue[cardIndex];
@@ -762,8 +1106,7 @@ function setupDoorCatalogue() {
     sizeSelect?.addEventListener("change", updateDoor);
     widthInput?.addEventListener("input", updateDoor);
     heightInput?.addEventListener("input", updateDoor);
-    updateMedia("photo");
-    updateDoor();
+    // The card renderer already supplies the initial view, dimensions and price.
   });
 }
 
@@ -789,26 +1132,20 @@ function getWindowTechDetails(model) {
 
 function buildWindowSpecs(model) {
   const details = getWindowTechDetails(model);
-  const materialLabel = getWindowMaterial(model) === "aluminium"
-    ? "Aluminium"
-    : getWindowMaterial(model) === "wood"
-      ? "Bois"
-      : "PVC";
 
   return `
-    <div class="window-spec-card" aria-label="Caracteristiques techniques">
-      <p class="window-spec-lead">${escapeHtml(materialLabel)}, ${escapeHtml(details.joints)} joints, ${escapeHtml(details.chambers)} chambres, Uw ${escapeHtml(details.uw)} pour Ug = ${escapeHtml(details.ug)}.</p>
-      <div class="window-spec-pair">
-        <strong>${escapeHtml(details.joints)}</strong>
-        <span>Joints</span>
+    <div class="window-spec-card" aria-label="Caractéristiques techniques">
+      <div class="window-spec-highlights">
+        <div><strong>${escapeHtml(details.joints)}</strong><span>Joints</span></div>
+        <div><strong>${escapeHtml(details.chambers)}</strong><span>Chambres</span></div>
+        <div><strong>${escapeHtml(details.depth)}</strong><span>Profondeur</span></div>
       </div>
-      <div class="window-spec-pair">
-        <strong>${escapeHtml(details.chambers)}</strong>
-        <span>Chambres</span>
-      </div>
-      <p>Profondeur de construction : ${escapeHtml(details.depth)}</p>
-      <p>Epaisseur de vitrage : ${escapeHtml(details.glazing)} (standard 24 mm)</p>
-      <p class="window-custom-color">Coloris : sur mesure au choix</p>
+      <dl class="window-spec-details">
+        <div><dt>Performance Uw</dt><dd>${escapeHtml(details.uw)} pour Ug = ${escapeHtml(details.ug)}</dd></div>
+        <div><dt>Vitrage</dt><dd>${escapeHtml(details.glazing)}</dd></div>
+        <div><dt>Vitrage standard</dt><dd>24 mm</dd></div>
+        <div><dt>Coloris</dt><dd>Sur mesure au choix</dd></div>
+      </dl>
     </div>
   `;
 }
@@ -824,10 +1161,14 @@ function buildWindowCatalogueCard(model) {
         <img src="${imagePath}" alt="${title} - vue du modele" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
-        <div class="project-topline">Fenetres</div>
+        <div class="project-topline">Fenêtres</div>
         <h3>${title}</h3>
         ${buildWindowSpecs(model)}
-        <div class="product-footer window-footer"><span class="price-row">Sur devis</span><a class="window-request-link" href="contact.html">Demander <span aria-hidden="true">-&gt;</span></a></div>
+        <div class="product-note door-summary window-price-note">
+          <strong>Prix sur devis</strong>
+          <span>Selon les dimensions et les options.</span>
+        </div>
+        <div class="product-footer window-footer"><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
       </div>
     </article>
   `;
@@ -837,7 +1178,9 @@ function setupWindowCatalogue() {
   const root = document.querySelector("#window-products");
   if (!root) return;
 
-  root.innerHTML = windowCatalogue.map(buildWindowCatalogueCard).join("");
+  if (root.dataset.prerendered !== "true") {
+    root.innerHTML = windowCatalogue.map(buildWindowCatalogueCard).join("");
+  }
 }
 
 function buildShutterCatalogueCard(model) {
@@ -854,7 +1197,7 @@ function buildShutterCatalogueCard(model) {
         <div class="project-topline">Volets roulants exterieurs</div>
         <h3>${title}</h3>
         <p class="product-note shutter-short">${feature}</p>
-        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button small light" href="contact.html">Demander</a></div>
+        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
       </div>
     </article>
   `;
@@ -864,7 +1207,9 @@ function setupShutterCatalogue() {
   const root = document.querySelector("#shutter-products");
   if (!root) return;
 
-  root.innerHTML = shutterCatalogue.map(buildShutterCatalogueCard).join("");
+  if (root.dataset.prerendered !== "true") {
+    root.innerHTML = shutterCatalogue.map(buildShutterCatalogueCard).join("");
+  }
 }
 
 function orderProductCatalogueCards() {
@@ -1122,27 +1467,218 @@ function setupProductVariants() {
   });
 }
 
+function setupContactProjectPicker(form) {
+  const select = form.querySelector("#subject");
+  const label = form.querySelector('label[for="subject"]');
+  if (!select || !label) return;
+
+  const picker = document.createElement("div");
+  picker.className = "contact-project-picker";
+  picker.innerHTML = `<button type="button" id="subject-trigger" class="contact-project-trigger" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="subject-options" aria-required="true" aria-labelledby="subject-label subject-display"><span id="subject-display"></span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button><div id="subject-options" class="contact-project-options" role="listbox" aria-labelledby="subject-label" hidden></div><span id="subject-error" class="contact-project-error" hidden>Choisissez un type de projet.</span>`;
+  select.before(picker);
+  label.id = "subject-label";
+  label.htmlFor = "subject-trigger";
+  select.classList.add("contact-project-native");
+  select.tabIndex = -1;
+  select.setAttribute("aria-hidden", "true");
+
+  const trigger = picker.querySelector("button");
+  const display = picker.querySelector("#subject-display");
+  const list = picker.querySelector("[role=listbox]");
+  const error = picker.querySelector("#subject-error");
+  const options = Array.from(select.options).filter((option) => option.value);
+  const items = options.map((option, index) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.id = `subject-option-${index}`;
+    item.className = "contact-project-option";
+    item.setAttribute("role", "option");
+    item.tabIndex = -1;
+    item.textContent = option.textContent;
+    item.addEventListener("click", () => choose(index));
+    list.append(item);
+    return item;
+  });
+  let active = 0;
+  let search = "";
+  let searchTimer;
+
+  const sync = () => {
+    display.textContent = select.selectedOptions[0].textContent;
+    trigger.classList.toggle("is-placeholder", !select.value);
+    items.forEach((item, index) => item.setAttribute("aria-selected", String(options[index].value === select.value)));
+    if (select.value) {
+      error.hidden = true;
+      trigger.removeAttribute("aria-invalid");
+      trigger.removeAttribute("aria-describedby");
+    }
+  };
+  const highlight = (index) => {
+    active = (index + items.length) % items.length;
+    items.forEach((item, itemIndex) => item.classList.toggle("is-active", itemIndex === active));
+    trigger.setAttribute("aria-activedescendant", items[active].id);
+    items[active].scrollIntoView({ block: "nearest" });
+  };
+  const close = () => {
+    list.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.removeAttribute("aria-activedescendant");
+  };
+  const open = () => {
+    list.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    highlight(Math.max(0, options.findIndex((option) => option.value === select.value)));
+  };
+  function choose(index) {
+    select.value = options[index].value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+    close();
+    trigger.focus();
+  }
+
+  trigger.addEventListener("click", () => list.hidden ? open() : close());
+  trigger.addEventListener("keydown", (event) => {
+    if (["ArrowDown", "ArrowUp", "Home", "End", "Enter", " ", "Escape"].includes(event.key)) {
+      event.preventDefault();
+      if (event.key === "Escape") return close();
+      if (event.key === "Enter" || event.key === " ") return list.hidden ? open() : choose(active);
+      const wasClosed = list.hidden;
+      if (wasClosed) open();
+      if (event.key === "Home") highlight(0);
+      else if (event.key === "End") highlight(items.length - 1);
+      else if (!wasClosed) highlight(active + (event.key === "ArrowDown" ? 1 : -1));
+      return;
+    }
+    if (event.key === "Tab") return close();
+    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      search += event.key.toLocaleLowerCase("fr");
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { search = ""; }, 600);
+      const match = options.findIndex((option) => option.textContent.toLocaleLowerCase("fr").startsWith(search));
+      if (match !== -1) {
+        if (list.hidden) open();
+        highlight(match);
+      }
+    }
+  });
+  picker.addEventListener("focusout", (event) => {
+    if (!picker.contains(event.relatedTarget)) close();
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (!picker.contains(event.target)) close();
+  });
+  select.addEventListener("change", sync);
+  select.addEventListener("invalid", (event) => {
+    event.preventDefault();
+    error.hidden = false;
+    trigger.setAttribute("aria-invalid", "true");
+    trigger.setAttribute("aria-describedby", error.id);
+    trigger.focus();
+  });
+  form.addEventListener("reset", () => {
+    close();
+    error.hidden = true;
+    trigger.removeAttribute("aria-invalid");
+    trigger.removeAttribute("aria-describedby");
+    queueMicrotask(sync);
+  });
+  sync();
+}
+
 function setupContactForm() {
   const form = document.querySelector("#contact-form");
   const success = document.querySelector("#contact-success");
 
   if (!form || !success) return;
+  setupContactProjectPicker(form);
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    form.reset();
-    success.hidden = false;
-    success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalLabel = submitButton?.textContent || "Envoyer ma demande";
+    const contactConfig = window.AI_AISSTEN_CONTACT_CONFIG || {};
+    const apiUrl = getConfiguredFunctionUrl("submitContactRequest", contactConfig.apiUrl || "");
+    const web3FormsAccessKey = getWeb3FormsAccessKey();
+    const formData = new FormData(form);
+    const payload = {
+      name: String(formData.get("name") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      subject: String(formData.get("subject") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+      page: window.location.href,
+    };
 
-    window.setTimeout(() => {
-      success.hidden = true;
-    }, 3500);
+    if (!apiUrl && !web3FormsAccessKey) {
+      success.innerHTML = "<strong>Configuration requise</strong> Le formulaire doit etre relie a Firebase Functions avant l'envoi automatique.";
+      success.hidden = false;
+      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Envoi...";
+    }
+
+    try {
+      if (web3FormsAccessKey && !contactConfig.preferFunctions) {
+        await submitToWeb3Forms({
+          subject: `ADAZ RENOV - Nouvelle demande: ${payload.subject}`,
+          from_name: payload.name,
+          email: payload.email,
+          telephone: payload.phone,
+          type_projet: payload.subject,
+          message: payload.message,
+          page: payload.page,
+          source: "Formulaire contact ADAZ RENOV",
+        });
+      } else if (apiUrl) {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) throw new Error(`Contact API unavailable: ${response.status}`);
+      } else {
+        await submitToWeb3Forms({
+          subject: `ADAZ RENOV - Nouvelle demande: ${payload.subject}`,
+          from_name: payload.name,
+          email: payload.email,
+          telephone: payload.phone,
+          type_projet: payload.subject,
+          message: payload.message,
+          page: payload.page,
+          source: "Formulaire contact ADAZ RENOV",
+        });
+      }
+
+      form.reset();
+      success.innerHTML = "<strong>Message envoye !</strong> Merci pour votre demande. Nous vous contacterons tres prochainement.";
+      success.hidden = false;
+      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      window.setTimeout(() => {
+        success.hidden = true;
+      }, 4500);
+    } catch (error) {
+      console.warn("Contact submit failed.", error);
+      success.innerHTML = "<strong>Envoi indisponible</strong> Merci de nous appeler ou de nous ecrire directement a adazrenov@gmail.com.";
+      success.hidden = false;
+      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalLabel;
+      }
+    }
   });
 }
 
 function setupReveal() {
   const elements = document.querySelectorAll(".reveal");
-  if (!("IntersectionObserver" in window)) {
+  if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     elements.forEach((element) => element.classList.add("revealed"));
     return;
   }
@@ -1152,14 +1688,23 @@ function setupReveal() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("revealed");
+          entry.target.classList.remove("reveal-pending");
           observer.unobserve(entry.target);
         }
       });
     },
-    { threshold: 0.12 }
+    { threshold: 0.01, rootMargin: "0px 0px 80px 0px" }
   );
 
-  elements.forEach((element) => observer.observe(element));
+  const positions = Array.from(elements, (element) => ({ element, top: element.getBoundingClientRect().top }));
+  positions.forEach(({ element, top }) => {
+    if (top < window.innerHeight + 80) {
+      element.classList.add("revealed");
+    } else {
+      element.classList.add("reveal-pending");
+      observer.observe(element);
+    }
+  });
 }
 
 function setupProjectVideoModal() {
@@ -1227,6 +1772,14 @@ function formatCurrency(value) {
     currency: "EUR",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function getSavedAiProject() {
+  try {
+    return JSON.parse(window.localStorage.getItem("adazrenov-ai-project-v2") || "{}");
+  } catch (error) {
+    return {};
+  }
 }
 
 function setupAiPhotoAnalyzer() {
@@ -1429,78 +1982,80 @@ function setupAiMaterialAdvisor() {
 
   if (!form || !result) return;
 
-  const catalog = [
-    {
-      name: "Fenetre PVC double vitrage",
-      usage: ["fenetres"],
-      priorities: ["budget", "isolation"],
-      budgets: ["eco", "moyen"],
-      strengths: ["isolation thermique", "rapport qualite/prix", "pose rapide"],
+  const zoneProfiles = {
+    interieur: {
+      label: "rénovation intérieure",
+      solutions: [
+        { name: "Préparation durable des supports", priorities: ["budget", "durabilite"], budgets: ["eco", "moyen", "premium"], strengths: ["fissures traitées", "finition régulière", "meilleure tenue"] },
+        { name: "Peinture lessivable à faibles émissions", priorities: ["budget", "confort", "design"], budgets: ["eco", "moyen"], strengths: ["entretien simple", "air intérieur", "large choix de teintes"] },
+        { name: "Sol adapté à l'usage de la pièce", priorities: ["confort", "design", "durabilite"], budgets: ["moyen", "premium"], strengths: ["résistance", "confort acoustique", "cohérence visuelle"] },
+      ],
     },
-    {
-      name: "Fenetre aluminium sur mesure",
-      usage: ["fenetres"],
-      priorities: ["design", "durabilite"],
-      budgets: ["moyen", "premium"],
-      strengths: ["finesse des profils", "resistance", "look contemporain"],
+    "salle-de-bain": {
+      label: "salle de bain",
+      solutions: [
+        { name: "Étanchéité complète sous carrelage", priorities: ["durabilite", "confort"], budgets: ["eco", "moyen", "premium"], strengths: ["protection des supports", "zones humides sécurisées", "durée de vie"] },
+        { name: "Ventilation et plomberie vérifiées", priorities: ["confort", "durabilite", "budget"], budgets: ["eco", "moyen", "premium"], strengths: ["moins d'humidité", "réseaux fiables", "prévention des dégâts"] },
+        { name: "Grès cérame antidérapant", priorities: ["design", "durabilite", "confort"], budgets: ["moyen", "premium"], strengths: ["entretien facile", "sécurité", "nombreuses finitions"] },
+      ],
     },
-    {
-      name: "Porte d'entree blindee",
-      usage: ["portes"],
-      priorities: ["durabilite", "isolation"],
-      budgets: ["moyen", "premium"],
-      strengths: ["protection", "isolation", "valorisation du bien"],
+    cuisine: {
+      label: "cuisine",
+      solutions: [
+        { name: "Implantation ergonomique et rangements utiles", priorities: ["confort", "design", "budget"], budgets: ["eco", "moyen", "premium"], strengths: ["circulation fluide", "rangement optimisé", "usage quotidien"] },
+        { name: "Plan de travail adapté à l'utilisation", priorities: ["durabilite", "design"], budgets: ["moyen", "premium"], strengths: ["résistance", "entretien", "finition cohérente"] },
+        { name: "Réseaux électriques et plomberie préparés", priorities: ["durabilite", "budget", "confort"], budgets: ["eco", "moyen", "premium"], strengths: ["sécurité", "implantation fiable", "pose sans reprise"] },
+      ],
     },
-    {
-      name: "Porte interieure design",
-      usage: ["portes", "interieur"],
-      priorities: ["design", "budget"],
-      budgets: ["eco", "moyen"],
-      strengths: ["finitions variees", "integration simple", "cout contenu"],
+    fenetres: {
+      label: "fenêtres",
+      solutions: [
+        { name: "PVC double vitrage performant", priorities: ["budget", "isolation", "confort"], budgets: ["eco", "moyen"], strengths: ["bon rapport qualité/prix", "isolation thermique", "entretien réduit"] },
+        { name: "Aluminium à rupture de pont thermique", priorities: ["design", "durabilite", "isolation"], budgets: ["moyen", "premium"], strengths: ["profils fins", "grandes dimensions", "finition contemporaine"] },
+        { name: "Pose avec traitement de l'étanchéité", priorities: ["isolation", "durabilite", "confort"], budgets: ["eco", "moyen", "premium"], strengths: ["moins d'infiltrations d'air", "meilleure acoustique", "performance réelle"] },
+      ],
     },
-    {
-      name: "Isolation thermique ecologique",
-      usage: ["facade", "toiture"],
-      priorities: ["isolation", "durabilite"],
-      budgets: ["moyen", "premium"],
-      strengths: ["performance thermique", "confort", "approche responsable"],
+    portes: {
+      label: "portes",
+      solutions: [
+        { name: "Bloc-porte isolant adapté au passage", priorities: ["confort", "isolation", "budget"], budgets: ["eco", "moyen"], strengths: ["isolation acoustique", "fermeture fiable", "entretien simple"] },
+        { name: "Porte d'entrée renforcée", priorities: ["durabilite", "isolation"], budgets: ["moyen", "premium"], strengths: ["sécurité", "étanchéité", "valorisation du logement"] },
+        { name: "Quincaillerie et réglages durables", priorities: ["durabilite", "budget", "confort"], budgets: ["eco", "moyen", "premium"], strengths: ["usage fluide", "moins d'usure", "finition propre"] },
+      ],
     },
-    {
-      name: "Enduit de facade",
-      usage: ["facade"],
-      priorities: ["design", "durabilite"],
-      budgets: ["eco", "moyen"],
-      strengths: ["protection exterieure", "uniformite", "resistance aux UV"],
+    facade: {
+      label: "façade",
+      solutions: [
+        { name: "Diagnostic et réparation des supports", priorities: ["durabilite", "budget"], budgets: ["eco", "moyen", "premium"], strengths: ["fissures contrôlées", "adhérence", "base saine"] },
+        { name: "Enduit de façade compatible", priorities: ["design", "durabilite", "budget"], budgets: ["eco", "moyen"], strengths: ["protection", "uniformité", "résistance aux intempéries"] },
+        { name: "Isolation thermique par l'extérieur", priorities: ["isolation", "confort", "durabilite"], budgets: ["moyen", "premium"], strengths: ["économies d'énergie", "confort", "ponts thermiques réduits"] },
+      ],
     },
-    {
-      name: "Carrelage gres cerame premium",
-      usage: ["interieur", "salle-de-bain", "cuisine"],
-      priorities: ["durabilite", "design"],
-      budgets: ["moyen", "premium"],
-      strengths: ["resistance", "facilite d'entretien", "finitions premium"],
+    toiture: {
+      label: "toiture",
+      solutions: [
+        { name: "Contrôle couverture et points singuliers", priorities: ["durabilite", "budget"], budgets: ["eco", "moyen", "premium"], strengths: ["fuites localisées", "priorités claires", "réparation ciblée"] },
+        { name: "Écran, ventilation et évacuation des eaux", priorities: ["durabilite", "confort"], budgets: ["moyen", "premium"], strengths: ["condensation limitée", "structure protégée", "meilleure longévité"] },
+        { name: "Isolation de toiture adaptée", priorities: ["isolation", "confort"], budgets: ["moyen", "premium"], strengths: ["déperditions réduites", "confort été/hiver", "performance énergétique"] },
+      ],
     },
-    {
-      name: "Parquet chene massif",
-      usage: ["interieur"],
-      priorities: ["design", "premium"],
-      budgets: ["premium"],
-      strengths: ["cachet", "durabilite", "valeur percue"],
+    electricite: {
+      label: "installation électrique",
+      solutions: [
+        { name: "Diagnostic du tableau et des protections", priorities: ["durabilite", "budget", "confort"], budgets: ["eco", "moyen", "premium"], strengths: ["sécurité", "priorités identifiées", "mise en conformité"] },
+        { name: "Circuits dédiés selon les usages", priorities: ["confort", "durabilite"], budgets: ["moyen", "premium"], strengths: ["installation fiable", "équipements protégés", "évolution facilitée"] },
+        { name: "Appareillage fonctionnel et sobre", priorities: ["design", "budget"], budgets: ["eco", "moyen", "premium"], strengths: ["usage pratique", "finition propre", "gammes coordonnées"] },
+      ],
     },
-    {
-      name: "Peinture interieure premium",
-      usage: ["interieur", "cuisine", "salle-de-bain"],
-      priorities: ["budget", "design"],
-      budgets: ["eco", "moyen"],
-      strengths: ["rafraichissement rapide", "large palette", "faibles emissions"],
-    },
-    {
-      name: "Tuiles terre cuite",
-      usage: ["toiture"],
-      priorities: ["durabilite", "design"],
-      budgets: ["moyen", "premium"],
-      strengths: ["longue duree de vie", "esthetique traditionnelle", "fiabilite"],
-    },
-  ];
+  };
+
+  const constraintAdvice = {
+    standard: "Aucune contrainte majeure déclarée : privilégiez une solution équilibrée et facile à entretenir.",
+    humidite: "Traitez d'abord la cause de l'humidité. Une finition appliquée avant le diagnostic risque de se dégrader rapidement.",
+    ancien: "Prévoyez une marge pour la dépose et la remise à niveau des supports avant les finitions.",
+    occupe: "Choisissez des travaux phasés, des matériaux à séchage rapide et une protection renforcée des zones habitées.",
+    urgence: "Sécurisez et stabilisez la zone avant les choix esthétiques ou les optimisations de budget.",
+  };
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1509,44 +2064,29 @@ function setupAiMaterialAdvisor() {
     const zone = String(formData.get("zone") || "interieur");
     const priority = String(formData.get("priority") || "design");
     const budget = String(formData.get("budget") || "moyen");
-    const finish = String(formData.get("finish") || "equilibre");
+    const constraint = String(formData.get("finish") || "standard");
+    const notes = String(formData.get("notes") || "").trim();
+    const profile = zoneProfiles[zone];
+    const savedProject = getSavedAiProject();
 
-    const scored = catalog
+    if (!profile) return;
+
+    const scored = profile.solutions
       .map((item) => {
         let score = 0;
         const reasons = [];
 
-        if (item.usage.includes(zone)) {
-          score += 3;
-          reasons.push("compatible avec la zone du projet");
-        }
-
         if (item.priorities.includes(priority)) {
-          score += 2;
-          reasons.push("aligne sur votre priorite technique");
+          score += 3;
+          reasons.push("répond à votre priorité principale");
         }
 
         if (item.budgets.includes(budget)) {
           score += 2;
-          reasons.push("coherent avec votre niveau de budget");
+          reasons.push("cohérent avec votre investissement");
         }
 
-        if (finish === "premium" && item.budgets.includes("premium")) {
-          score += 1;
-          reasons.push("adapte a une finition premium");
-        }
-
-        if (finish === "equilibre" && item.budgets.includes("moyen")) {
-          score += 1;
-          reasons.push("equilibre cout / performance");
-        }
-
-        if (finish === "essentiel" && item.budgets.includes("eco")) {
-          score += 1;
-          reasons.push("optimise pour une finition essentielle");
-        }
-
-        const fit = Math.max(45, Math.min(98, 45 + score * 7));
+        const fit = Math.max(68, Math.min(96, 70 + score * 6));
         return { ...item, score, reasons, fit };
       })
       .sort((a, b) => b.score - a.score)
@@ -1554,17 +2094,27 @@ function setupAiMaterialAdvisor() {
 
     const strategy =
       priority === "isolation"
-        ? "Priorisez les performances thermiques avant les finitions decoratives."
-        : priority === "durabilite"
-          ? "Favorisez des materiaux robustes avec entretien faible et cycle long."
+        ? "Mesurez la performance de l'ensemble : le produit seul ne compense pas une pose ou un support défaillant."
+      : priority === "durabilite"
+          ? "Investissez d'abord dans les supports, l'étanchéité et la qualité de pose."
+          : priority === "confort"
+            ? "Traitez les causes techniques avant d'améliorer les finitions visibles."
           : priority === "budget"
-            ? "Concentrez le budget sur les postes visibles et gardez des references fiables pour le reste."
-            : "Misez sur la coherence visuelle entre revetements, menuiseries et quincaillerie.";
+            ? "Conservez les éléments en bon état et concentrez le budget sur les postes techniques indispensables."
+            : "Définissez une palette courte et coordonnez les matériaux avant les achats.";
+    const projectContext = [
+      savedProject.projectState === "mauvais" ? "prévoir une dépose et une préparation renforcées" : "",
+      savedProject.occupancy === "occupe" ? "organiser les travaux par zones pour maintenir le logement utilisable" : "",
+      savedProject.finish === "premium" || savedProject.finish === "prestige"
+        ? "réserver les finitions haut de gamme aux éléments les plus visibles"
+        : "",
+    ].filter(Boolean);
 
     result.innerHTML = `
       <div class="tool-result-card">
-        <span class="result-kicker">Selection IA produits</span>
-        <h3>Voici les produits les plus pertinents pour votre besoin</h3>
+        <span class="result-kicker">Stratégie recommandée</span>
+        <h3>Priorités pour votre ${profile.label}</h3>
+        <p>${strategy}</p>
         <div class="recommendation-list">
           ${scored
             .map(
@@ -1573,7 +2123,7 @@ function setupAiMaterialAdvisor() {
                   <div class="recommendation-rank">0${index + 1}</div>
                   <div>
                     <h4>${item.name}</h4>
-                    <p>Indice de pertinence: <strong>${item.fit}%</strong>. ${item.reasons.slice(0, 2).join(" · ")}.</p>
+                    <p>Compatibilité estimée : <strong>${item.fit}%</strong>${item.reasons.length ? ` · ${item.reasons.join(" · ")}` : ""}.</p>
                     <div class="tag-row">
                       ${item.strengths.map((strength) => `<span class="tag">${strength}</span>`).join("")}
                     </div>
@@ -1584,7 +2134,10 @@ function setupAiMaterialAdvisor() {
             .join("")}
         </div>
         <div class="result-note">
-          Conseil IA: ${strategy} Ensuite, consultez le <a href="produits.html">catalogue produits</a> puis demandez un chiffrage avec pose.
+          <strong>Point de vigilance :</strong> ${constraintAdvice[constraint] || constraintAdvice.standard}
+          ${projectContext.length ? `<br><strong>Adaptation au projet mémorisé :</strong> ${projectContext.join(" ; ")}.` : ""}
+          ${notes ? `<br><strong>Votre besoin :</strong> ${escapeHtml(notes)}.` : ""}
+          <br>La référence exacte sera choisie après vérification des dimensions et des supports.
         </div>
       </div>
     `;
@@ -1939,14 +2492,15 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
     return "Oui, on peut integrer ChatGPT en production. La bonne architecture est un backend securise (pas de cle OpenAI dans le navigateur): endpoint API + cle cote serveur + fallback local.";
   }
 
-  function getChatConfig() {
-    const root = window.AI_AISSTEN_CHAT_CONFIG || null;
-    if (!root || typeof root !== "object") return null;
-    return {
-      apiUrl: String(root.apiUrl || ""),
-      model: String(root.model || "gpt-4o-mini"),
-    };
-  }
+function getChatConfig() {
+  const root = window.AI_AISSTEN_CHAT_CONFIG || null;
+  if (!root || typeof root !== "object" || root.enablePageChat !== true) return null;
+  return {
+    apiUrl: getConfiguredFunctionUrl("adazChat", root.apiUrl || ""),
+  };
+}
+
+  let conversationId = "";
 
   async function getRemoteChatAnswer(question) {
     const config = getChatConfig();
@@ -1960,7 +2514,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
         },
         body: JSON.stringify({
           message: question,
-          model: config.model,
+          conversationId,
           context: "ADAZ RENOV chantier assistant",
           page: document.body.dataset.page || "",
           url: window.location.href,
@@ -1972,6 +2526,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
       const data = await response.json();
       const text = String(data.answer || data.message || data.output || "").trim();
       const nextConversationId = String(data.conversationId || "").trim();
+      if (nextConversationId) conversationId = nextConversationId;
       return text
         ? {
             answer: text,
@@ -2116,7 +2671,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
     }
 
     if (action === "materials") {
-      scrollToTool("#outil-materiaux");
+      scrollToTool("#outil-conseil");
       return;
     }
 
@@ -2136,7 +2691,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
     }
 
     if (action === "ideas") {
-      scrollToTool("#outil-idees");
+      scrollToTool("#outil-conseil");
       return;
     }
 
@@ -2196,7 +2751,7 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
           )
           .join("")}</div>`
       : "";
-    bubble.innerHTML = `${source}<p>${escapeHtml(text)}</p>${actionHtml}`;
+    bubble.innerHTML = `${source}<p>${formatChatMessage(text)}</p>${actionHtml}`;
     log.appendChild(bubble);
     bubble.querySelectorAll("[data-chat-action]").forEach((button) => {
       button.addEventListener("click", () => runChatAction(button.dataset.chatAction || "", button.dataset.chatContext || ""));
@@ -2329,20 +2884,23 @@ Pour une cuisine ou salle de bain, on peut aussi proposer une mise aux normes de
 function setupAiEstimator() {
   const form = document.querySelector("#ai-estimator-form");
   const result = document.querySelector("#ai-estimator-result");
+  const typeSelect = form?.querySelector('[name="work_type"]');
+  const measureInput = form?.querySelector('[name="surface"]');
+  const measureLabel = document.querySelector("#ai-est-measure-label");
 
   if (!form || !result) return;
 
   const profiles = {
-    interieur: { label: "renovation interieure", min: 700, max: 1400, daysPer100: 42 },
-    "salle-de-bain": { label: "salle de bain", min: 900, max: 1800, daysPer100: 60 },
-    cuisine: { label: "cuisine sur mesure", min: 1200, max: 2500, daysPer100: 70 },
-    fenetres: { label: "remplacement de fenetres", min: 420, max: 980, daysPer100: 18 },
-    portes: { label: "remplacement de portes", min: 520, max: 1300, daysPer100: 16 },
-    electricite: { label: "installation electrique", min: 90, max: 220, daysPer100: 28 },
-    facade: { label: "renovation de facade", min: 130, max: 260, daysPer100: 24 },
-    toiture: { label: "renovation de toiture", min: 180, max: 420, daysPer100: 34 },
-    construction: { label: "construction ou extension", min: 1800, max: 3000, daysPer100: 120 },
-    amenagement: { label: "amenagement sur mesure", min: 450, max: 980, daysPer100: 38 },
+    interieur: { label: "rénovation intérieure", unit: "m²", min: 650, max: 1450, daysPerUnit: 0.42, minimum: 3500 },
+    "salle-de-bain": { label: "salle de bain", unit: "m²", min: 1100, max: 2300, daysPerUnit: 1.45, minimum: 6500 },
+    cuisine: { label: "cuisine", unit: "m²", min: 1000, max: 2400, daysPerUnit: 1.1, minimum: 7000 },
+    fenetres: { label: "remplacement de fenêtres", unit: "fenêtre(s)", min: 650, max: 1450, daysPerUnit: 0.65, minimum: 900 },
+    portes: { label: "remplacement de portes", unit: "porte(s)", min: 550, max: 1800, daysPerUnit: 0.55, minimum: 700 },
+    electricite: { label: "installation électrique", unit: "m²", min: 95, max: 210, daysPerUnit: 0.28, minimum: 2200 },
+    facade: { label: "rénovation de façade", unit: "m²", min: 90, max: 240, daysPerUnit: 0.25, minimum: 2800 },
+    toiture: { label: "rénovation de toiture", unit: "m²", min: 170, max: 390, daysPerUnit: 0.34, minimum: 4500 },
+    construction: { label: "construction ou extension", unit: "m²", min: 1900, max: 3300, daysPerUnit: 1.2, minimum: 28000 },
+    amenagement: { label: "aménagement sur mesure", unit: "m²", min: 500, max: 1200, daysPerUnit: 0.5, minimum: 3000 },
   };
 
   const complexityFactors = {
@@ -2362,6 +2920,86 @@ function setupAiEstimator() {
     libre: 1,
     occupe: 1.12,
   };
+
+  const stateFactors = {
+    bon: 0.92,
+    moyen: 1,
+    mauvais: 1.22,
+  };
+
+  const budgetRanges = {
+    "moins-5000": { max: 5000 },
+    "5000-15000": { max: 15000 },
+    "15000-40000": { max: 40000 },
+    "plus-40000": { max: Infinity },
+  };
+
+  const constrainedScopes = {
+    interieur: (quantity) => [
+      `Rafraîchissement ciblé d'environ ${quantity} m²`,
+      "Préparation légère, peinture et finitions essentielles",
+      "Conservation des réseaux et éléments encore en bon état",
+    ],
+    "salle-de-bain": () => [
+      "Intervention ciblée plutôt qu'une rénovation complète",
+      "Réparations prioritaires, meuble ou robinetterie selon l'état",
+      "Conservation du carrelage et des réseaux lorsqu'ils sont fiables",
+    ],
+    cuisine: () => [
+      "Modernisation partielle de la cuisine existante",
+      "Façades, peinture, crédence ou plan de travail selon priorité",
+      "Conservation de l'implantation et des réseaux",
+    ],
+    fenetres: (quantity) => [
+      `Remplacement prioritaire de ${quantity} fenêtre(s)`,
+      "Dimensions et coloris standards",
+      "Options décoratives reportées si nécessaire",
+    ],
+    portes: (quantity) => [
+      `Remplacement prioritaire de ${quantity} porte(s)`,
+      "Modèle standard avec pose et réglages",
+      "Options premium reportées",
+    ],
+    electricite: (quantity) => [
+      `Sécurisation ciblée d'environ ${quantity} m²`,
+      "Traitement des anomalies prioritaires",
+      "Extension complète du réseau planifiée dans une seconde phase",
+    ],
+    facade: (quantity) => [
+      `Réparation ciblée d'environ ${quantity} m²`,
+      "Traitement des fissures et zones dégradées",
+      "Ravalement global reporté",
+    ],
+    toiture: (quantity) => [
+      `Réparation ciblée d'environ ${quantity} m²`,
+      "Étanchéité et points d'infiltration prioritaires",
+      "Réfection complète reportée",
+    ],
+    construction: () => [
+      "Étude, relevés et préparation du projet",
+      "Priorisation des démarches et du chiffrage",
+      "Travaux de construction à prévoir dans une enveloppe séparée",
+    ],
+    amenagement: (quantity) => [
+      `Aménagement ciblé d'environ ${quantity} m²`,
+      "Fonctions essentielles et matériaux standards",
+      "Éléments sur mesure complexes reportés",
+    ],
+  };
+
+  function updateMeasureField() {
+    const profile = profiles[typeSelect?.value] || profiles.interieur;
+    const usesUnits = ["fenetres", "portes"].includes(typeSelect?.value);
+    if (measureLabel) measureLabel.textContent = usesUnits ? `Nombre de ${profile.unit}` : "Surface concernée (m²)";
+    if (measureInput) {
+      measureInput.min = "1";
+      measureInput.step = "1";
+      measureInput.placeholder = usesUnits ? "4" : "80";
+    }
+  }
+
+  typeSelect?.addEventListener("change", updateMeasureField);
+  updateMeasureField();
 
   const packageProfiles = {
     interieur: [
@@ -2434,26 +3072,39 @@ function setupAiEstimator() {
     const factor =
       (complexityFactors[complexity] || 1) *
       (finishFactors[finish] || 1) *
-      (occupancyFactors[occupancy] || 1);
+      (occupancyFactors[occupancy] || 1) *
+      (stateFactors[projectState] || 1);
 
-    const minBudget = Math.round(profile.min * area * factor);
-    const maxBudget = Math.round(profile.max * area * factor);
-    const baseDays = Math.max(8, Math.round((profile.daysPer100 / 100) * area));
-    const durationMin = Math.max(1, Math.round(baseDays * 0.85));
-    const durationMax = Math.max(durationMin + 3, Math.round(baseDays * factor * 1.12));
-    const confidence = Math.max(64, Math.min(96, 70 + Math.round((area >= 40 ? 8 : 3) + (complexity === "standard" ? 4 : 1) - (occupancy === "occupe" ? 2 : 0))));
+    const fullMinBudget = Math.max(profile.minimum, Math.round(profile.min * area * factor));
+    const fullMaxBudget = Math.max(Math.round(profile.minimum * 1.35), Math.round(profile.max * area * factor));
+    const budgetCap = budgetRanges[desiredBudget]?.max ?? Infinity;
+    const isBudgetConstrained = Number.isFinite(budgetCap) && fullMinBudget > budgetCap;
+    const scenarioMinBudget = isBudgetConstrained
+      ? Math.max(500, Math.round(budgetCap * 0.68))
+      : fullMinBudget;
+    const scenarioMaxBudget = Number.isFinite(budgetCap)
+      ? Math.min(fullMaxBudget, budgetCap)
+      : fullMaxBudget;
+    const affordableQuantity = Math.max(
+      1,
+      Math.floor((Number.isFinite(budgetCap) ? budgetCap : fullMinBudget) / Math.max(1, profile.min * factor))
+    );
+    const baseDays = Math.max(2, Math.round(profile.daysPerUnit * area));
+    const scopeRatio = isBudgetConstrained ? Math.min(1, affordableQuantity / Math.max(1, area)) : 1;
+    const durationMin = Math.max(1, Math.round(baseDays * scopeRatio * 0.85));
+    const durationMax = Math.max(durationMin + 2, Math.round(baseDays * scopeRatio * factor * 1.12));
+    const confidence = Math.max(62, Math.min(91, 74 + (complexity === "standard" ? 5 : 1) + (projectState === "moyen" ? 4 : 0) - (occupancy === "occupe" ? 3 : 0)));
 
     const packs = (packageProfiles[type] || packageProfiles.interieur).map((pack) => ({
       ...pack,
-      min: Math.round(minBudget * pack.share),
-      max: Math.round(maxBudget * pack.share),
+      min: Math.round(scenarioMinBudget * pack.share),
+      max: Math.round(scenarioMaxBudget * pack.share),
     }));
 
     const stateLabels = {
-      "renovation-complete": "renovation complete",
-      reparation: "reparation",
-      montage: "montage / pose",
-      remplacement: "remplacement",
+      bon: "bon état / préparation légère",
+      moyen: "état moyen / reprises habituelles",
+      mauvais: "mauvais état / dépose importante",
     };
 
     const deadlineLabels = {
@@ -2464,30 +3115,47 @@ function setupAiEstimator() {
     };
 
     const budgetLabels = {
-      "a-definir": "a definir",
-      "moins-5000": "moins de 5 000 EUR",
-      "5000-15000": "5 000 - 15 000 EUR",
-      "15000-40000": "15 000 - 40 000 EUR",
+      "a-definir": "à définir",
+      "moins-5000": "maximum 5 000 EUR",
+      "5000-15000": "maximum 15 000 EUR",
+      "15000-40000": "maximum 40 000 EUR",
       "plus-40000": "plus de 40 000 EUR",
     };
 
+    const scopeItems = isBudgetConstrained
+      ? (constrainedScopes[type] || constrainedScopes.interieur)(affordableQuantity)
+      : [
+          "Périmètre déclaré conservé dans le scénario",
+          "Niveau de finition et contraintes pris en compte",
+          "Marge finale à confirmer après visite technique",
+        ];
+    const budgetStatus = desiredBudget === "a-definir"
+      ? "Votre budget reste à définir."
+      : isBudgetConstrained
+        ? `Le projet complet dépasse votre limite. ADAZAI a réduit le périmètre pour rester strictement sous ${formatCurrency(budgetCap)}.`
+        : `Le scénario proposé respecte votre plafond de ${formatCurrency(budgetCap)}.`;
+
     result.innerHTML = `
       <div class="tool-result-card">
-        <span class="result-kicker">Estimation indicative</span>
+        <span class="result-kicker">${isBudgetConstrained ? "Scénario ajusté au budget" : "Estimation personnalisée"}</span>
         <h3>${profile.label.charAt(0).toUpperCase() + profile.label.slice(1)}</h3>
         <div class="estimate-strip">
           <div class="estimate-box">
-            <span>Budget estime</span>
-            <strong>${formatCurrency(minBudget)} - ${formatCurrency(maxBudget)}</strong>
+            <span>Budget à respecter</span>
+            <strong>${formatCurrency(scenarioMinBudget)} - ${formatCurrency(scenarioMaxBudget)}</strong>
           </div>
           <div class="estimate-box">
             <span>Duree probable</span>
             <strong>${durationMin} a ${durationMax} jours ouvres</strong>
           </div>
         </div>
+        <h4>${isBudgetConstrained ? "Ce qui est réaliste dans votre enveloppe" : "Périmètre pris en compte"}</h4>
+        <ul class="feature-list">
+          ${scopeItems.map((item) => `<li><span class="check">&#10003;</span><span>${item}</span></li>`).join("")}
+        </ul>
         <div class="result-tags">
           <span class="badge">Indice de confiance: ${confidence}%</span>
-          <span class="badge">Surface: ${area} m2</span>
+          <span class="badge">${profile.unit === "m²" ? "Surface" : "Quantité"} : ${area} ${profile.unit}</span>
           ${city ? `<span class="badge">Zone: ${escapeHtml(city)}</span>` : ""}
         </div>
         <h4>Repartition budgetaire proposee</h4>
@@ -2500,13 +3168,14 @@ function setupAiEstimator() {
             .join("")}
         </ul>
         <ul class="feature-list">
-          <li><span class="check">&#10003;</span><span>Complexite chantier: <strong>${complexity}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>Niveau de finition: <strong>${finish}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>Etat actuel: <strong>${escapeHtml(stateLabels[projectState] || projectState)}</strong></span></li>
+          <li><span class="check">&#10003;</span><span>Accès chantier : <strong>${complexity}</strong></span></li>
+          <li><span class="check">&#10003;</span><span>Niveau de finition : <strong>${finish}</strong></span></li>
+          <li><span class="check">&#10003;</span><span>État actuel : <strong>${escapeHtml(stateLabels[projectState] || projectState)}</strong></span></li>
           <li><span class="check">&#10003;</span><span>Budget client: <strong>${escapeHtml(budgetLabels[desiredBudget] || desiredBudget)}</strong></span></li>
           <li><span class="check">&#10003;</span><span>Delai souhaite: <strong>${escapeHtml(deadlineLabels[deadline] || deadline)}</strong></span></li>
           <li><span class="check">&#10003;</span><span>Logement: <strong>${occupancy === "occupe" ? "occupe pendant travaux" : "libre pendant travaux"}</strong></span></li>
         </ul>
+        <div class="budget-fit-note">${budgetStatus}</div>
         <div class="result-note">
           Cette estimation reste indicative. Pour une vraie offre commerciale, il faut une visite technique, des mesures, la verification de l'acces et un devis detaille.
         </div>
@@ -2699,16 +3368,32 @@ function setupAiConceptIdeator() {
 function setupAiRoadmapPlanner() {
   const form = document.querySelector("#ai-roadmap-form");
   const result = document.querySelector("#ai-roadmap-result");
+  const typeSelect = form?.querySelector('[name="type"]');
+  const measureLabel = document.querySelector("#ai-roadmap-measure-label");
 
   if (!form || !result) return;
 
   const profiles = {
-    interieur: { label: "renovation interieure", baseDaysPer100: 42, risks: ["reseaux / electricite", "phases poussiereuses", "sequencage des corps d'etat"] },
-    "salle-de-bain": { label: "salle de bain", baseDaysPer100: 58, risks: ["etancheite", "delai de livraison sanitaires", "coordination plomberie / elec"] },
-    cuisine: { label: "cuisine", baseDaysPer100: 60, risks: ["reseaux cuisine", "ajustage mobilier", "ventilation"] },
-    facade: { label: "facade", baseDaysPer100: 30, risks: ["meteo", "isolation exterieure", "finition uniforme"] },
-    extension: { label: "extension / construction", baseDaysPer100: 120, risks: ["fondations", "structures porteuses", "coordination etancheite / isolation"] },
+    interieur: { label: "renovation interieure", baseDaysPer100: 42, minDays: 8, unit: "m²", risks: ["reseaux / electricite", "phases poussiereuses", "sequencage des corps d'etat"] },
+    "salle-de-bain": { label: "salle de bain", baseDaysPer100: 145, minDays: 7, unit: "m²", risks: ["etancheite", "delai de livraison sanitaires", "coordination plomberie / elec"] },
+    cuisine: { label: "cuisine", baseDaysPer100: 110, minDays: 7, unit: "m²", risks: ["reseaux cuisine", "ajustage mobilier", "ventilation"] },
+    fenetres: { label: "remplacement de fenetres", baseDaysPer100: 65, minDays: 2, unit: "fenêtre(s)", risks: ["relevés exacts", "délais de fabrication", "étanchéité de pose"] },
+    portes: { label: "remplacement de portes", baseDaysPer100: 55, minDays: 2, unit: "porte(s)", risks: ["dimensions des tableaux", "sens d'ouverture", "réglages et finitions"] },
+    electricite: { label: "installation electrique", baseDaysPer100: 28, minDays: 4, unit: "m²", risks: ["mise en sécurité", "passage des circuits", "contrôles finaux"] },
+    facade: { label: "facade", baseDaysPer100: 30, minDays: 6, unit: "m²", risks: ["meteo", "isolation exterieure", "finition uniforme"] },
+    toiture: { label: "toiture", baseDaysPer100: 34, minDays: 5, unit: "m²", risks: ["météo et sécurisation", "étanchéité", "évacuation des eaux"] },
+    extension: { label: "extension / construction", baseDaysPer100: 120, minDays: 20, unit: "m²", risks: ["fondations", "structures porteuses", "coordination etancheite / isolation"] },
   };
+
+  function updateMeasureLabel() {
+    const profile = profiles[typeSelect?.value] || profiles.interieur;
+    if (measureLabel) {
+      measureLabel.textContent = profile.unit === "m²" ? "Surface concernée (m²)" : `Nombre de ${profile.unit}`;
+    }
+  }
+
+  typeSelect?.addEventListener("change", updateMeasureLabel);
+  updateMeasureLabel();
 
   const scopeFactors = {
     rafraichissement: 0.8,
@@ -2745,10 +3430,11 @@ function setupAiRoadmapPlanner() {
 
     const profile = profiles[type];
     if (!profile || !surface) return;
+    const savedProject = getSavedAiProject();
 
     const factor = (scopeFactors[scope] || 1) * (occupancyFactors[occupancy] || 1);
-    const base = Math.max(8, Math.round((profile.baseDaysPer100 / 100) * surface * factor));
-    const adjusted = Math.max(8, Math.round(base * (urgencyFactors[urgency] || 1)));
+    const base = Math.max(profile.minDays, Math.round((profile.baseDaysPer100 / 100) * surface * factor));
+    const adjusted = Math.max(profile.minDays, Math.round(base * (urgencyFactors[urgency] || 1)));
     const buffer = Math.max(2, Math.round(adjusted * 0.08));
 
     const phases = [
@@ -2765,6 +3451,20 @@ function setupAiRoadmapPlanner() {
 
     const totalDays = timeline.reduce((acc, item) => acc + item.days, 0);
     const criticalRisks = profile.risks.slice(0, 2).join(" · ");
+    const budgetNotes = {
+      "moins-5000": "Avancer par intervention ciblée et valider chaque dépense avant commande.",
+      "5000-15000": "Séparer les travaux indispensables des améliorations optionnelles.",
+      "15000-40000": "Prévoir les commandes principales avant le démarrage pour protéger le planning.",
+      "plus-40000": "Verrouiller les choix techniques et les finitions avec un planning d'approvisionnement.",
+      "a-definir": "Définir une enveloppe avant de valider les commandes et le calendrier.",
+    };
+    const projectAdjustments = [
+      savedProject.projectState === "mauvais" ? "Ajouter une validation des supports après dépose." : "",
+      savedProject.finish === "premium" || savedProject.finish === "prestige"
+        ? "Valider les échantillons et délais des finitions avant lancement."
+        : "",
+      savedProject.deadline === "urgent" ? "Confirmer immédiatement la disponibilité des matériaux et équipes." : "",
+    ].filter(Boolean);
 
     result.innerHTML = `
       <div class="tool-result-card">
@@ -2800,7 +3500,11 @@ function setupAiRoadmapPlanner() {
           <li><span class="check">&#10003;</span><span>Urgence: ${urgencyNotes[urgency]}</span></li>
           <li><span class="check">&#10003;</span><span>Risques prioritaires: ${profile.risks.join(", ")}.</span></li>
           <li><span class="check">&#10003;</span><span>Étape critique: ${criticalRisks}.</span></li>
-          <li><span class="check">&#10003;</span><span>Surface declaree: ${surface} m2, a ajuster apres visite.</span></li>
+          <li><span class="check">&#10003;</span><span>${profile.unit === "m²" ? "Surface" : "Quantité"} déclarée : ${surface} ${profile.unit}, à ajuster après visite.</span></li>
+          <li><span class="check">&#10003;</span><span>Règle budget : ${budgetNotes[savedProject.desiredBudget || "a-definir"]}</span></li>
+          ${projectAdjustments
+            .map((item) => `<li><span class="check">&#10003;</span><span>${item}</span></li>`)
+            .join("")}
         </ul>
         <div class="result-note">Ce plan est indicatif. Une visite technique permettra de verrouiller les jalons, les acces et la logistique.</div>
       </div>
@@ -2809,6 +3513,416 @@ function setupAiRoadmapPlanner() {
     result.hidden = false;
     result.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
+}
+
+function setupAiToolsNavigation() {
+  const menu = document.querySelector(".ai-tool-menu");
+  if (!menu) return;
+
+  const panels = {
+    estimate: document.querySelector("#ai-estimator-form")?.closest(".tool-panel"),
+    advice: document.querySelector("#outil-conseil"),
+    plan: document.querySelector("#outil-plan"),
+    booking: document.querySelector("#outil-programmation"),
+  };
+  if (Object.values(panels).some((panel) => !panel)) return;
+
+  panels.estimate.id = "outil-estimateur";
+  const introSection = menu.closest("section");
+  const workspace = document.createElement("section");
+  workspace.className = "section section-muted ai-configurator";
+  workspace.innerHTML = `
+    <div class="container ai-configurator-shell">
+      <aside class="ai-project-summary" aria-live="polite">
+        <span class="result-kicker">Votre projet</span>
+        <h2>Résumé intelligent</h2>
+        <p>Vos choix sont mémorisés et utilisés dans chaque étape.</p>
+        <div class="ai-progress-head">
+          <span>Préparation du projet</span>
+          <strong data-ai-progress-value>0%</strong>
+        </div>
+        <div class="ai-summary-progress" role="progressbar" aria-label="Préparation du projet" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span data-ai-progress-bar></span>
+        </div>
+        <p class="ai-progress-message" data-ai-progress-message>Commencez par préciser votre projet.</p>
+        <div class="ai-summary-list">
+          <div><span>Projet</span><strong data-summary-type>À définir</strong></div>
+          <div><span>Mesure</span><strong data-summary-surface>À définir</strong></div>
+          <div><span>Budget maximum</span><strong data-summary-budget>À définir</strong></div>
+          <div><span>Finition</span><strong data-summary-finish>Équilibrée</strong></div>
+          <div><span>Contrainte</span><strong data-summary-constraint>Aucune</strong></div>
+        </div>
+        <button class="ai-summary-reset" type="button" data-ai-reset>Recommencer le projet</button>
+      </aside>
+      <div class="ai-configurator-content"></div>
+    </div>
+  `;
+  introSection.insertAdjacentElement("afterend", workspace);
+  const content = workspace.querySelector(".ai-configurator-content");
+  const orderedKeys = ["estimate", "advice", "plan", "booking"];
+
+  orderedKeys.forEach((key, index) => {
+    const panel = panels[key];
+    panel.dataset.aiStep = String(index + 1);
+    panel.hidden = index !== 0;
+    content.appendChild(panel);
+
+    const nav = document.createElement("div");
+    nav.className = "ai-step-actions";
+    nav.innerHTML = `
+      ${index > 0 ? `<button class="button light" type="button" data-ai-previous="${orderedKeys[index - 1]}">Étape précédente</button>` : "<span></span>"}
+      ${index < orderedKeys.length - 1 ? `<button class="button secondary" type="button" data-ai-next="${orderedKeys[index + 1]}">Continuer</button>` : ""}
+    `;
+    panel.appendChild(nav);
+  });
+
+  document.querySelectorAll(".ai-tool-stack").forEach((stack) => {
+    if (!stack.children.length) stack.closest("section")?.remove();
+  });
+
+  const links = [...menu.querySelectorAll("[data-ai-tab]")];
+  const storageKey = "adazrenov-ai-project-v3";
+  const savedState = (() => {
+    try {
+      return JSON.parse(window.localStorage.getItem(storageKey) || "{}");
+    } catch (error) {
+      return {};
+    }
+  })();
+  const state = {
+    workType: "interieur",
+    surface: "",
+    city: "",
+    projectState: "moyen",
+    complexity: "standard",
+    finish: "equilibre",
+    occupancy: "libre",
+    deadline: "1-3-mois",
+    desiredBudget: "a-definir",
+    priority: "budget",
+    constraint: "standard",
+    notes: "",
+    roadmapScope: "renovation",
+    roadmapUrgency: "normale",
+    roadmapOccupancy: "libre",
+    touched: {},
+    ...savedState,
+  };
+  state.touched = state.touched && typeof state.touched === "object" ? state.touched : {};
+
+  const typeLabels = {
+    interieur: "Rénovation intérieure",
+    "salle-de-bain": "Salle de bain",
+    cuisine: "Cuisine",
+    fenetres: "Fenêtres",
+    portes: "Portes",
+    electricite: "Installation électrique",
+    facade: "Façade",
+    toiture: "Toiture",
+    construction: "Construction / extension",
+    amenagement: "Aménagement sur mesure",
+  };
+  const budgetLabels = {
+    "a-definir": "À définir",
+    "moins-5000": "5 000 EUR",
+    "5000-15000": "15 000 EUR",
+    "15000-40000": "40 000 EUR",
+    "plus-40000": "Plus de 40 000 EUR",
+  };
+  const finishLabels = {
+    essentiel: "Essentielle",
+    equilibre: "Équilibrée",
+    premium: "Premium",
+    prestige: "Prestige",
+  };
+  const constraintLabels = {
+    standard: "Aucune",
+    humidite: "Humidité",
+    ancien: "Support dégradé",
+    occupe: "Logement occupé",
+    urgence: "Prioritaire",
+  };
+
+  function setFormValue(selector, value) {
+    const field = document.querySelector(selector);
+    if (field && value !== undefined && value !== null) field.value = String(value);
+  }
+
+  function syncDerivedFields() {
+    const adviceZone = {
+      construction: "interieur",
+      amenagement: "interieur",
+    }[state.workType] || state.workType;
+    const planType = {
+      construction: "extension",
+      amenagement: "interieur",
+    }[state.workType] || state.workType;
+    const service = {
+      interieur: "Rénovation intérieure",
+      "salle-de-bain": "Salle de bain",
+      cuisine: "Cuisine",
+      fenetres: "Fourniture de fenêtres et pose",
+      portes: "Portes et menuiseries",
+      electricite: "Installation Électrique",
+      facade: "Travaux Maçonnerie",
+      toiture: "Travaux Maçonnerie",
+      construction: "Travaux Maçonnerie",
+      amenagement: "Rénovation intérieure",
+    }[state.workType];
+    const adviceBudget =
+      state.desiredBudget === "moins-5000"
+        ? "eco"
+        : ["15000-40000", "plus-40000"].includes(state.desiredBudget)
+          ? "premium"
+          : "moyen";
+
+    setFormValue("#ai-work-type", state.workType);
+    setFormValue("#ai-desired-budget", state.desiredBudget);
+    setFormValue("#ai-zone", adviceZone);
+    setFormValue("#ai-budget", adviceBudget);
+    setFormValue("#ai-roadmap-type", planType);
+    setFormValue("#ai-roadmap-scope", state.roadmapScope);
+    setFormValue("#ai-roadmap-urgency", state.roadmapUrgency);
+    setFormValue("#ai-roadmap-occupancy", state.roadmapOccupancy);
+    if (state.surface) setFormValue("#ai-roadmap-surface", state.surface);
+    if (service) setFormValue("#ai-booking-service", service);
+    const roadmapMeasureLabel = document.querySelector("#ai-roadmap-measure-label");
+    const estimatorMeasureLabel = document.querySelector("#ai-est-measure-label");
+    const estimatorMeasureInput = document.querySelector("#ai-est-surface");
+    const usesUnits = ["fenetres", "portes"].includes(state.workType);
+    if (estimatorMeasureLabel) {
+      estimatorMeasureLabel.textContent = usesUnits
+        ? `Nombre de ${state.workType === "fenetres" ? "fenêtre(s)" : "porte(s)"}`
+        : "Surface concernée (m²)";
+    }
+    if (estimatorMeasureInput) estimatorMeasureInput.placeholder = usesUnits ? "4" : "80";
+    if (roadmapMeasureLabel) {
+      roadmapMeasureLabel.textContent = usesUnits
+        ? `Nombre de ${state.workType === "fenetres" ? "fenêtre(s)" : "porte(s)"}`
+        : "Surface concernée (m²)";
+    }
+    const bookingNotes = document.querySelector("#ai-booking-notes");
+    if (bookingNotes && (!bookingNotes.value || bookingNotes.dataset.aiGenerated === "true") && state.surface) {
+      const measure = ["fenetres", "portes"].includes(state.workType)
+        ? `${state.surface} élément(s)`
+        : `${state.surface} m²`;
+      bookingNotes.value = `${typeLabels[state.workType] || "Projet"} · ${measure} · budget ${budgetLabels[state.desiredBudget] || "à définir"}.`;
+      bookingNotes.dataset.aiGenerated = "true";
+    }
+  }
+
+  function renderSummary() {
+    const usesUnits = ["fenetres", "portes"].includes(state.workType);
+    workspace.querySelector("[data-summary-type]").textContent = state.touched.workType
+      ? typeLabels[state.workType] || "À définir"
+      : "À définir";
+    workspace.querySelector("[data-summary-surface]").textContent = state.touched.surface && state.surface
+      ? `${state.surface} ${usesUnits ? "élément(s)" : "m²"}`
+      : "À définir";
+    workspace.querySelector("[data-summary-budget]").textContent = state.touched.desiredBudget
+      ? budgetLabels[state.desiredBudget] || "À définir"
+      : "À définir";
+    workspace.querySelector("[data-summary-finish]").textContent = state.touched.finish
+      ? finishLabels[state.finish] || "Équilibrée"
+      : "À définir";
+    workspace.querySelector("[data-summary-constraint]").textContent = state.touched.constraint
+      ? constraintLabels[state.constraint] || "Aucune"
+      : "À définir";
+    const readinessFields = [
+      { complete: state.touched.workType, weight: 10, missing: "le type de projet" },
+      { complete: state.touched.surface && Number(state.surface) > 0, weight: 14, missing: "la surface ou la quantité" },
+      { complete: state.touched.city && Boolean(state.city.trim()), weight: 8, missing: "la ville" },
+      { complete: state.touched.projectState, weight: 8, missing: "l'état actuel" },
+      { complete: state.touched.complexity, weight: 7, missing: "l'accès au chantier" },
+      { complete: state.touched.finish, weight: 8, missing: "la finition" },
+      { complete: state.touched.occupancy, weight: 7, missing: "l'occupation du logement" },
+      { complete: state.touched.deadline, weight: 7, missing: "le délai souhaité" },
+      { complete: state.touched.desiredBudget && state.desiredBudget !== "a-definir", weight: 14, missing: "le budget maximum" },
+      { complete: state.touched.priority, weight: 7, missing: "votre priorité" },
+      { complete: state.touched.constraint, weight: 5, missing: "une contrainte éventuelle", optional: true },
+      { complete: state.touched.notes && Boolean(state.notes.trim()), weight: 5, missing: "un besoin précis", optional: true },
+    ];
+    const progress = readinessFields.reduce((total, field) => total + (field.complete ? field.weight : 0), 0);
+    const missingRequired = readinessFields.filter((field) => !field.complete && !field.optional);
+    const progressBar = workspace.querySelector("[data-ai-progress-bar]");
+    const progressRoot = progressBar.closest(".ai-summary-progress");
+    const progressValue = workspace.querySelector("[data-ai-progress-value]");
+    const progressMessage = workspace.querySelector("[data-ai-progress-message]");
+
+    progressBar.style.width = `${progress}%`;
+    progressRoot.setAttribute("aria-valuenow", String(progress));
+    progressValue.textContent = `${progress}%`;
+    progressRoot.classList.toggle("is-ready", progress >= 85);
+
+    if (progress >= 95) {
+      progressMessage.textContent = "Projet très bien préparé pour une première analyse.";
+    } else if (progress >= 75) {
+      progressMessage.textContent = missingRequired.length
+        ? `Presque prêt : ajoutez ${missingRequired[0].missing}.`
+        : "Ajoutez un détail personnel pour affiner la recommandation.";
+    } else if (progress >= 45) {
+      progressMessage.textContent = missingRequired.length
+        ? `Bonne base. Prochaine information utile : ${missingRequired[0].missing}.`
+        : "Continuez pour affiner le projet.";
+    } else {
+      progressMessage.textContent = missingRequired.length
+        ? `Pour continuer, précisez ${missingRequired[0].missing}.`
+        : "Commencez par préciser votre projet.";
+    }
+  }
+
+  function saveState() {
+    window.localStorage.setItem(storageKey, JSON.stringify(state));
+    syncDerivedFields();
+    renderSummary();
+  }
+
+  function hydrateForms() {
+    setFormValue("#ai-work-type", state.workType);
+    setFormValue("#ai-est-surface", state.surface);
+    setFormValue("#ai-est-city", state.city);
+    setFormValue("#ai-project-state", state.projectState);
+    setFormValue("#ai-complexity", state.complexity);
+    setFormValue("#ai-est-finish", state.finish);
+    setFormValue("#ai-occupancy", state.occupancy);
+    setFormValue("#ai-deadline", state.deadline);
+    setFormValue("#ai-desired-budget", state.desiredBudget);
+    setFormValue("#ai-priority", state.priority);
+    setFormValue("#ai-finish", state.constraint);
+    setFormValue("#ai-project-notes", state.notes);
+    setFormValue("#ai-roadmap-scope", state.roadmapScope);
+    setFormValue("#ai-roadmap-urgency", state.roadmapUrgency);
+    setFormValue("#ai-roadmap-occupancy", state.roadmapOccupancy);
+    syncDerivedFields();
+    renderSummary();
+  }
+
+  function showStep(key, shouldScroll = true) {
+    orderedKeys.forEach((entryKey) => {
+      const active = entryKey === key;
+      panels[entryKey].hidden = !active;
+      panels[entryKey].classList.toggle("is-current", active);
+    });
+    links.forEach((link) => {
+      const active = link.dataset.aiTab === key;
+      link.classList.toggle("is-active", active);
+      link.setAttribute("aria-current", active ? "step" : "false");
+    });
+    if (shouldScroll) workspace.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  links.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      showStep(link.dataset.aiTab);
+    });
+  });
+  workspace.addEventListener("click", (event) => {
+    const next = event.target.closest("[data-ai-next]")?.dataset.aiNext;
+    const previous = event.target.closest("[data-ai-previous]")?.dataset.aiPrevious;
+    if (next || previous) showStep(next || previous);
+  });
+
+  const estimatorMap = {
+    work_type: "workType",
+    surface: "surface",
+    city: "city",
+    project_state: "projectState",
+    complexity: "complexity",
+    finish: "finish",
+    occupancy: "occupancy",
+    deadline: "deadline",
+    desired_budget: "desiredBudget",
+  };
+  document.querySelector("#ai-estimator-form")?.addEventListener("input", (event) => {
+    const stateKey = estimatorMap[event.target.name];
+    if (!stateKey) return;
+    state[stateKey] = event.target.value;
+    state.touched[stateKey] = true;
+    saveState();
+  });
+  document.querySelector("#ai-estimator-form")?.addEventListener("submit", () => {
+    Object.values(estimatorMap).forEach((stateKey) => {
+      state.touched[stateKey] = true;
+    });
+    saveState();
+  });
+  document.querySelector("#ai-material-form")?.addEventListener("input", (event) => {
+    if (event.target.name === "zone") {
+      state.workType = event.target.value;
+      state.touched.workType = true;
+    }
+    if (event.target.name === "budget") {
+      state.desiredBudget = {
+        eco: "moins-5000",
+        moyen: "5000-15000",
+        premium: "15000-40000",
+      }[event.target.value] || state.desiredBudget;
+      state.touched.desiredBudget = true;
+    }
+    if (event.target.name === "priority") {
+      state.priority = event.target.value;
+      state.touched.priority = true;
+    }
+    if (event.target.name === "finish") {
+      state.constraint = event.target.value;
+      state.touched.constraint = true;
+    }
+    if (event.target.name === "notes") {
+      state.notes = event.target.value;
+      state.touched.notes = true;
+    }
+    saveState();
+  });
+  document.querySelector("#ai-roadmap-form")?.addEventListener("input", (event) => {
+    if (event.target.name === "type") {
+      state.workType = event.target.value === "extension" ? "construction" : event.target.value;
+      state.touched.workType = true;
+    }
+    if (event.target.name === "scope") {
+      state.roadmapScope = event.target.value;
+      state.touched.roadmapScope = true;
+    }
+    if (event.target.name === "urgency") {
+      state.roadmapUrgency = event.target.value;
+      state.deadline = event.target.value === "haute" ? "urgent" : state.deadline;
+      state.touched.deadline = true;
+    }
+    if (event.target.name === "occupancy") {
+      state.roadmapOccupancy = event.target.value;
+      state.occupancy = event.target.value;
+      state.touched.occupancy = true;
+    }
+    if (event.target.name === "surface") {
+      state.surface = event.target.value;
+      state.touched.surface = true;
+    }
+    saveState();
+  });
+  document.querySelector("#ai-booking-notes")?.addEventListener("input", (event) => {
+    delete event.target.dataset.aiGenerated;
+  });
+
+  workspace.querySelector("[data-ai-reset]").addEventListener("click", () => {
+    window.localStorage.removeItem(storageKey);
+    window.localStorage.removeItem("adazrenov-ai-project-v2");
+    window.location.reload();
+  });
+
+  document.querySelectorAll(".ai-configurator .tool-inline-result").forEach((result) => {
+    const panel = result.closest(".tool-panel");
+    const updateCompletion = () => panel.classList.toggle("is-complete", !result.hidden && Boolean(result.textContent.trim()));
+    new MutationObserver(updateCompletion).observe(result, {
+      attributes: true,
+      attributeFilter: ["hidden"],
+      childList: true,
+      subtree: true,
+    });
+    updateCompletion();
+  });
+
+  hydrateForms();
+  showStep("estimate", false);
 }
 
 const aiBookingState = {
@@ -2833,6 +3947,10 @@ function escapeHtml(text) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function formatChatMessage(text) {
+  return escapeHtml(text).replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
 }
 
 function formatBookingSlot(date) {
@@ -2950,9 +4068,10 @@ async function loadAiBookingSlots() {
   const maxSlots = Math.max(3, Number(config.slotCount || 6));
   const slots = [];
 
-  if (config.availabilityApiUrl) {
+  const availabilityApiUrl = getConfiguredFunctionUrl("getAvailability", config.availabilityApiUrl || "");
+  if (availabilityApiUrl) {
     try {
-      const response = await fetch(`${config.availabilityApiUrl}?limit=${maxSlots}`);
+      const response = await fetch(`${availabilityApiUrl}?limit=${maxSlots}`);
       if (response.ok) {
         const payload = await response.json();
         const apiSlots = Array.isArray(payload?.slots) ? payload.slots : [];
@@ -3164,9 +4283,10 @@ function setupAiBookingPlanner() {
     const bookingConfig = getAiBookingConfig();
     let bookingSource = slot.source === "firebase" ? "Firebase" : "aperçu local";
 
-    if (bookingConfig.bookingApiUrl) {
+    const bookingApiUrl = getConfiguredFunctionUrl("createBooking", bookingConfig.bookingApiUrl || "");
+    if (bookingApiUrl) {
       try {
-        const response = await fetch(bookingConfig.bookingApiUrl, {
+        const response = await fetch(bookingApiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -3215,6 +4335,26 @@ function setupAiBookingPlanner() {
       }
     }
 
+    if (bookingSource !== "API calendrier" && getWeb3FormsAccessKey()) {
+      try {
+        await submitToWeb3Forms({
+          subject: `ADAZ RENOV - Demande de programmation: ${payload.service}`,
+          from_name: `${payload.firstname} ${payload.lastname}`,
+          email: payload.email,
+          telephone: payload.phone,
+          service: payload.service,
+          creneau: `${slot.start.toISOString()} - ${slot.end.toISOString()}`,
+          canal_calendrier: payload.calendarMode,
+          message: payload.notes || "Aucun message",
+          page: window.location.href,
+          source: "Programmation ADAZAI",
+        });
+        bookingSource = "Email Web3Forms";
+      } catch (error) {
+        console.warn("Could not send booking lead by email.", error);
+      }
+    }
+
     const googleUrl = buildGoogleCalendarUrl(slot, payload);
     const icsContent = buildIcsContent(slot, payload);
 
@@ -3228,23 +4368,19 @@ function setupAiBookingPlanner() {
         </p>
         <div class="estimate-strip">
           <div class="estimate-box">
-            <span>Telephone</span>
+            <span>Téléphone</span>
             <strong>${escapeHtml(payload.phone)}</strong>
           </div>
           <div class="estimate-box">
-            <span>Source de reservation</span>
-            <strong>${escapeHtml(bookingSource)}</strong>
-          </div>
-          <div class="estimate-box">
-            <span>Canal calendrier</span>
-            <strong>${escapeHtml(payload.calendarMode)}</strong>
+            <span>Créneau demandé</span>
+            <strong>${escapeHtml(formatBookingSlot(slot.start))}</strong>
           </div>
         </div>
         <div class="booking-actions">
           <a class="button small secondary" href="${googleUrl}" target="_blank" rel="noreferrer">Ouvrir Google Calendar</a>
           <button class="button small light" type="button" data-download-ics>Télécharger Apple Calendar</button>
         </div>
-        <div class="result-note">Votre demande peut ensuite etre reliee a Firebase, puis synchronisee avec Google Calendar et importee dans Apple Calendar via le fichier .ics.</div>
+        <div class="result-note">La demande a bien été transmise. Le rendez-vous sera définitif après confirmation par l'équipe ADAZ RENOV.</div>
       </div>
     `;
 
@@ -3265,216 +4401,6 @@ function setupAiBookingPlanner() {
 function setupGlobalAdazaiWidget() {
   if (document.querySelector(".adazai-widget")) return;
 
-  const CHAT_CONFIG = {
-    links: {
-      // Update these paths if the site routes change.
-      services: "services.html",
-      realisations: "projets.html",
-      produits: "produits.html",
-      aPropos: "a-propos.html",
-      contact: "contact.html",
-    },
-    estimateRanges: {
-      salleDeBain: "4 500 € à 18 000 € ou plus",
-      cuisine: "5 000 € à 25 000 € ou plus",
-      renovationInterieure: "80 € à 900 € par m²",
-      renovationExterieure: "à partir de 1 500 €",
-      fenetresSupply: "350 € à 900 € par fenêtre",
-      fenetresSupplyPose: "600 € à 1 500 € ou plus par fenêtre",
-      portesInterieures: "250 € à 800 € par porte intérieure",
-      portesEntreePremium: "plus de 1 500 € par porte d’entrée premium ou sur mesure avec pose",
-    },
-    disclaimer:
-      "Le prix indiqué est une estimation indicative. Le tarif final dépend de l’état actuel du chantier, des dimensions exactes, des matériaux choisis et des contraintes techniques.",
-    menuMessage:
-      "Bonjour 👋 Je suis Assistant Construction, l’assistant virtuel Adazrenov.\n\nJe peux vous aider à découvrir nos projets, nos produits premium, obtenir une estimation de budget ou trouver les bonnes informations pour votre chantier en France.\n\nQue souhaitez-vous faire ?",
-    menuReplies: [
-      { label: "Obtenir une estimation", action: "estimate" },
-      { label: "Voir nos services", action: "services" },
-      { label: "Voir nos réalisations", action: "realisations" },
-      { label: "Produits premium", action: "products" },
-      { label: "Découvrir Adazrenov", action: "about" },
-      { label: "Demander un rappel", action: "lead" },
-    ],
-  };
-
-  const estimateFlows = {
-    bathroom: {
-      selectedCategory: "Salle de bain",
-      intro:
-        "Très bon choix. Pour estimer une rénovation de salle de bain, nous allons préciser la surface, le type de travaux et le niveau de finition souhaité.",
-      questions: [
-        {
-          key: "selectedSurface",
-          text: "Quelle est la surface approximative de votre salle de bain ?",
-          options: ["Moins de 4 m²", "4 à 6 m²", "6 à 10 m²", "10 à 15 m²", "Plus de 15 m²"],
-        },
-        {
-          key: "selectedWorkType",
-          text: "Quel type de rénovation souhaitez-vous ?",
-          options: ["Rafraîchissement simple", "Rénovation standard", "Rénovation complète", "Salle de bain premium", "Je ne sais pas encore"],
-        },
-        {
-          key: "selectedServiceType",
-          text: "Souhaitez-vous modifier la plomberie ou garder l’emplacement actuel ?",
-          options: ["Garder l’emplacement actuel", "Modifier la plomberie", "Ajouter une douche italienne", "Ajouter baignoire / meuble / WC", "Je ne sais pas"],
-        },
-      ],
-      result: () =>
-        `Merci pour vos réponses. Pour ce type de salle de bain, le budget estimatif peut commencer autour de ${CHAT_CONFIG.estimateRanges.salleDeBain} selon les matériaux, la plomberie et les finitions.\n\nLe prix exact pourra être confirmé après analyse du projet et des détails techniques.\n\n${CHAT_CONFIG.disclaimer}\n\nSouhaitez-vous que l’équipe Adazrenov vous contacte pour une estimation personnalisée ?`,
-      replies: [
-        { label: "Oui, je souhaite être rappelé", action: "lead" },
-        { label: "Voir des réalisations salle de bain", action: "link", url: "realisations" },
-        { label: "Retour au menu", action: "menu" },
-      ],
-    },
-    kitchen: {
-      selectedCategory: "Cuisine",
-      intro:
-        "Parfait 😊 Pour une cuisine, l’estimation dépend surtout de la surface, des finitions, des meubles, du plan de travail et des éventuelles modifications techniques.",
-      questions: [
-        {
-          key: "selectedSurface",
-          text: "Quelle est la surface approximative de votre cuisine ?",
-          options: ["Moins de 6 m²", "6 à 10 m²", "10 à 15 m²", "15 à 25 m²", "Plus de 25 m²"],
-        },
-        {
-          key: "selectedWorkType",
-          text: "Quel type de projet souhaitez-vous ?",
-          options: ["Rafraîchir la cuisine", "Remplacer les meubles", "Rénovation complète", "Cuisine premium sur mesure", "Je ne sais pas encore"],
-        },
-        {
-          key: "selectedServiceType",
-          text: "Faut-il modifier l’électricité, la plomberie ou l’agencement ?",
-          options: ["Non, juste les finitions", "Oui, électricité", "Oui, plomberie", "Oui, agencement complet", "Je ne sais pas"],
-        },
-      ],
-      result: () =>
-        `Merci. Pour une cuisine de ce type, le budget estimatif peut commencer autour de ${CHAT_CONFIG.estimateRanges.cuisine} pour une cuisine premium ou sur mesure.\n\nLe montant final dépendra du mobilier, du plan de travail, des matériaux, des raccordements et du niveau de finition.\n\n${CHAT_CONFIG.disclaimer}\n\nSouhaitez-vous être rappelé par notre équipe pour affiner cette estimation ?`,
-      replies: [
-        { label: "Oui, je souhaite être rappelé", action: "lead" },
-        { label: "Voir des réalisations cuisine", action: "link", url: "realisations" },
-        { label: "Retour au menu", action: "menu" },
-      ],
-    },
-    interior: {
-      selectedCategory: "Rénovation intérieure",
-      intro:
-        "Très bien. Nous pouvons vous accompagner pour des travaux intérieurs : peinture, sols, carrelage, cloisons, finitions, électricité, plomberie ou rénovation complète.",
-      questions: [
-        {
-          key: "selectedServiceType",
-          text: "Quel espace souhaitez-vous rénover ?",
-          options: ["Une chambre", "Un salon", "Un appartement", "Une maison", "Plusieurs pièces"],
-        },
-        {
-          key: "selectedSurface",
-          text: "Quelle est la surface approximative à rénover ?",
-          options: ["Moins de 20 m²", "20 à 50 m²", "50 à 80 m²", "80 à 120 m²", "Plus de 120 m²"],
-        },
-        {
-          key: "selectedFinishLevel",
-          text: "Quel niveau de travaux souhaitez-vous ?",
-          options: ["Peinture uniquement", "Sols et peinture", "Rénovation standard", "Rénovation complète", "Projet premium"],
-        },
-      ],
-      result: () =>
-        `Merci. Pour une rénovation intérieure, le budget estimatif peut varier entre ${CHAT_CONFIG.estimateRanges.renovationInterieure} selon le niveau de travaux, les matériaux et les finitions.\n\nPour une estimation plus précise, notre équipe peut vous recontacter et analyser votre projet en détail.\n\n${CHAT_CONFIG.disclaimer}`,
-      replies: [
-        { label: "Oui, je souhaite être rappelé", action: "lead" },
-        { label: "Voir nos services intérieurs", action: "link", url: "services" },
-        { label: "Retour au menu", action: "menu" },
-      ],
-    },
-    exterior: {
-      selectedCategory: "Rénovation extérieure",
-      intro:
-        "Pour les travaux extérieurs, chaque projet dépend beaucoup de l’état actuel, de l’accès au chantier et du type de finition souhaité. Je vais vous guider rapidement.",
-      questions: [
-        {
-          key: "selectedWorkType",
-          text: "Quel type de travaux extérieurs souhaitez-vous ?",
-          options: ["Façade", "Terrasse", "Entrée / allée", "Mur / clôture", "Autre extérieur"],
-        },
-        {
-          key: "selectedSurface",
-          text: "Quelle est la surface approximative ?",
-          options: ["Moins de 20 m²", "20 à 50 m²", "50 à 100 m²", "100 à 200 m²", "Plus de 200 m²"],
-        },
-        {
-          key: "selectedFinishLevel",
-          text: "Quel niveau de finition recherchez-vous ?",
-          options: ["Simple et efficace", "Standard durable", "Finition premium", "Projet sur mesure", "Je ne sais pas"],
-        },
-      ],
-      result: () =>
-        `Merci. Pour ce type de travaux extérieurs, le budget estimatif peut commencer autour de ${CHAT_CONFIG.estimateRanges.renovationExterieure} et varier fortement selon la surface, l’accès, les matériaux et l’état actuel.\n\nPour ce type de projet, nous vous recommandons un échange avec notre équipe afin de vérifier les détails techniques.\n\n${CHAT_CONFIG.disclaimer}`,
-      replies: [
-        { label: "Être rappelé", action: "lead" },
-        { label: "Voir les réalisations", action: "link", url: "realisations" },
-        { label: "Retour au menu", action: "menu" },
-      ],
-    },
-    windows: {
-      selectedCategory: "Fenêtres",
-      intro:
-        "Très bien. Pour les fenêtres, l’estimation dépend du nombre de fenêtres, des dimensions, du type d’ouverture, de la couleur et de la pose.",
-      questions: [
-        {
-          key: "selectedQuantity",
-          text: "Combien de fenêtres souhaitez-vous remplacer ou installer ?",
-          options: ["1 fenêtre", "2 à 3 fenêtres", "4 à 6 fenêtres", "7 à 10 fenêtres", "Plus de 10 fenêtres"],
-        },
-        {
-          key: "selectedWorkType",
-          text: "Souhaitez-vous des fenêtres standard ou sur mesure ?",
-          options: ["Standard", "Sur mesure", "Je ne sais pas"],
-        },
-        {
-          key: "selectedServiceType",
-          text: "Quel type de service souhaitez-vous ?",
-          options: ["Fourniture uniquement", "Fourniture et pose", "Remplacement ancien modèle", "Fenêtres premium", "Je ne sais pas"],
-        },
-      ],
-      result: () =>
-        `Merci. Pour des fenêtres, le budget estimatif peut commencer autour de ${CHAT_CONFIG.estimateRanges.fenetresSupply} en fourniture, et de ${CHAT_CONFIG.estimateRanges.fenetresSupplyPose} avec la pose, selon les dimensions, la couleur et les options.\n\nPour un chiffrage plus juste, notre équipe peut vous recontacter et vérifier les dimensions avec vous.\n\n${CHAT_CONFIG.disclaimer}`,
-      replies: [
-        { label: "Oui, je souhaite être rappelé", action: "lead" },
-        { label: "Voir nos fenêtres", action: "link", url: "produits" },
-        { label: "Retour au menu", action: "menu" },
-      ],
-    },
-    doors: {
-      selectedCategory: "Portes",
-      intro:
-        "Très bien. Pour les portes, le prix dépend du type de porte, des dimensions, des finitions et de la pose.",
-      questions: [
-        {
-          key: "selectedWorkType",
-          text: "Quel type de porte souhaitez-vous ?",
-          options: ["Porte intérieure", "Porte d’entrée", "Porte vitrée", "Porte sur mesure", "Je ne sais pas"],
-        },
-        {
-          key: "selectedQuantity",
-          text: "Combien de portes souhaitez-vous installer ou remplacer ?",
-          options: ["1 porte", "2 à 3 portes", "4 à 6 portes", "7 à 10 portes", "Plus de 10 portes"],
-        },
-        {
-          key: "selectedServiceType",
-          text: "Souhaitez-vous la fourniture, la pose ou les deux ?",
-          options: ["Fourniture uniquement", "Pose uniquement", "Fourniture et pose", "Projet premium", "Je ne sais pas"],
-        },
-      ],
-      result: () =>
-        `Merci. Pour les portes, le budget estimatif peut commencer autour de ${CHAT_CONFIG.estimateRanges.portesInterieures}, et peut dépasser ${CHAT_CONFIG.estimateRanges.portesEntreePremium}.\n\nLe prix final dépendra du modèle, des dimensions, des finitions et des contraintes de pose.\n\n${CHAT_CONFIG.disclaimer}`,
-      replies: [
-        { label: "Être rappelé", action: "lead" },
-        { label: "Voir nos portes", action: "link", url: "produits" },
-        { label: "Retour au menu", action: "menu" },
-      ],
-    },
-  };
-
   const widget = document.createElement("div");
   widget.className = "adazai-widget";
   widget.innerHTML = `
@@ -3490,14 +4416,12 @@ function setupGlobalAdazaiWidget() {
           <span>AI Assistant</span>
         </div>
         <div class="adazai-head-actions">
-          <button class="adazai-chat-new" type="button" data-new-conversation>Retour au menu</button>
           <button class="adazai-widget-close" type="button" aria-label="Fermer AI Assistant">×</button>
         </div>
       </div>
-      <div class="adazai-widget-log" aria-live="polite"></div>
-      <div class="adazai-quick-replies" aria-label="Choix rapides"></div>
+      <div class="adazai-widget-log" role="log" aria-label="Conversation avec ADAZAI" aria-live="polite"></div>
       <form class="adazai-widget-form">
-        <input type="text" autocomplete="off" placeholder="Écrivez votre question...">
+        <input type="text" autocomplete="off" aria-label="Votre message" placeholder="Écrivez votre question...">
         <button class="button small" type="submit" aria-label="Envoyer">→</button>
       </form>
     </aside>
@@ -3508,84 +4432,41 @@ function setupGlobalAdazaiWidget() {
   const toggle = widget.querySelector(".adazai-floating-cta");
   const panel = widget.querySelector(".adazai-widget-panel");
   const closeButton = widget.querySelector(".adazai-widget-close");
-  const newButton = widget.querySelector("[data-new-conversation]");
   const form = widget.querySelector(".adazai-widget-form");
   const input = widget.querySelector(".adazai-widget-form input");
   const log = widget.querySelector(".adazai-widget-log");
-  const quickRepliesRoot = widget.querySelector(".adazai-quick-replies");
   let typingBubble = null;
 
-  function createDefaultState() {
-    return {
-      messages: [],
-      currentStep: "menu",
-      activeEstimateFlow: null,
-      estimateQuestionIndex: 0,
-      selectedCategory: "",
-      selectedSurface: "",
-      selectedQuantity: "",
-      selectedWorkType: "",
-      selectedFinishLevel: "",
-      selectedServiceType: "",
-      leadName: "",
-      leadPhone: "",
-      quickReplies: [],
-      leadFormVisible: false,
-    };
-  }
-
-  let state = createDefaultState();
-
-  function normalizeWidgetText(value) {
-    return String(value || "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s@.+-]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function renderMessages() {
-    log.innerHTML = "";
-    state.messages.forEach((message) => appendMessage(message.role, message.text, false));
-    renderQuickReplies();
-    scrollLog();
-  }
+  const state = { messages: [], conversationId: "" };
+  let conversationVersion = 0;
+  let pendingRequest = null;
+  const localTime = new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  });
 
   function scrollLog() {
     log.scrollTop = log.scrollHeight;
   }
 
   function appendMessage(role, text, persist = true, type = "message") {
+    const sentAt = new Date();
     const row = document.createElement("div");
     row.className = `adazai-message-row ${role}`;
-    row.innerHTML = `<div class="adazai-message-stack"><div class="chat-message ${role}"><p>${escapeHtml(text)}</p></div></div>`;
+    row.innerHTML = `<div class="adazai-message-stack"><div class="chat-message ${role}"><p>${formatChatMessage(text)}</p></div></div>`;
+    const timestamp = document.createElement("time");
+    timestamp.className = "adazai-message-time";
+    timestamp.dateTime = sentAt.toISOString();
+    timestamp.textContent = localTime.format(sentAt);
+    timestamp.title = sentAt.toLocaleString();
+    row.querySelector(".adazai-message-stack").appendChild(timestamp);
     log.appendChild(row);
     scrollLog();
 
     if (persist) {
-      state.messages.push({ role, text, type, timestamp: new Date().toISOString() });
+      state.messages.push({ role, text, type, timestamp: sentAt.toISOString() });
     }
-  }
-
-  function addBotMessage(text, replies = null, after = null) {
-    state.quickReplies = [];
-    renderQuickReplies();
-    showTyping();
-    window.setTimeout(() => {
-      hideTyping();
-      appendMessage("assistant", text);
-      if (Array.isArray(replies)) {
-        state.quickReplies = replies;
-        renderQuickReplies();
-      }
-      if (typeof after === "function") after();
-    }, 220);
-  }
-
-  function addUserMessage(text) {
-    appendMessage("user", text);
   }
 
   function showTyping() {
@@ -3604,436 +4485,75 @@ function setupGlobalAdazaiWidget() {
     }
   }
 
-  function detectIntent(message) {
-    const normalized = normalizeWidgetText(message);
-    if (/(salle de bain|bain|douche|baignoire|carrelage salle de bain)/.test(normalized)) return "bathroom";
-    if (/(cuisine|meubles cuisine|plan de travail)/.test(normalized)) return "kitchen";
-    if (/(appartement|maison|chambre|salon|peinture|sol|parquet|carrelage|interieur|interieure)/.test(normalized)) return "interior";
-    if (/(facade|terrasse|exterieur|exterieure|cloture|allee|jardin|mur)/.test(normalized)) return "exterior";
-    if (/(fenetre|fenetres|vitrage|pvc|alu|aluminium)/.test(normalized)) return "windows";
-    if (/(porte|portes|porte d entree|porte interieure)/.test(normalized)) return "doors";
-    if (/(prix|tarif|devis|estimation|budget)/.test(normalized)) return "estimate";
-    if (/(services|travaux|prestations)/.test(normalized)) return "services";
-    if (/(realisations|projets|galerie|photos|exemples)/.test(normalized)) return "realisations";
-    if (/(produits|premium|materiaux|qualite|sur mesure)/.test(normalized)) return "products";
-    if (/(adazrenov|adaz renov|qui etes vous|entreprise|a propos|nous)/.test(normalized)) return "about";
-    if (/(contact|telephone|rappel|formulaire|appeler|conseil)/.test(normalized)) return "lead";
-    return "unknown";
-  }
+  async function getRemoteWidgetAnswer(message, signal) {
+    const apiUrl = getConfiguredFunctionUrl("adazChat", window.AI_AISSTEN_CHAT_CONFIG?.apiUrl || "");
+    if (!apiUrl) throw new Error("Chat API is not configured.");
 
-  function renderQuickReplies() {
-    quickRepliesRoot.innerHTML = "";
-    quickRepliesRoot.hidden = !state.quickReplies.length || state.leadFormVisible;
-    state.quickReplies.forEach((reply) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = reply.label;
-      button.addEventListener("click", () => handleQuickReply(reply));
-      quickRepliesRoot.appendChild(button);
-    });
-  }
-
-  function resetChat() {
-    state = createDefaultState();
-    resetToMenu();
-  }
-
-  function resetToMenu() {
-    state.currentStep = "menu";
-    state.activeEstimateFlow = null;
-    state.estimateQuestionIndex = 0;
-    state.leadFormVisible = false;
-    quickRepliesRoot.hidden = false;
-    renderLeadForm(false);
-    if (!state.messages.length) {
-      appendMessage("assistant", CHAT_CONFIG.menuMessage);
-      state.quickReplies = CHAT_CONFIG.menuReplies;
-      renderQuickReplies();
-    } else {
-      addBotMessage(CHAT_CONFIG.menuMessage, CHAT_CONFIG.menuReplies);
-    }
-  }
-
-  function startEstimate() {
-    state.currentStep = "estimate_category";
-    addBotMessage(
-      "Bien sûr 😊 Pour vous donner une estimation plus juste, j’ai besoin de quelques réponses rapides. Vous pouvez simplement choisir les options ci-dessous.\n\nQuel type de projet souhaitez-vous réaliser ?",
-      [
-        { label: "Salle de bain", action: "estimateFlow", flow: "bathroom" },
-        { label: "Cuisine", action: "estimateFlow", flow: "kitchen" },
-        { label: "Rénovation intérieure", action: "estimateFlow", flow: "interior" },
-        { label: "Rénovation extérieure", action: "estimateFlow", flow: "exterior" },
-        { label: "Fenêtres", action: "estimateFlow", flow: "windows" },
-        { label: "Portes", action: "estimateFlow", flow: "doors" },
-        { label: "Projet personnalisé", action: "customProject" },
-      ]
-    );
-  }
-
-  function startEstimateFlow(flowKey) {
-    const flow = estimateFlows[flowKey];
-    if (!flow) return startCustomProjectFlow();
-    state.activeEstimateFlow = flowKey;
-    state.estimateQuestionIndex = 0;
-    state.selectedCategory = flow.selectedCategory;
-    state.selectedSurface = "";
-    state.selectedQuantity = "";
-    state.selectedWorkType = "";
-    state.selectedFinishLevel = "";
-    state.selectedServiceType = "";
-    state.currentStep = "estimate_questions";
-    addBotMessage(`${flow.intro}\n\n${flow.questions[0].text}`, flow.questions[0].options.map((label) => ({ label, action: "estimateAnswer" })));
-  }
-
-  function handleEstimateAnswer(label) {
-    const flow = estimateFlows[state.activeEstimateFlow];
-    const question = flow?.questions[state.estimateQuestionIndex];
-    if (!flow || !question) return resetToMenu();
-    state[question.key] = label;
-    state.estimateQuestionIndex += 1;
-    const nextQuestion = flow.questions[state.estimateQuestionIndex];
-    if (nextQuestion) {
-      return addBotMessage(nextQuestion.text, nextQuestion.options.map((option) => ({ label: option, action: "estimateAnswer" })));
-    }
-    state.currentStep = "estimate_result";
-    return addBotMessage(flow.result(), flow.replies);
-  }
-
-  function startBathroomFlow() {
-    startEstimateFlow("bathroom");
-  }
-
-  function startKitchenFlow() {
-    startEstimateFlow("kitchen");
-  }
-
-  function startInteriorFlow() {
-    startEstimateFlow("interior");
-  }
-
-  function startExteriorFlow() {
-    startEstimateFlow("exterior");
-  }
-
-  function startWindowsFlow() {
-    startEstimateFlow("windows");
-  }
-
-  function startDoorsFlow() {
-    startEstimateFlow("doors");
-  }
-
-  function startCustomProjectFlow() {
-    state.selectedCategory = "Projet personnalisé";
-    state.currentStep = "lead";
-    addBotMessage(
-      "Votre projet semble spécifique, et c’est justement le type de demande qui mérite un échange direct avec notre équipe.\n\nPour mieux comprendre vos besoins, nous vous proposons de vous rappeler et de voir ensemble les détails : type de travaux, contraintes, budget, délais et solutions possibles.\n\nPouvez-vous laisser votre nom et votre numéro de téléphone ?",
-      null,
-      () => showLeadForm()
-    );
-  }
-
-  function showServices() {
-    state.currentStep = "services";
-    addBotMessage(
-      "Adazrenov vous accompagne pour des projets de rénovation, construction, aménagement et installation, avec une approche claire, professionnelle et adaptée à vos besoins.\n\nQuel service souhaitez-vous découvrir ?",
-      [
-        { label: "Salle de bain", action: "serviceInfo", service: "Salle de bain" },
-        { label: "Cuisine", action: "serviceInfo", service: "Cuisine" },
-        { label: "Rénovation intérieure", action: "serviceInfo", service: "Rénovation intérieure" },
-        { label: "Rénovation extérieure", action: "serviceInfo", service: "Rénovation extérieure" },
-        { label: "Fenêtres et portes", action: "serviceInfo", service: "Fenêtres et portes" },
-        { label: "Projet personnalisé", action: "customProject" },
-        { label: "Voir les services", action: "link", url: "services" },
-      ]
-    );
-  }
-
-  function showServiceDetail(service) {
-    const descriptions = {
-      "Salle de bain": "Nous pouvons vous accompagner pour une salle de bain plus confortable, moderne et durable : douche, baignoire, carrelage, meubles, plomberie et finitions.",
-      Cuisine: "Pour la cuisine, Adazrenov peut intervenir sur les finitions, meubles, plan de travail, raccordements, agencement et solutions sur mesure.",
-      "Rénovation intérieure": "Pour l’intérieur, nous pouvons vous orienter sur peinture, sols, carrelage, cloisons, finitions, électricité, plomberie et rénovation complète.",
-      "Rénovation extérieure": "Pour l’extérieur, nous pouvons étudier façade, terrasse, entrée, allée, mur, clôture et finitions adaptées à votre chantier.",
-      "Fenêtres et portes": "Nous proposons des solutions pour fenêtres et portes standard ou sur mesure, avec fourniture, pose et finitions premium selon votre projet.",
-    };
-    addBotMessage(
-      `${descriptions[service] || "Nous pouvons vous orienter selon votre besoin et votre chantier."}\n\nSouhaitez-vous obtenir une estimation ou voir des exemples de réalisations ?\n\nVous pouvez découvrir plus de détails sur notre page services.`,
-      [
-        { label: "Obtenir une estimation", action: "estimate" },
-        { label: "Voir des réalisations", action: "realisations" },
-        { label: "Être rappelé", action: "lead" },
-        { label: "Voir les services", action: "link", url: "services" },
-      ]
-    );
-  }
-
-  function showRealisations() {
-    state.currentStep = "realisations";
-    addBotMessage(
-      "Bien sûr 😊 Vous pouvez découvrir plusieurs projets réalisés par Adazrenov : salles de bain, cuisines, rénovations intérieures, extérieures, fenêtres, portes et projets sur mesure.\n\nQuel type de réalisation souhaitez-vous voir ?",
-      [
-        { label: "Salles de bain", action: "realisationsDetail" },
-        { label: "Cuisines", action: "realisationsDetail" },
-        { label: "Rénovations intérieures", action: "realisationsDetail" },
-        { label: "Fenêtres et portes", action: "realisationsDetail" },
-        { label: "Tous les projets", action: "realisationsDetail" },
-      ]
-    );
-  }
-
-  function showRealisationsLink() {
-    addBotMessage("Vous pouvez consulter cette page pour voir des exemples similaires.", [{ label: "Voir la galerie", action: "link", url: "realisations" }]);
-  }
-
-  function showPremiumProducts() {
-    state.currentStep = "products";
-    addBotMessage(
-      "Chez Adazrenov, nous privilégions des produits fiables, durables et esthétiques pour obtenir un résultat propre, moderne et adapté à votre projet.\n\nQuel type de produit vous intéresse ?",
-      [
-        { label: "Fenêtres premium", action: "productDetail" },
-        { label: "Portes premium", action: "productDetail" },
-        { label: "Finitions salle de bain", action: "productDetail" },
-        { label: "Finitions cuisine", action: "productDetail" },
-        { label: "Solutions sur mesure", action: "productDetail" },
-      ]
-    );
-  }
-
-  function showProductDetail() {
-    addBotMessage(
-      "Nous pouvons vous orienter vers des solutions standard ou sur mesure, avec différentes finitions, couleurs et options selon votre projet.",
-      [
-        { label: "Demander un conseil", action: "lead" },
-        { label: "Voir les produits", action: "link", url: "produits" },
-        { label: "Être rappelé", action: "lead" },
-      ]
-    );
-  }
-
-  function showAboutAdazrenov() {
-    state.currentStep = "about";
-    addBotMessage(
-      "Adazrenov accompagne ses clients en France dans leurs projets de rénovation, construction et aménagement, avec une approche professionnelle, claire et orientée vers la qualité.\n\nNous travaillons sur des projets intérieurs et extérieurs : salles de bain, cuisines, rénovations complètes, fenêtres, portes, produits premium et solutions personnalisées.\n\nNotre objectif est simple : vous aider à concrétiser votre projet avec des conseils adaptés, des finitions soignées et un accompagnement sérieux.\n\nSouhaitez-vous découvrir davantage notre entreprise sur le site ?",
-      [
-        { label: "Voir la page À propos", action: "link", url: "aPropos" },
-        { label: "Voir nos réalisations", action: "realisations" },
-        { label: "Obtenir une estimation", action: "estimate" },
-        { label: "Retour au menu", action: "menu" },
-      ]
-    );
-  }
-
-  function showLeadForm() {
-    state.currentStep = "lead";
-    state.leadFormVisible = true;
-    state.quickReplies = [];
-    renderQuickReplies();
-    renderLeadForm(true);
-  }
-
-  function renderLeadForm(show) {
-    const existing = widget.querySelector(".adazai-lead-form");
-    if (existing) existing.remove();
-    if (!show) return;
-
-    const leadForm = document.createElement("form");
-    leadForm.className = "adazai-lead-form";
-    leadForm.innerHTML = `
-      <label>
-        <span>Nom</span>
-        <input name="leadName" type="text" autocomplete="name" value="${escapeHtml(state.leadName)}">
-      </label>
-      <label>
-        <span>Téléphone</span>
-        <input name="leadPhone" type="tel" autocomplete="tel" value="${escapeHtml(state.leadPhone)}">
-      </label>
-      <p class="adazai-lead-error" hidden></p>
-      <button class="button" type="submit">Envoyer ma demande</button>
-      <a class="adazai-contact-link" href="${CHAT_CONFIG.links.contact}" target="_blank" rel="noopener noreferrer">Ouvrir le formulaire</a>
-    `;
-    form.before(leadForm);
-    leadForm.addEventListener("submit", submitLead);
-    const contactLink = leadForm.querySelector(".adazai-contact-link");
-    if (contactLink) {
-      contactLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        openAssistantLink(contactLink.href);
-      });
-    }
-  }
-
-  function showLeadRequest() {
-    addBotMessage(
-      "Avec plaisir 😊 Pour que l’équipe Adazrenov puisse vous recontacter, merci de laisser simplement votre nom et votre numéro de téléphone.",
-      null,
-      () => showLeadForm()
-    );
-  }
-
-  function buildLeadPayload() {
-    return {
-      name: state.leadName,
-      phone: state.leadPhone,
-      projectType: state.selectedCategory,
-      selections: {
-        selectedCategory: state.selectedCategory,
-        selectedSurface: state.selectedSurface,
-        selectedQuantity: state.selectedQuantity,
-        selectedWorkType: state.selectedWorkType,
-        selectedFinishLevel: state.selectedFinishLevel,
-        selectedServiceType: state.selectedServiceType,
-      },
-      page: window.location.href,
-    };
-  }
-
-  async function onLeadSubmit(payload) {
-    const leadApiUrl = window.AI_AISSTEN_CHAT_CONFIG?.leadApiUrl || "";
-    if (!leadApiUrl) {
-      console.info("ADAZRENOV lead stub:", payload);
-      return { ok: true, source: "stub" };
-    }
-
-    const response = await fetch(leadApiUrl, {
+    const response = await fetch(apiUrl, {
       method: "POST",
+      signal,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        message,
+        conversationId: state.conversationId,
+        context: "ADAZ RENOV global website assistant",
+        page: document.body.dataset.page || "",
+        url: window.location.href,
+      }),
     });
-    return { ok: response.ok, source: "api" };
+
+    if (!response.ok) throw new Error(`Chat API unavailable: ${response.status}`);
+    const data = await response.json();
+    const answer = String(data.answer || "").trim();
+    if (!answer) throw new Error("Chat API returned an empty answer.");
+    return { answer, conversationId: String(data.conversationId || "") };
   }
 
-  async function submitLead(event) {
-    event.preventDefault();
-    const leadForm = event.currentTarget;
-    const error = leadForm.querySelector(".adazai-lead-error");
-    const name = leadForm.elements.leadName.value.trim();
-    const phone = leadForm.elements.leadPhone.value.trim();
-    const phoneDigits = phone.replace(/\D/g, "");
-
-    error.hidden = true;
-    if (!name) {
-      error.textContent = "Merci d’indiquer votre nom.";
-      error.hidden = false;
-      return;
-    }
-    if (!phone || phoneDigits.length < 8) {
-      error.textContent = "Merci d’indiquer un numéro de téléphone valide.";
-      error.hidden = false;
-      return;
-    }
-
-    state.leadName = name;
-    state.leadPhone = phone;
-    const submitButton = leadForm.querySelector("button");
-    submitButton.disabled = true;
-    submitButton.textContent = "Envoi...";
+  async function handleFreeText(message) {
+    const version = conversationVersion;
+    const controller = new AbortController();
+    pendingRequest = controller;
+    appendMessage("user", message);
+    showTyping();
 
     try {
-      await onLeadSubmit(buildLeadPayload());
-    } catch (errorSubmit) {
-      console.warn("Assistant lead submit unavailable.", errorSubmit);
+      const response = await getRemoteWidgetAnswer(message, controller.signal);
+      if (version !== conversationVersion) return;
+      state.conversationId = response.conversationId || state.conversationId;
+      hideTyping();
+      appendMessage("assistant", response.answer);
+    } catch (error) {
+      if (version !== conversationVersion || error.name === "AbortError") return;
+      console.warn("ADAZAI chat unavailable.", error);
+      hideTyping();
+      appendMessage(
+        "assistant",
+        "Le chat est momentanément indisponible. Vous pouvez réessayer ou contacter notre équipe au +33 1 86 04 74 68 ou à adazrenov@gmail.com."
+      );
+    } finally {
+      if (pendingRequest === controller) pendingRequest = null;
     }
-
-    state.leadFormVisible = false;
-    renderLeadForm(false);
-    addBotMessage(
-      "Merci. Votre demande a bien été envoyée. L’équipe Adazrenov vous contactera prochainement pour discuter de votre projet et vous proposer la meilleure solution.\n\nVous pouvez aussi remplir notre formulaire de contact pour être rappelé plus facilement.",
-      [
-        { label: "Voir nos réalisations", action: "realisations" },
-        { label: "Retour au menu", action: "menu" },
-        { label: "Ouvrir le formulaire", action: "link", url: "contact" },
-      ]
-    );
-  }
-
-  function handleFallback() {
-    addBotMessage(
-      "Je peux vous aider 😊 Pour mieux vous orienter, pouvez-vous choisir le type de projet qui correspond le mieux à votre demande ?",
-      [
-        { label: "Salle de bain", action: "estimateFlow", flow: "bathroom" },
-        { label: "Cuisine", action: "estimateFlow", flow: "kitchen" },
-        { label: "Rénovation intérieure", action: "estimateFlow", flow: "interior" },
-        { label: "Rénovation extérieure", action: "estimateFlow", flow: "exterior" },
-        { label: "Fenêtres / Portes", action: "services" },
-        { label: "Projet personnalisé", action: "customProject" },
-      ]
-    );
-  }
-
-  function routeIntent(intent) {
-    switch (intent) {
-      case "bathroom":
-        return startBathroomFlow();
-      case "kitchen":
-        return startKitchenFlow();
-      case "interior":
-        return startInteriorFlow();
-      case "exterior":
-        return startExteriorFlow();
-      case "windows":
-        return startWindowsFlow();
-      case "doors":
-        return startDoorsFlow();
-      case "estimate":
-        return startEstimate();
-      case "services":
-        return showServices();
-      case "realisations":
-        return showRealisations();
-      case "products":
-        return showPremiumProducts();
-      case "about":
-        return showAboutAdazrenov();
-      case "lead":
-        return showLeadRequest();
-      default:
-        return handleFallback();
-    }
-  }
-
-  function handleQuickReply(reply) {
-    addUserMessage(reply.label);
-    if (reply.action === "link") {
-      const targetUrl = CHAT_CONFIG.links[reply.url] || reply.url || CHAT_CONFIG.links.contact;
-      openAssistantLink(targetUrl);
-      return;
-    }
-    if (reply.action === "menu") return resetToMenu();
-    if (reply.action === "estimate") return startEstimate();
-    if (reply.action === "estimateFlow") return startEstimateFlow(reply.flow);
-    if (reply.action === "estimateAnswer") return handleEstimateAnswer(reply.label);
-    if (reply.action === "customProject") return startCustomProjectFlow();
-    if (reply.action === "services") return showServices();
-    if (reply.action === "serviceInfo") return showServiceDetail(reply.service);
-    if (reply.action === "realisations") return showRealisations();
-    if (reply.action === "realisationsDetail") return showRealisationsLink();
-    if (reply.action === "products") return showPremiumProducts();
-    if (reply.action === "productDetail") return showProductDetail();
-    if (reply.action === "about") return showAboutAdazrenov();
-    if (reply.action === "lead") return showLeadRequest();
-  }
-
-  function openAssistantLink(url) {
-    window.open(url, "_blank", "noopener,noreferrer");
-    window.setTimeout(() => window.focus(), 0);
-  }
-
-  function handleFreeText(message) {
-    const clean = String(message || "").trim();
-    if (!clean) return;
-    addUserMessage(clean);
-    routeIntent(detectIntent(clean));
-  }
-
-  function handleUserMessage(message) {
-    handleFreeText(message);
   }
 
   function openWidget() {
+    if (!panel.hidden) return;
+    conversationVersion += 1;
+    pendingRequest?.abort();
+    pendingRequest = null;
+    hideTyping();
+    state.messages = [];
+    state.conversationId = "";
+    log.replaceChildren();
+    form.reset();
+    input.disabled = false;
+    form.querySelector("button").disabled = false;
     panel.hidden = false;
     widget.classList.add("is-open");
     toggle.setAttribute("aria-expanded", "true");
+    appendMessage(
+      "assistant",
+      "Bonjour, je suis ADAZAI, votre assistant rénovation. Décrivez votre projet ou posez-moi votre question : nous pouvons en discuter ici."
+    );
     window.setTimeout(() => input.focus(), 40);
   }
 
@@ -4049,11 +4569,23 @@ function setupGlobalAdazaiWidget() {
   });
 
   closeButton.addEventListener("click", closeWidget);
-  newButton.addEventListener("click", resetToMenu);
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    handleUserMessage(input.value);
+    const message = input.value.trim();
+    if (!message || input.disabled) return;
     input.value = "";
+    input.disabled = true;
+    form.querySelector("button").disabled = true;
+    const version = conversationVersion;
+    try {
+      await handleFreeText(message);
+    } finally {
+      if (version === conversationVersion) {
+        input.disabled = false;
+        form.querySelector("button").disabled = false;
+        if (!panel.hidden) input.focus();
+      }
+    }
   });
 
   document.addEventListener("keydown", (event) => {
@@ -4064,17 +4596,15 @@ function setupGlobalAdazaiWidget() {
     button.addEventListener("click", openWidget);
   });
 
-  resetChat();
-  renderMessages();
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+function setupSiteShell() {
   const currentPage = document.body.dataset.page || "home";
   const headerRoot = document.querySelector(".site-header");
   const footerRoot = document.querySelector(".site-footer");
 
-  if (headerRoot) headerRoot.innerHTML = buildHeader(currentPage);
-  if (footerRoot) footerRoot.innerHTML = buildFooter();
+  if (headerRoot && !headerRoot.children.length) headerRoot.innerHTML = buildHeader(currentPage);
+  if (footerRoot && !footerRoot.children.length) footerRoot.innerHTML = buildFooter();
 
   const toggle = document.querySelector(".nav-toggle");
   if (toggle) {
@@ -4095,19 +4625,45 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (year) {
     year.textContent = String(new Date().getFullYear());
   }
+}
 
-  await loadProductCatalogues();
-  setupDoorCatalogue();
-  setupWindowCatalogue();
-  setupShutterCatalogue();
-  orderProductCatalogueCards();
+function setupProductCatalogue() {
+  const roots = document.querySelectorAll("#door-products, #window-products, #shutter-products");
+  if (!roots.length) return;
+
+  const render = () => {
+    setupDoorCatalogue();
+    setupWindowCatalogue();
+    setupShutterCatalogue();
+    orderProductCatalogueCards();
+  };
+  render();
   setupFilters();
   setupProductSubfilters();
   setupProductVariants();
+
+  // Keep the local catalogue interactive while an optional remote source loads.
+  loadProductCatalogues().then((changed) => {
+    if (!changed) return;
+    roots.forEach((root) => delete root.dataset.prerendered);
+    render();
+    document.dispatchEvent(new CustomEvent("productcataloguechange"));
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupSiteShell();
+  if (document.querySelector("#door-products, #window-products, #shutter-products")) {
+    setupProductCatalogue();
+  } else {
+    setupFilters();
+    setupProductVariants();
+  }
   setupContactForm();
   setupReveal();
   setupProjectVideoPreviews();
   setupProjectVideoModal();
+  setupAiToolsNavigation();
   setupAiPhotoAnalyzer();
   setupAiMaterialAdvisor();
   setupAiChatbot();

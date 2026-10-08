@@ -1,0 +1,4 @@
+Font Awesome Free brand icons: Facebook, Instagram, TikTok.
+Source: https://github.com/FortAwesome/Font-Awesome/tree/7.x/svgs/brands
+Icons licensed under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Copyright Fonticons, Inc. Icons reused without modifying their paths.
