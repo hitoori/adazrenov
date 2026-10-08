@@ -4,7 +4,7 @@ const navItems = [
   { page: "products", href: "produits.html", label: "Produits" },
   { page: "projects", href: "projets.html", label: "Projets" },
   { page: "about", href: "a-propos.html", label: "À propos" },
-  { page: "ai", href: "ia-travaux.html", label: "IA Travaux" },
+  { page: "ai", href: "ia-travaux.html", label: "Assistant IA" },
   { page: "contact", href: "contact.html", label: "Contact" },
 ];
 
@@ -52,8 +52,7 @@ function buildHeader(currentPage) {
   const links = navItems
     .map((item) => {
       const active = item.page === currentPage ? "is-active" : "";
-      const label = currentPage === "home" && item.page === "ai" ? "Assistant IA" : item.label;
-      return `<a class="${active}" href="${item.href}">${label}</a>`;
+      return `<a class="${active}" href="${item.href}">${item.label}</a>`;
     })
     .join("");
 
@@ -93,12 +92,8 @@ function buildHeader(currentPage) {
   `;
 }
 
-function buildFooter(currentPage = "") {
-  const description = currentPage === "home"
-    ? "ADAZ RENOV, entreprise de rénovation et de construction basée à Noiseau. Fourniture et pose de fenêtres, portes et volets. Intervention à Paris, en Île-de-France et dans toute la France."
-    : "ADAZ RENOV, entreprise de rénovation et de construction basée à Noiseau. Fourniture et pose de fenêtres, portes et volets.";
-  const assistantLabel = currentPage === "home" ? "Assistant IA" : "IA Travaux";
-  const emailLabel = currentPage === "home" ? "E-mail" : "Gmail";
+function buildFooter() {
+  const description = "Rénovation, construction et menuiserie depuis 2021. Basés à Noiseau, nous intervenons à Paris, en Île-de-France et dans toute la France.";
   return `
     <footer class="footer-shell">
       <div class="container footer-grid">
@@ -123,7 +118,7 @@ function buildFooter(currentPage = "") {
             <a href="produits.html">Produits</a>
             <a href="projets.html">Projets</a>
             <a href="a-propos.html">À propos</a>
-            <a href="ia-travaux.html">${assistantLabel}</a>
+            <a href="ia-travaux.html">Assistant IA</a>
             <a href="contact.html">Contact</a>
           </div>
         </nav>
@@ -143,7 +138,7 @@ function buildFooter(currentPage = "") {
           <dl class="footer-contact">
             <div><dt>Adresse</dt><dd><address>1 Place du Vieux Pays<br>94880 Noiseau, France</address></dd></div>
             <div><dt>Téléphone</dt><dd><a href="${companyPhoneHref}">${companyPhoneDisplay}</a></dd></div>
-            <div><dt>${emailLabel}</dt><dd><a href="mailto:${companyEmail}">${companyEmail}</a></dd></div>
+            <div><dt>E-mail</dt><dd><a href="mailto:${companyEmail}">${companyEmail}</a></dd></div>
           </dl>
         </div>
       </div>
@@ -628,88 +623,88 @@ let doorCatalogue = [
 let windowCatalogue = [
   {
     id: 1,
-    title: "Fenetre aluminium ENTRA",
+    title: "Fenêtre en aluminium ENTRA",
     description: "Profil aluminium moderne avec isolation renforcee et finition personnalisable.",
     specs: "Aluminium, 3 joints, 3 chambres, Uw 0,85 pour Ug = 0,5.",
     hasTechSheet: true,
   },
   {
     id: 2,
-    title: "Fenetre bois ESPERIA LIFE",
+    title: "Fenêtre en bois ESPERIA LIFE",
     description: "Menuiserie bois chaleureuse avec profil isolant pour renovation premium.",
     specs: "Bois, fiche technique disponible, Uw 0,83 pour Ug = 0,5.",
     hasTechSheet: true,
   },
   {
     id: 3,
-    title: "Fenetre PVC modele 03",
+    title: "Fenêtre en PVC — modèle 03",
     description: "Profil PVC blanc avec vitrage isolant et lignes sobres pour facade contemporaine.",
   },
   {
     id: 4,
-    title: "Baie coulissante PVC EKOSUN HST",
+    title: "Baie coulissante en PVC EKOSUN HST",
     description: "Systeme coulissant PVC pour grandes ouvertures avec performance thermique elevee.",
     specs: "PVC coulissant, fiche technique disponible, Uw 0,63 pour Ug = 0,5.",
     hasTechSheet: true,
   },
   {
     id: 5,
-    title: "Fenetre PVC IDEAL 8000",
+    title: "Fenêtre en PVC IDEAL 8000",
     description: "Profil PVC performant pour isolation, etancheite et confort au quotidien.",
     specs: "PVC, 3 joints, 6 chambres, Uw 0,74 pour Ug = 0,5.",
     hasTechSheet: true,
   },
   {
     id: 6,
-    title: "Fenetre PVC modele 06",
+    title: "Fenêtre en PVC — modèle 06",
     description: "Menuiserie PVC blanche avec double vitrage et coloris disponibles sur demande.",
   },
   {
     id: 7,
-    title: "Fenetre aluminium modele 07",
+    title: "Fenêtre en aluminium — modèle 07",
     description: "Profil aluminium fin, adapte aux projets modernes et aux finitions foncees.",
   },
   {
     id: 8,
-    title: "Fenetre aluminium anthracite",
+    title: "Fenêtre en aluminium anthracite",
     description: "Menuiserie aluminium foncee avec vitrage isolant et style contemporain.",
   },
   {
     id: 9,
-    title: "Fenetre bois avec appui",
+    title: "Fenêtre en bois avec appui",
     description: "Profil bois robuste avec finition protectrice et rendu naturel.",
     specs: "Fenetres en bois avec couches de vernis pour garantir une utilisation durable.",
     hasTechSheet: true,
   },
   {
     id: 10,
-    title: "Fenetre PVC isolation renforcee",
+    title: "Fenêtre en PVC à isolation renforcée",
     description: "Profil PVC blanc concu pour une bonne isolation thermique et acoustique.",
   },
   {
     id: 11,
-    title: "Fenetre PVC double vitrage",
+    title: "Fenêtre en PVC à double vitrage",
     description: "Solution PVC compacte pour renovation avec vitrage isolant.",
   },
   {
     id: 12,
-    title: "Fenetre PVC haute performance",
+    title: "Fenêtre en PVC haute performance",
     description: "Profil PVC blanc avec structure renforcie pour confort et durabilite.",
   },
   {
     id: 13,
-    title: "Fenetre aluminium modele 13",
+    title: "Fenêtre en aluminium — modèle 13",
     description: "Profil aluminium epure avec choix de coloris pour s'adapter a la facade.",
   },
 ];
 
 let shutterCatalogue = [
-  { id: 1, title: "Volet roulant exterieur modele 01", feature: "Coffre apparent" },
-  { id: 2, title: "Volet roulant exterieur modele 02", feature: "Sous linteau" },
-  { id: 3, title: "Volet roulant exterieur modele 03", feature: "Coffre droit" },
-  { id: 4, title: "Volet roulant exterieur modele 04", feature: "Coffre arrondi" },
-  { id: 5, title: "Volet roulant exterieur modele 05", feature: "Acces technique" },
-  { id: 6, title: "Volet roulant exterieur modele 06", feature: "Finition blanche" },
+  { id: 1, title: "Volet roulant — modèle 01", feature: "Coffre apparent" },
+  { id: 2, title: "Volet roulant — modèle 02", feature: "Sous linteau" },
+  { id: 3, title: "Volet roulant — modèle 03", feature: "Coffre droit" },
+  { id: 4, title: "Volet roulant — modèle 04", feature: "Coffre arrondi" },
+  { id: 5, title: "Volet roulant — modèle 05", feature: "Accès technique" },
+  { id: 6, title: "Volet roulant — modèle 06", feature: "Finition blanche" },
 ];
 
 function getAiProductsConfig() {
@@ -911,7 +906,7 @@ function getWindowMaterial(model) {
 }
 
 function getDoorMaterialLabel(material) {
-  if (material === "glass") return "Bois vitré";
+  if (material === "glass") return "Bois avec vitrage";
   if (material === "wood") return "Bois";
   if (material === "pvc") return "PVC";
   return "Acier";
@@ -934,7 +929,7 @@ function parseDoorSize(value) {
 
 function formatDoorPrice(value) {
   const rounded = Math.round(value / 10) * 10;
-  return `${rounded.toLocaleString("fr-FR")} EUR`;
+  return `${rounded.toLocaleString("fr-FR")} €`;
 }
 
 function estimateDoorPrice(material, mode, width, height, sizeLabel) {
@@ -963,7 +958,7 @@ function buildDoorCatalogueCard(model) {
   const safeSchemaImage = escapeHtml(schemaImage);
   const domId = String(model.databaseId || model.id || "").replace(/[^a-zA-Z0-9_-]/g, "-");
   const sizeOptions = doorStandardSizes
-    .map((size) => `<option value="${size}">${size}</option>`)
+    .map((size) => `<option value="${size}">${size.replace(" x ", " × ").replace(" double", " — 2 vantaux")}</option>`)
     .join("");
   const defaultSize = parseDoorSize(doorStandardSizes[0]);
   const defaultPrice = estimateDoorPrice(material, "standard", defaultSize.width, defaultSize.height, doorStandardSizes[0]);
@@ -989,11 +984,11 @@ function buildDoorCatalogueCard(model) {
         <div class="image-toggle door-image-toggle" aria-label="Changer la vue du produit">
           <div class="door-image-option">
             <button class="image-toggle-button is-active" type="button" data-door-media="photo" aria-pressed="true" aria-label="Vue produit"></button>
-            <span>Produit</span>
+            <span>Vue produit</span>
           </div>
           <div class="door-image-option">
             <button class="image-toggle-button" type="button" data-door-media="schema" aria-pressed="false" aria-label="Dessin technique"></button>
-            <span>Dessin</span>
+            <span>Dessin technique</span>
           </div>
         </div>
         <div class="project-topline">Portes d'entrée</div>
@@ -1005,7 +1000,7 @@ function buildDoorCatalogueCard(model) {
         <div class="door-panels">
           <div class="door-panel" data-door-panel="standard">
             <div class="tool-field">
-              <label for="door-size-${domId}">Dimension standard</label>
+              <label for="door-size-${domId}">Dimensions (L × H)</label>
               <select id="door-size-${domId}" data-door-size>
                 ${sizeOptions}
               </select>
@@ -1013,18 +1008,20 @@ function buildDoorCatalogueCard(model) {
           </div>
           <div class="door-panel door-custom-panel" data-door-panel="custom" hidden>
             <div class="tool-field">
-              <label for="door-width-${domId}">Largeur en cm</label>
+              <label for="door-width-${domId}">Largeur (cm)</label>
               <input id="door-width-${domId}" type="number" min="70" max="160" step="1" value="90" inputmode="numeric" data-door-width>
             </div>
             <div class="tool-field">
-              <label for="door-height-${domId}">Hauteur en cm</label>
+              <label for="door-height-${domId}">Hauteur (cm)</label>
               <input id="door-height-${domId}" type="number" min="190" max="240" step="1" value="210" inputmode="numeric" data-door-height>
             </div>
+            <p class="door-measure-note">Dimensions à confirmer après prise de mesures.</p>
           </div>
         </div>
         <p class="product-note door-summary" data-door-note>
-          <span>${materialLabel}. Dimension standard : ${doorStandardSizes[0]}.</span>
-          <span>Prix estimatif : <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>, hors pose.</span>
+          <span class="door-price-material">${materialLabel}</span>
+          <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>
+          <span>Prix indicatif, hors pose.</span>
         </p>
         <div class="product-footer"><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
       </div>
@@ -1043,7 +1040,6 @@ function setupDoorCatalogue() {
   root.querySelectorAll("[data-door-card]").forEach((card, cardIndex) => {
     const model = doorCatalogue[cardIndex];
     const material = getDoorMaterial(model);
-    const materialLabel = getDoorMaterialLabel(material);
     const mediaButtons = card.querySelectorAll("[data-door-media]");
     const views = card.querySelectorAll("[data-door-view]");
     const modeButtons = card.querySelectorAll("[data-door-mode]");
@@ -1087,15 +1083,8 @@ function setupDoorCatalogue() {
         button.setAttribute("aria-pressed", String(active));
       });
 
-      if (note) {
-        const detail = activeMode === "custom"
-          ? `Sur mesure : ${width} x ${height} cm.`
-          : `Dimension standard : ${standardSize}.`;
-        note.innerHTML = `
-          <span>${materialLabel}. ${detail}</span>
-          <span>Prix estimatif : <strong data-door-price>${formatDoorPrice(priceValue)}</strong>, hors pose.</span>
-        `;
-      }
+      const price = note?.querySelector("[data-door-price]");
+      if (price) price.textContent = formatDoorPrice(priceValue);
     };
 
     mediaButtons.forEach((button) => {
@@ -1119,14 +1108,14 @@ function setupDoorCatalogue() {
 function getWindowTechDetails(model) {
   const material = getWindowMaterial(model);
   const defaults = {
-    aluminium: { joints: 3, chambers: 3, depth: "70 mm", glazing: "jusqu'a 48 mm", uw: "0,85", ug: "0,5" },
-    wood: { joints: 2, chambers: 4, depth: "78 mm", glazing: "jusqu'a 44 mm", uw: "0,83", ug: "0,5" },
-    pvc: { joints: 3, chambers: 5, depth: "70 mm", glazing: "jusqu'a 41 mm", uw: "1,0", ug: "0,7" },
+    aluminium: { joints: 3, chambers: 3, depth: "70 mm", glazing: "Jusqu’à 48 mm", uw: "0,85", ug: "0,5" },
+    wood: { joints: 2, chambers: 4, depth: "78 mm", glazing: "Jusqu’à 44 mm", uw: "0,83", ug: "0,5" },
+    pvc: { joints: 3, chambers: 5, depth: "70 mm", glazing: "Jusqu’à 41 mm", uw: "1,0", ug: "0,7" },
   };
   const premium = {
-    4: { joints: 3, chambers: 6, depth: "197 mm", glazing: "jusqu'a 52 mm", uw: "0,63", ug: "0,5" },
-    5: { joints: 3, chambers: 6, depth: "85 mm", glazing: "jusqu'a 51 mm", uw: "0,74", ug: "0,5" },
-    12: { joints: 3, chambers: 6, depth: "85 mm", glazing: "jusqu'a 51 mm", uw: "0,74", ug: "0,5" },
+    4: { joints: 3, chambers: 6, depth: "197 mm", glazing: "Jusqu’à 52 mm", uw: "0,63", ug: "0,5" },
+    5: { joints: 3, chambers: 6, depth: "85 mm", glazing: "Jusqu’à 51 mm", uw: "0,74", ug: "0,5" },
+    12: { joints: 3, chambers: 6, depth: "85 mm", glazing: "Jusqu’à 51 mm", uw: "0,74", ug: "0,5" },
   };
 
   const databaseDetails = model.tech || model.technical || model.technicalDetails || {};
@@ -1142,15 +1131,15 @@ function buildWindowSpecs(model) {
   return `
     <div class="window-spec-card" aria-label="Caractéristiques techniques">
       <div class="window-spec-highlights">
-        <div><strong>${escapeHtml(details.joints)}</strong><span>Joints</span></div>
-        <div><strong>${escapeHtml(details.chambers)}</strong><span>Chambres</span></div>
-        <div><strong>${escapeHtml(details.depth)}</strong><span>Profondeur</span></div>
+        <div><strong>${escapeHtml(details.joints)}</strong><span>Joints d’étanchéité</span></div>
+        <div><strong>${escapeHtml(details.chambers)}</strong><span>Chambres du profil</span></div>
+        <div><strong>${escapeHtml(details.depth)}</strong><span>Profondeur du profil</span></div>
       </div>
       <dl class="window-spec-details">
-        <div><dt>Performance Uw</dt><dd>${escapeHtml(details.uw)} pour Ug = ${escapeHtml(details.ug)}</dd></div>
-        <div><dt>Vitrage</dt><dd>${escapeHtml(details.glazing)}</dd></div>
+        <div><dt>Isolation thermique (Uw)</dt><dd>${escapeHtml(details.uw)} pour Ug = ${escapeHtml(details.ug)}</dd></div>
+        <div><dt>Épaisseur de vitrage</dt><dd>${escapeHtml(details.glazing)}</dd></div>
         <div><dt>Vitrage standard</dt><dd>24 mm</dd></div>
-        <div><dt>Coloris</dt><dd>Sur mesure au choix</dd></div>
+        <div><dt>Coloris</dt><dd>Au choix</dd></div>
       </dl>
     </div>
   `;
@@ -1191,7 +1180,7 @@ function setupWindowCatalogue() {
 
 function buildShutterCatalogueCard(model) {
   const feature = escapeHtml(model.feature || model.description || "Modele disponible sur devis");
-  const title = escapeHtml(model.title || `Volet roulant exterieur modele ${String(model.id).padStart(2, "0")}`);
+  const title = escapeHtml(model.title || `Volet roulant — modèle ${String(model.id).padStart(2, "0")}`);
   const imagePath = escapeHtml(getShutterImagePath(model));
 
   return `
@@ -1200,10 +1189,10 @@ function buildShutterCatalogueCard(model) {
         <img src="${imagePath}" alt="${title}" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
-        <div class="project-topline">Volets roulants exterieurs</div>
+        <div class="project-topline">Volets roulants extérieurs</div>
         <h3>${title}</h3>
         <p class="product-note shutter-short">${feature}</p>
-        <div class="product-footer"><span class="price-row">Sur devis</span><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
+        <div class="product-footer"><span class="price-row">Prix sur devis</span><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
       </div>
     </article>
   `;
@@ -4410,19 +4399,19 @@ function setupGlobalAdazaiWidget() {
   const widget = document.createElement("div");
   widget.className = "adazai-widget";
   widget.innerHTML = `
-    <button class="adazai-floating-cta" type="button" aria-label="Ouvrir AI Assistant" aria-expanded="false" aria-controls="adazai-widget-panel">
-      <span class="adazai-floating-cta-icon" aria-hidden="true">AI</span>
-      <span class="adazai-floating-cta-title">Assistant</span>
+    <button class="adazai-floating-cta" type="button" aria-label="Ouvrir Assistant IA" aria-expanded="false" aria-controls="adazai-widget-panel">
+      <span class="adazai-floating-cta-icon" aria-hidden="true">IA</span>
+      <span class="adazai-floating-cta-title">Assistant IA</span>
     </button>
-    <aside class="adazai-widget-panel" id="adazai-widget-panel" aria-label="AI Assistant Adazrenov" hidden>
+    <aside class="adazai-widget-panel" id="adazai-widget-panel" aria-label="Assistant IA Adazrenov" hidden>
       <div class="adazai-chat-head">
         <img class="adazai-chat-logo" src="${headerLogoPath}" alt="">
         <div class="adazai-chat-title">
           <strong>ADAZRENOV</strong>
-          <span>AI Assistant</span>
+          <span>Assistant IA</span>
         </div>
         <div class="adazai-head-actions">
-          <button class="adazai-widget-close" type="button" aria-label="Fermer AI Assistant">×</button>
+          <button class="adazai-widget-close" type="button" aria-label="Fermer Assistant IA">×</button>
         </div>
       </div>
       <div class="adazai-widget-log" role="log" aria-label="Conversation avec ADAZAI" aria-live="polite"></div>
@@ -4434,14 +4423,6 @@ function setupGlobalAdazaiWidget() {
   `;
 
   document.body.appendChild(widget);
-  if (document.body.dataset.page === "home") {
-    widget.querySelector(".adazai-floating-cta").setAttribute("aria-label", "Ouvrir Assistant IA");
-    widget.querySelector(".adazai-floating-cta-icon").textContent = "IA";
-    widget.querySelector(".adazai-floating-cta-title").textContent = "Assistant IA";
-    widget.querySelector(".adazai-widget-panel").setAttribute("aria-label", "Assistant IA Adazrenov");
-    widget.querySelector(".adazai-chat-title span").textContent = "Assistant IA";
-    widget.querySelector(".adazai-widget-close").setAttribute("aria-label", "Fermer Assistant IA");
-  }
 
   const toggle = widget.querySelector(".adazai-floating-cta");
   const panel = widget.querySelector(".adazai-widget-panel");
@@ -4618,7 +4599,7 @@ function setupSiteShell() {
   const footerRoot = document.querySelector(".site-footer");
 
   if (headerRoot && !headerRoot.children.length) headerRoot.innerHTML = buildHeader(currentPage);
-  if (footerRoot && !footerRoot.children.length) footerRoot.innerHTML = buildFooter(currentPage);
+  if (footerRoot && !footerRoot.children.length) footerRoot.innerHTML = buildFooter();
 
   const toggle = document.querySelector(".nav-toggle");
   if (toggle) {

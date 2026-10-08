@@ -26,19 +26,21 @@
         <div class="container">
           <div class="hero-card product-hero-card reveal">
             <div class="product-hero-main">
-              <span class="eyebrow">Catalogue produits</span>
-              <h1 id="catalogue-title"><span>Portes, fenêtres et volets</span> <span>sur mesure.</span></h1>
+              <span class="eyebrow">Nos produits</span>
+              <h1 id="catalogue-title">Portes, fenêtres et volets</h1>
               <p>
-                <span>Découvrez nos portes, fenêtres et volets pour votre habitat.</span>
-                <span>Sélectionnez votre modèle et demandez un devis personnalisé.</span>
+                Choisissez votre modèle et indiquez les dimensions souhaitées. Nous vous préparons un devis.
               </p>
 
-              <div class="hero-actions product-pdf-links" aria-label="Catalogues PDF ADAZ RENOV">
-                <a class="button secondary" href="https://drive.google.com/file/d/13oly9Yhmtc875pbHrkzV4SS73QKi7xXg/view?usp=sharing" target="_blank" rel="noopener">
-                  Voir le catalogue portes <span aria-hidden="true">→</span>
+              <div class="hero-actions">
+                <a class="button secondary" href="#produits-disponibles">Voir les modèles <span aria-hidden="true">↓</span></a>
+              </div>
+              <div class="product-pdf-links" aria-label="Catalogues PDF ADAZ RENOV">
+                <a class="catalogue-pdf-link" href="https://drive.google.com/file/d/13oly9Yhmtc875pbHrkzV4SS73QKi7xXg/view?usp=sharing" target="_blank" rel="noopener">
+                  Catalogue des portes · PDF <span aria-hidden="true">→</span>
                 </a>
-                <a class="button outline" href="https://drive.google.com/file/d/1ZWh3pR9Pyc2Y0Je7kfby4i7aeVlpYma5/view?usp=sharing" target="_blank" rel="noopener">
-                  Voir le catalogue matériaux <span aria-hidden="true">→</span>
+                <a class="catalogue-pdf-link" href="https://drive.google.com/file/d/1ZWh3pR9Pyc2Y0Je7kfby4i7aeVlpYma5/view?usp=sharing" target="_blank" rel="noopener">
+                  Catalogue des matériaux · PDF <span aria-hidden="true">→</span>
                 </a>
               </div>
             </div>
@@ -49,8 +51,8 @@
       <section class="section text-filters" id="produits-disponibles">
         <div class="container">
           <div class="filter-bar reveal" data-filter-group="products" role="group" aria-label="Filtrer les produits par catégorie">
-            <span class="filter-lead">Filtrer par :</span>
-            <button class="filter-chip" type="button" data-filter="all" aria-pressed="false">Tous les produits</button>
+            <span class="filter-lead">Catégorie</span>
+            <button class="filter-chip" type="button" data-filter="all" aria-pressed="false">Tous</button>
             <button class="filter-chip" type="button" data-filter="doors" aria-pressed="false">Portes d’entrée</button>
             <button class="filter-chip" type="button" data-filter="windows" aria-pressed="false">Fenêtres</button>
             <button class="filter-chip" type="button" data-filter="shutters" aria-pressed="false">Volets</button>
@@ -59,17 +61,17 @@
           <div class="product-subfilters reveal" data-product-subfilters hidden>
             <div class="subcategory-panel" data-subfilter-panel="doors" role="group" aria-label="Filtrer les portes par type" hidden>
               <span class="filter-lead">Type de porte :</span>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="metal" aria-pressed="false">Portes metalliques</button>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="glass" aria-pressed="false">Portes en bois vitrees</button>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Portes en bois</button>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">Portes PVC</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="metal" aria-pressed="false">Métal</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="glass" aria-pressed="false">Bois avec vitrage</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Bois</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">PVC</button>
             </div>
 
             <div class="subcategory-panel" data-subfilter-panel="windows" role="group" aria-label="Filtrer les fenêtres par matériau" hidden>
               <span class="filter-lead">Matériau :</span>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">Fenetres PVC</button>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="aluminium" aria-pressed="false">Fenetres aluminium</button>
-              <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Fenetres bois</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="pvc" aria-pressed="false">PVC</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="aluminium" aria-pressed="false">Aluminium</button>
+              <button class="filter-chip subfilter-chip" type="button" data-subfilter="wood" aria-pressed="false">Bois</button>
             </div>
           </div>
 
@@ -79,7 +81,7 @@
             <div id="shutter-products" class="catalogue-products-slot"></div>
           </div>
 
-          <p class="no-results" data-empty="products" hidden>Aucun produit trouve dans cette categorie.</p>
+          <p class="no-results" data-empty="products" hidden>Aucun produit trouvé dans cette catégorie.</p>
         </div>
       </section>
 
@@ -87,18 +89,18 @@
         <div class="container cards-3">
           <article class="card value-card reveal">
             <div class="icon-badge">01</div>
-            <h3>Mesure sur chantier</h3>
-            <p>Les dimensions exactes sont confirmees apres prise de cotes pour eviter toute erreur de commande.</p>
+            <h3>Prise de mesures</h3>
+            <p>Nous vérifions les dimensions sur place avant la commande.</p>
           </article>
           <article class="card value-card reveal">
             <div class="icon-badge">02</div>
-            <h3>Choix du modele</h3>
-            <p>Nous vous aidons a choisir le materiau, le coloris, le vitrage, le type d'ouverture et les options utiles.</p>
+            <h3>Choix du modèle</h3>
+            <p>Nous vous conseillons sur les matériaux, les coloris, le vitrage et le type d’ouverture.</p>
           </article>
           <article class="card value-card reveal">
             <div class="icon-badge">03</div>
-            <h3>Pose professionnelle</h3>
-            <p>L'installation est preparee pour une finition propre, une bonne isolation et un usage fiable au quotidien.</p>
+            <h3>La pose</h3>
+            <p>Notre équipe assure la pose de vos portes, fenêtres et volets.</p>
           </article>
         </div>
       </section>

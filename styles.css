@@ -486,15 +486,24 @@ textarea:focus-visible {
   line-height: 1.75;
 }
 
-.home-hero-copy .home-hero-coverage {
-  max-width: 760px;
-  margin-top: -16px;
-  font-size: 1rem;
-  line-height: 1.6;
+.home-hero-copy .hero-actions {
+  align-items: flex-start;
+  gap: 16px;
 }
 
-.home-hero-copy .hero-actions {
-  gap: 16px;
+.home-hero-primary-action {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 216px;
+  max-width: 100%;
+}
+
+.home-hero-action-note {
+  color: var(--surface-alt);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .home-hero-copy .hero-actions .button {
@@ -509,6 +518,10 @@ textarea:focus-visible {
   }
 
   .home-hero-copy .hero-actions .button {
+    width: 100%;
+  }
+
+  .home-hero-primary-action {
     width: 100%;
   }
 }
@@ -649,7 +662,7 @@ textarea:focus-visible {
 }
 
 .services-list .project-card .card-body {
-  padding: 26px;
+  padding: 24px;
 }
 
 .services-list .project-topline {
@@ -662,20 +675,20 @@ textarea:focus-visible {
 }
 
 .services-list .project-card h3 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: 1.25rem;
   line-height: 1.35;
 }
 
 .services-list .project-card p {
-  margin: 0 0 20px;
+  margin: 0 0 14px;
   font-size: 1rem;
   line-height: 1.6;
 }
 
 .services-list .project-card .project-footer {
   justify-content: flex-start;
-  padding-top: 16px;
+  padding-top: 14px;
   margin-top: auto;
 }
 
@@ -1063,6 +1076,16 @@ textarea:focus-visible {
   font-size: 1rem;
 }
 
+.home-about .image-frame {
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+}
+
+.home-about .image-frame img {
+  width: 100%;
+  height: 100%;
+}
+
 @media (min-width: 921px) {
   .home-about .image-frame {
     width: 90%;
@@ -1337,7 +1360,7 @@ textarea:focus-visible {
 }
 
 #services-overview .cards-3 {
-  grid-auto-rows: 1fr;
+  grid-auto-rows: auto;
 }
 
 #services-overview .service-card {
@@ -1547,6 +1570,20 @@ textarea:focus-visible {
   justify-content: center;
   gap: 16px;
   margin-top: 36px;
+}
+
+.home-ai-intro .home-ai-note {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.home-ai-intro .home-ai-actions .inline-link {
+  margin-top: 0;
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .home-ai-intro .home-ai-actions .button {
@@ -2432,6 +2469,24 @@ body.video-modal-open {
 .door-summary strong {
   color: var(--muted);
   font-weight: 900;
+}
+
+.door-card .door-summary [data-door-price] {
+  color: var(--primary);
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.door-price-material {
+  font-weight: 600;
+}
+
+.door-card .door-measure-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
 }
 
 .door-card .product-footer {
@@ -6775,8 +6830,22 @@ body[data-page="products"] .catalogue-hero .container {
 }
 
 .catalogue-hero .product-pdf-links {
-  gap: 24px;
-  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 20px;
+}
+
+.catalogue-hero .catalogue-pdf-link {
+  color: var(--surface-alt);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.catalogue-hero .catalogue-pdf-link:hover {
+  color: var(--accent);
 }
 
 body[data-page="products"] .catalogue-hero .button {
@@ -6942,6 +7011,29 @@ body[data-page] .text-filters .subfilter-chip::after {
 
   body[data-page] .text-filters .subfilter-chip {
     font-size: 0.8125rem;
+  }
+}
+
+/* Keep the project introduction short so the work appears sooner. */
+.projects-hero.hero-simple .hero-card {
+  padding-block: 36px;
+}
+
+.projects-hero.hero-simple h1 {
+  margin-bottom: 18px;
+}
+
+.projects-hero.hero-simple p {
+  max-width: 880px;
+}
+
+.projects-hero .button {
+  margin-top: 20px;
+}
+
+@media (max-width: 640px) {
+  .projects-hero.hero-simple .hero-card {
+    padding-block: 28px;
   }
 }
 
