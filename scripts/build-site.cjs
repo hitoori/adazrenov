@@ -124,7 +124,8 @@ async function build() {
   const metadata = new Map(Object.values(manifest.media).filter(record => record.width).map(record => [record.path, record]));
   metadata.set(manifest.icons['header-logo.webp'], { width: 144, height: 162 });
   const entries = await fs.readdir(ROOT);
-  const pages = entries.filter(name => name.endsWith('.html') && name !== '404.html').sort();
+  const verificationFiles = entries.filter(name => /^google[a-f0-9]+\.html$/.test(name));
+  const pages = entries.filter(name => name.endsWith('.html') && name !== '404.html' && !verificationFiles.includes(name)).sort();
   const replacements = Object.fromEntries(Object.entries(manifest.media).map(([original, record]) => [original, record.path]));
   const sourceJs = normalizeLinks(replaceMedia(await fs.readFile(path.join(ROOT, 'script.js'), 'utf8'), manifest.media)
     .replace(/const headerLogoPath = "[^"]+";/, `const headerLogoPath = "${manifest.icons['header-logo.webp']}";`));
@@ -154,6 +155,8 @@ async function build() {
     fs.writeFile(path.join(OUTPUT, searchFile), searchJson),
     fs.writeFile(path.join(OUTPUT, cssFile), css.code),
     ...STATIC_FILES.map(name => fs.copyFile(path.join(ROOT, name), path.join(OUTPUT, name))),
+    // Ownership files must retain Google's exact content and stay out of the sitemap.
+    ...verificationFiles.map(name => fs.copyFile(path.join(ROOT, name), path.join(OUTPUT, name))),
   ]);
   const emittedSources = [sourceJs, sourceCss];
   const pageBytes = {};
