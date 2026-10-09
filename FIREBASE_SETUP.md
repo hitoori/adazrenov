@@ -118,7 +118,6 @@ Edit `ai-config.js` and set:
 - `window.AI_AISSTEN_FUNCTIONS_BASE_URL` (recommended single base URL for Cloud Functions)
 - `window.AI_AISSTEN_FIREBASE_CONFIG` (optional for direct Firestore fallback)
 - `window.AI_AISSTEN_CONTACT_CONFIG.apiUrl`
-- `window.AI_AISSTEN_CONTACT_CONFIG.web3FormsAccessKey` (Spark-friendly email delivery)
 - `window.AI_AISSTEN_PRODUCTS_CONFIG.apiUrl` (optional, for loading products from Firestore through Cloud Functions)
 - `window.AI_AISSTEN_BOOKING_CONFIG.availabilityApiUrl`
 - `window.AI_AISSTEN_BOOKING_CONFIG.bookingApiUrl`
@@ -139,8 +138,8 @@ window.AI_AISSTEN_FIREBASE_CONFIG = {
 window.AI_AISSTEN_FUNCTIONS_BASE_URL = "https://europe-west1-YOUR_FIREBASE_PROJECT_ID.cloudfunctions.net";
 
 window.AI_AISSTEN_CONTACT_CONFIG = {
-  recipientEmail: "octavian.chiticgd@gmail.com",
-  web3FormsAccessKey: "YOUR_WEB3FORMS_ACCESS_KEY",
+  deliveryProvider: "resend",
+  apiUrl: "https://adazai-api.adazrenov.workers.dev/contact",
 };
 
 window.AI_AISSTEN_BOOKING_CONFIG = {
@@ -163,9 +162,9 @@ window.AI_AISSTEN_CHAT_CONFIG = {
 };
 ```
 
-For the Spark plan, keep `window.AI_AISSTEN_FUNCTIONS_BASE_URL = ""` and use
-`web3FormsAccessKey`. Contact form submissions, ADAZAI widget leads and booking
-requests are then sent by Web3Forms directly from the browser.
+The Contact form uses the Cloudflare Worker and Resend, independently of Firebase.
+The recipient and Resend secret are configured only in Cloudflare. The Assistant
+does not send email requests. See `cloudflare/adazai-worker/README.md` for the active setup.
 
 ## 8. Firestore collections
 ADAZAI uses these collections:

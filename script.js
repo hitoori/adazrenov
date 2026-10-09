@@ -26,10 +26,6 @@ function getConfiguredFunctionUrl(functionName, explicitUrl = "") {
   return baseUrl ? `${baseUrl}/${functionName}` : "";
 }
 
-function getWeb3FormsAccessKey() {
-  return String(window.AI_AISSTEN_CONTACT_CONFIG?.web3FormsAccessKey || "").trim();
-}
-
 async function submitAdazForm(form, apiUrl, payload) {
   // Reuse the identifier after an uncertain response; Resend deduplicates retries.
   const fingerprint = JSON.stringify(payload);
@@ -46,25 +42,6 @@ async function submitAdazForm(form, apiUrl, payload) {
       ? result.error : "L’envoi est momentanément indisponible. Réessayez ou contactez-nous directement.");
   }
   form.adazSubmission = null;
-}
-
-async function submitToWeb3Forms(fields) {
-  const accessKey = getWeb3FormsAccessKey();
-  if (!accessKey) throw new Error("Web3Forms access key is not configured.");
-
-  const response = await fetch("https://api.web3forms.com/submit", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      access_key: accessKey,
-      ...fields,
-    }),
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok || data.success === false) {
-    throw new Error(data.message || `Web3Forms unavailable: ${response.status}`);
-  }
-  return data;
 }
 
 function buildHeader(currentPage) {
@@ -1612,8 +1589,7 @@ function setupContactForm() {
     const submitButton = form.querySelector('button[type="submit"]');
     const originalLabel = submitButton?.textContent || "Envoyer ma demande";
     const contactConfig = window.AI_AISSTEN_CONTACT_CONFIG || {};
-    const apiUrl = getConfiguredFunctionUrl("submitContactRequest", contactConfig.apiUrl || "");
-    const web3FormsAccessKey = getWeb3FormsAccessKey();
+    const apiUrl = String(contactConfig.apiUrl || "").trim();
     const formData = new FormData(form);
     const payload = {
       name: String(formData.get("name") || "").trim(),
@@ -1625,7 +1601,7 @@ function setupContactForm() {
       page: window.location.href,
     };
 
-    if (!apiUrl && !web3FormsAccessKey) {
+    if (!apiUrl) {
       success.innerHTML = "<strong>Envoi indisponible</strong> Appelez-nous ou écrivez à adazrenov@gmail.com.";
       success.hidden = false;
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -1638,38 +1614,7 @@ function setupContactForm() {
     }
 
     try {
-      if (web3FormsAccessKey && !contactConfig.preferFunctions) {
-        await submitToWeb3Forms({
-          subject: `ADAZ RENOV - Nouvelle demande: ${payload.subject}`,
-          from_name: payload.name,
-          email: payload.email,
-          telephone: payload.phone,
-          type_projet: payload.subject,
-          message: payload.message,
-          page: payload.page,
-          source: "Formulaire contact ADAZ RENOV",
-        });
-      } else if (apiUrl && contactConfig.deliveryProvider === "resend") {
-        await submitAdazForm(form, apiUrl, payload);
-      } else if (apiUrl) {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) throw new Error(`Contact API unavailable: ${response.status}`);
-      } else {
-        await submitToWeb3Forms({
-          subject: `ADAZ RENOV - Nouvelle demande: ${payload.subject}`,
-          from_name: payload.name,
-          email: payload.email,
-          telephone: payload.phone,
-          type_projet: payload.subject,
-          message: payload.message,
-          page: payload.page,
-          source: "Formulaire contact ADAZ RENOV",
-        });
-      }
+      await submitAdazForm(form, apiUrl, payload);
 
       form.reset();
       success.innerHTML = "<strong>Demande envoyée !</strong> Merci. Notre équipe vous recontactera pour faire le point sur vos travaux.";
@@ -1681,7 +1626,7 @@ function setupContactForm() {
       }, 4500);
     } catch (error) {
       console.warn("Contact submit failed.", error);
-      success.innerHTML = `<strong>Envoi indisponible</strong> ${escapeHtml(contactConfig.deliveryProvider === "resend" ? error.message : "Merci de nous appeler ou de nous écrire directement à adazrenov@gmail.com.")}`;
+      success.innerHTML = `<strong>Envoi indisponible</strong> ${escapeHtml(error.message || "Merci de nous appeler ou de nous écrire directement à adazrenov@gmail.com.")}`;
       success.hidden = false;
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } finally {

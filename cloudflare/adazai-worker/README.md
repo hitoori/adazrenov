@@ -92,9 +92,8 @@ salvat ca Secret Cloudflare, cu drepturi Resend « Sending access » limitate la
 `adazrenov.fr`. Domeniul trebuie să fie verificat de Resend înaintea activării.
 
 În `ai-config.js`, activarea folosește `deliveryProvider: "resend"`,
-`preferFunctions: true` și `apiUrl: "https://adazai-api.adazrenov.workers.dev/contact"`
+`apiUrl: "https://adazai-api.adazrenov.workers.dev/contact"`
 pentru contact. Configurația de trimitere a Assistant este dezactivată.
-După activare, elimină cheia Web3Forms.
 Un eșec Resend nu trimite datele automat unui alt furnizor.
 
 E-mailurile merg doar la firmă; clientul nu primește o confirmare automată.

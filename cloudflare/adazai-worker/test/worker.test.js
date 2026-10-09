@@ -176,7 +176,7 @@ test('catalogue, FAQ and project references are current and do not include forms
   assert.ok(refs.some(record => record.href === window.href));
   const prompt = buildInstructions(refs);
   assert.match(prompt, /Les prix du catalogue sont indicatifs et hors pose/);
-  assert.ok(!JSON.stringify(knowledge).includes('web3FormsAccessKey'));
+  assert.ok(!JSON.stringify(knowledge).includes('RESEND_API_KEY'));
   assert.ok(!JSON.stringify(knowledge).includes('access_key'));
   assert.ok(!JSON.stringify(knowledge).includes('OPENAI_API_KEY'));
 });

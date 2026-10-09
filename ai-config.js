@@ -7,7 +7,6 @@ window.AI_AISSTEN_FUNCTIONS_BASE_URL = "";
 
 window.AI_AISSTEN_CONTACT_CONFIG = {
   deliveryProvider: "resend",
-  preferFunctions: true,
   apiUrl: "https://adazai-api.adazrenov.workers.dev/contact",
 };
 
