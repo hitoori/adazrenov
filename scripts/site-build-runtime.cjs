@@ -1,5 +1,6 @@
 const vm = require('node:vm');
 const { transform } = require('esbuild');
+const { addSearchAnchors } = require('./site-search-index.cjs');
 
 const STARTUP = 'document.addEventListener("DOMContentLoaded", () => {';
 const PAGE_LABELS = {
@@ -11,6 +12,7 @@ const PAGE_LABELS = {
   'ia-travaux.html': 'Assistant IA',
   'contact.html': 'Contact',
   'politique-confidentialite.html': 'Politique de confidentialité',
+  'mentions-legales.html': 'Mentions légales',
 };
 
 function createRuntime(source, replacements) {
@@ -36,16 +38,18 @@ function createRuntime(source, replacements) {
   }));
   const launcher = source.match(/<button class="adazai-floating-cta"[\s\S]*?<\/button>/)?.[0]
     .replace(/ aria-controls="[^"]+"/, '');
+  const launcherHtml = launcher?.replaceAll('${headerLogoPath}', evaluate('headerLogoPath'));
   if (!launcher) throw new Error('Assistant launcher not found.');
   return {
     definitions, catalogues,
-    launcher: `<div data-adazai-launcher>${launcher}</div>`,
+    launcher: `<div data-adazai-launcher>${launcherHtml}</div>`,
     header: page => evaluate(`buildHeader(${JSON.stringify(page)})`),
     footer: evaluate('buildFooter()').replace('<span id="year"></span>', `<span id="year">${new Date().getFullYear()}</span>`),
   };
 }
 
-function prerender(html, runtime) {
+function prerender(html, runtime, page) {
+  html = addSearchAnchors(html, page);
   const currentPage = html.match(/data-page="([^"]+)"/)?.[1] || 'home';
   html = html.replace('<div class="site-header"></div>', `<div class="site-header">${runtime.header(currentPage)}</div>`)
     .replace('<div class="site-footer"></div>', `<div class="site-footer">${runtime.footer}</div>`)
@@ -107,17 +111,19 @@ function jsonLd(value) {
   return `<script type="application/ld+json">${JSON.stringify(value).replaceAll('<', '\\u003c')}</script>`;
 }
 
-async function compileWidget(runtime) {
-  return transform(`${runtime.definitions}\nwindow.ADAZ_INIT_WIDGET = setupGlobalAdazaiWidget;`, {
+async function compileWidget(runtime, searchFile) {
+  const definitions = runtime.definitions.replace('const adazSiteSearchUrl = "site-search.json";', `const adazSiteSearchUrl = "/${searchFile}";`);
+  return transform(`${definitions}\nwindow.ADAZ_INIT_WIDGET = setupGlobalAdazaiWidget;`, {
     loader: 'js', format: 'iife', minify: true, treeShaking: true, target: 'es2020', legalComments: 'none',
   });
 }
 
 async function compilePage(runtime, loader, page, widgetFile, replacements) {
-  let calls = ['setupSiteShell()', 'setupReveal()', `setupLazyAdazaiWidget(${JSON.stringify(widgetFile)})`];
+  let calls = ['setupSiteShell()', 'setupCookieConsent()', 'setupReveal()', `setupLazyAdazaiWidget(${JSON.stringify(widgetFile)})`];
   if (page === 'produits.html') calls.push('setupProductCatalogue()');
   if (['index.html', 'projets.html'].includes(page)) calls.push('setupProjectVideoPreviews()', 'setupProjectVideoModal()');
   if (page === 'projets.html') calls.push('setupFilters()');
+  if (['produits.html', 'projets.html', 'contact.html'].includes(page)) calls.push('setupSearchTarget()');
   if (page === 'contact.html') calls.push('setupContactForm()');
   if (page === 'ia-travaux.html') calls.push(
     'setupAiToolsNavigation()', 'setupAiPhotoAnalyzer()', 'setupAiMaterialAdvisor()', 'setupAiChatbot()',

@@ -1,5 +1,6 @@
 // The public build includes this small loader, while the assistant is a separate asset.
 function setupLazyAdazaiWidget(scriptUrl) {
+  setupAdazChatCacheExpiry();
   const launcher = document.querySelector("[data-adazai-launcher]");
   const button = launcher?.querySelector("button");
   if (!button) return;

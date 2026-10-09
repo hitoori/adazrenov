@@ -1,1 +1,2 @@
 OPENAI_API_KEY=replace-with-a-new-key-for-local-development
+RESEND_API_KEY=replace-with-a-key-only-for-local-development

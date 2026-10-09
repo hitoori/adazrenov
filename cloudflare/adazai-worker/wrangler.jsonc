@@ -1,14 +1,18 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "adazai-api",
+  "account_id": "bb6277da27c64f6f7126489439ac71fc",
   "main": "src/index.js",
   "compatibility_date": "2026-06-08",
   "workers_dev": true,
   "vars": {
     "OPENAI_MODEL": "gpt-4o-mini",
-    "OPENAI_FALLBACK_MODEL": "gpt-5.4-mini",
-    "ALLOWED_ORIGINS": "https://adazrenov.fr,https://www.adazrenov.fr,https://hitoori.github.io,http://localhost:8765,http://127.0.0.1:8765",
-    "MAX_OUTPUT_TOKENS": "500"
+    "ALLOWED_ORIGINS": "https://adazrenov.fr,https://www.adazrenov.fr,https://adazrenov.pages.dev,http://localhost:8888,http://127.0.0.1:8888",
+    "MAX_OUTPUT_TOKENS": "600",
+    "MAX_DAILY_REQUESTS": "100",
+    "MAX_CLIENT_DAILY_REQUESTS": "20",
+    "RESEND_FROM": "ADAZ RENOV <contact@adazrenov.fr>",
+    "CONTACT_TO": "octavian.chiticgd@gmail.com"
   },
   "d1_databases": [
     {

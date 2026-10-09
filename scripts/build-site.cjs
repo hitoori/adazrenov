@@ -4,11 +4,14 @@ const crypto = require('node:crypto');
 const { transform } = require('esbuild');
 const { createRuntime, prerender, structuredData, compileWidget, compilePage } = require('./site-build-runtime.cjs');
 
+const { buildSearchIndex } = require('./site-search-index.cjs');
+const { buildAssistantKnowledge } = require('./assistant-knowledge.cjs');
+
 const ROOT = path.resolve(__dirname, '..');
 const OUTPUT = path.join(ROOT, 'dist');
 const DOMAIN = 'https://adazrenov.fr';
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
-const STATIC_FILES = ['ai-config.js', 'robots.txt', '404.html'];
+const STATIC_FILES = ['ai-config.js', 'robots.txt', '404.html', 'favicon.ico'];
 const LOCAL_FONT = 'assets/fonts/manrope-latin.e310b55a7fd9.woff2';
 
 function publicRoute(name) {
@@ -16,8 +19,8 @@ function publicRoute(name) {
 }
 
 function normalizeLinks(source) {
-  return source.replace(/(["'])(index|services|produits|projets|a-propos|ia-travaux|contact|politique-confidentialite)\.html\1/g,
-    (_, quote, name) => `${quote}${publicRoute(name)}${quote}`);
+  return source.replace(/(["'])(index|services|produits|projets|a-propos|ia-travaux|contact|politique-confidentialite|mentions-legales)\.html(#[^"']*)?\1/g,
+    (_, quote, name, fragment = '') => `${quote}${publicRoute(name)}${fragment}${quote}`);
 }
 
 function fingerprint(content) {
@@ -52,7 +55,8 @@ function optimizeHtml(html, page, metadata, icons, cssFile, jsFile) {
   html = html.replace(/href="styles\.css(?:\?[^"]*)?"/, `href="${cssFile}"`)
     .replace(/src="script\.js(?:\?[^"]*)?"/, `src="${jsFile}"`);
   html = html.replace(/<link\b[^>]*rel="(?:icon|apple-touch-icon)"[^>]*>/g, tag =>
-    setAttribute(tag, 'href', icons[tag.includes('apple-touch-icon') ? 'apple-touch-icon.png' : 'favicon.png']));
+    setAttribute(tag, 'href', '/' + icons[tag.includes('apple-touch-icon') ? 'apple-touch-icon.png' : 'favicon.png']));
+  html = html.replace('</head>', '<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">\n</head>');
   html = html.replace(/<link\b[^>]*href="https:\/\/fonts\.(?:googleapis|gstatic)\.com[^\"]*"[^>]*>\s*/g, '');
   html = html.replace('</head>', `<link rel="preload" href="${LOCAL_FONT}" as="font" type="font/woff2" crossorigin>\n</head>`);
 
@@ -126,9 +130,16 @@ async function build() {
     .replace(/const headerLogoPath = "[^"]+";/, `const headerLogoPath = "${manifest.icons['header-logo.webp']}";`));
   const sourceCss = replaceMedia(await fs.readFile(path.join(ROOT, 'styles.css'), 'utf8'), manifest.media);
   const runtime = createRuntime(sourceJs, replacements);
+  const pageSources = new Map(await Promise.all(pages.map(async page => [page, await fs.readFile(path.join(ROOT, page), 'utf8')])));
+  const searchRecords = buildSearchIndex(pageSources, runtime.catalogues);
+  const searchJson = JSON.stringify(searchRecords);
+  const knowledge = buildAssistantKnowledge(pageSources, runtime.catalogues, searchRecords);
+  await fs.writeFile(path.join(ROOT, 'cloudflare/adazai-worker/src/site-knowledge.js'),
+    '// Generated from public site content by npm run build. Do not edit manually.\nexport default ' + JSON.stringify(knowledge, null, 2) + ';\n');
+  const searchFile = `assets/runtime/site-search.${fingerprint(searchJson)}.json`;
   const loader = await fs.readFile(path.join(__dirname, 'browser-runtime.js'), 'utf8');
   const [widget, css] = await Promise.all([
-    compileWidget(runtime),
+    compileWidget(runtime, searchFile),
     transform(sourceCss, { loader: 'css', minify: true, target: 'es2020', legalComments: 'none' }),
   ]);
   const widgetFile = `assets/runtime/assistant.${fingerprint(widget.code)}.js`;
@@ -140,18 +151,19 @@ async function build() {
   await fs.mkdir(path.join(OUTPUT, 'assets/runtime'), { recursive: true });
   await Promise.all([
     fs.writeFile(path.join(OUTPUT, widgetFile), widget.code),
+    fs.writeFile(path.join(OUTPUT, searchFile), searchJson),
     fs.writeFile(path.join(OUTPUT, cssFile), css.code),
     ...STATIC_FILES.map(name => fs.copyFile(path.join(ROOT, name), path.join(OUTPUT, name))),
   ]);
   const emittedSources = [sourceJs, sourceCss];
   const pageBytes = {};
   for (const page of pages) {
-    const source = replaceMedia(await fs.readFile(path.join(ROOT, page), 'utf8'), manifest.media);
+    const source = replaceMedia(pageSources.get(page), manifest.media);
     const js = await compilePage(runtime, loader, page, widgetFile, replacements);
     const jsFile = `assets/runtime/page.${fingerprint(js.code)}.js`;
     await fs.writeFile(path.join(OUTPUT, jsFile), js.code);
     pageBytes[page] = Buffer.byteLength(js.code);
-    let html = optimizeHtml(prerender(source, runtime), page, metadata, manifest.icons, cssFile, jsFile);
+    let html = optimizeHtml(prerender(source, runtime, page), page, metadata, manifest.icons, cssFile, jsFile);
     html = structuredData(html, page, canonicalUrl(page), DOMAIN, runtime);
     emittedSources.push(html);
     await fs.writeFile(path.join(OUTPUT, page), html);

@@ -11,7 +11,7 @@ const types = {
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp',
-  '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.woff2': 'font/woff2',
+  '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.woff2': 'font/woff2',
 };
 
 if (!fs.existsSync(path.join(root, 'index.html'))) throw new Error('Run npm run build before preview.');

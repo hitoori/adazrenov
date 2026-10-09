@@ -6,21 +6,19 @@ window.AI_AISSTEN_FIREBASE_CONFIG = null;
 window.AI_AISSTEN_FUNCTIONS_BASE_URL = "";
 
 window.AI_AISSTEN_CONTACT_CONFIG = {
-  recipientEmail: "octavian.chiticgd@gmail.com",
-  web3FormsAccessKey: "c651e977-90dd-44a5-b74f-7b3690d0a4f6",
-  // Optional direct endpoint. If empty, FUNCTIONS_BASE_URL + /submitContactRequest is used.
-  // apiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/submitContactRequest",
+  deliveryProvider: "resend",
+  preferFunctions: true,
+  apiUrl: "https://adazai-api.adazrenov.workers.dev/contact",
 };
 
 window.AI_AISSTEN_BOOKING_CONFIG = {
+  deliveryProvider: "disabled",
   slotCount: 6,
   availabilityCollection: "aiAvailabilitySlots",
   appointmentsCollection: "aiAppointments",
-  // Optional: Cloud Functions endpoints. These make bookings safer because the
-  // backend can block a slot and save the appointment atomically.
-  // Example:
+  // Requests are submitted exclusively through the Contact page.
+  // Optional endpoint for displaying availability:
   // availabilityApiUrl: "https://<region>-<project-id>.cloudfunctions.net/getAvailability",
-  // bookingApiUrl: "https://<region>-<project-id>.cloudfunctions.net/createBooking",
 };
 
 window.AI_AISSTEN_PRODUCTS_CONFIG = {
@@ -34,6 +32,6 @@ window.AI_AISSTEN_PRODUCTS_CONFIG = {
 window.AI_AISSTEN_CHAT_CONFIG = {
   apiUrl: "https://adazai-api.adazrenov.workers.dev/chat",
   enablePageChat: false,
-  // Optional endpoint for sending Assistant Construction lead summaries by email.
-  // leadApiUrl: "https://europe-west1-<project-id>.cloudfunctions.net/sendChatLead",
+  // The Worker holds the OpenAI secret; suggested questions use the same chat endpoint.
+  useOpenAIForSuggestions: true,
 };

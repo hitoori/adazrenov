@@ -9,6 +9,7 @@ const navItems = [
 ];
 
 const brandLogoPath = "assets/brand/adaz-renov-wordmark.png";
+const adazSiteSearchUrl = "site-search.json";
 const headerLogoPath = "assets/brand/adaz-renov-logo.png";
 const companyPhoneDisplay = "+33 1 86 04 74 68";
 const companyPhoneHref = "tel:+33186047468";
@@ -27,6 +28,24 @@ function getConfiguredFunctionUrl(functionName, explicitUrl = "") {
 
 function getWeb3FormsAccessKey() {
   return String(window.AI_AISSTEN_CONTACT_CONFIG?.web3FormsAccessKey || "").trim();
+}
+
+async function submitAdazForm(form, apiUrl, payload) {
+  // Reuse the identifier after an uncertain response; Resend deduplicates retries.
+  const fingerprint = JSON.stringify(payload);
+  if (form.adazSubmission?.fingerprint !== fingerprint) {
+    form.adazSubmission = { fingerprint, id: crypto.randomUUID() };
+  }
+  const response = await fetch(apiUrl, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, requestId: form.adazSubmission.id, website: String(form.elements.website?.value || "") }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || result.ok !== true) {
+    throw new Error([400, 429, 503].includes(response.status) && typeof result.error === "string"
+      ? result.error : "L’envoi est momentanément indisponible. Réessayez ou contactez-nous directement.");
+  }
+  form.adazSubmission = null;
 }
 
 async function submitToWeb3Forms(fields) {
@@ -145,9 +164,9 @@ function buildFooter() {
       <div class="container footer-bottom">
         <span>&copy; <span id="year"></span> ADAZ RENOV. Tous droits réservés.</span>
         <div class="footer-legal">
-          <a href="#">Mentions légales</a>
+          <a href="mentions-legales.html">Mentions légales</a>
           <a href="politique-confidentialite.html">Politique de confidentialité</a>
-          <a href="#">CGV</a>
+          <button type="button" class="footer-cookie-settings" data-cookie-settings>Préférences cookies</button>
         </div>
       </div>
     </footer>
@@ -1019,8 +1038,7 @@ function buildDoorCatalogueCard(model) {
           </div>
         </div>
         <p class="product-note door-summary" data-door-note>
-          <span class="door-price-material">${materialLabel}</span>
-          <strong data-door-price>${formatDoorPrice(defaultPrice)}</strong>
+          <span class="door-price-line"><span class="door-price-material">${materialLabel}</span><strong data-door-price>${formatDoorPrice(defaultPrice)}</strong></span>
           <span>Prix indicatif, hors pose.</span>
         </p>
         <div class="product-footer"><a class="button product-request-link" href="contact.html">Demander un devis <span aria-hidden="true">→</span></a></div>
@@ -1590,6 +1608,7 @@ function setupContactForm() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!form.reportValidity()) return;
     const submitButton = form.querySelector('button[type="submit"]');
     const originalLabel = submitButton?.textContent || "Envoyer ma demande";
     const contactConfig = window.AI_AISSTEN_CONTACT_CONFIG || {};
@@ -1602,11 +1621,12 @@ function setupContactForm() {
       email: String(formData.get("email") || "").trim(),
       subject: String(formData.get("subject") || "").trim(),
       message: String(formData.get("message") || "").trim(),
+      privacy_consent: formData.get("privacy_consent") === "on",
       page: window.location.href,
     };
 
     if (!apiUrl && !web3FormsAccessKey) {
-      success.innerHTML = "<strong>Configuration requise</strong> Le formulaire doit etre relie a Firebase Functions avant l'envoi automatique.";
+      success.innerHTML = "<strong>Envoi indisponible</strong> Appelez-nous ou écrivez à adazrenov@gmail.com.";
       success.hidden = false;
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
       return;
@@ -1629,6 +1649,8 @@ function setupContactForm() {
           page: payload.page,
           source: "Formulaire contact ADAZ RENOV",
         });
+      } else if (apiUrl && contactConfig.deliveryProvider === "resend") {
+        await submitAdazForm(form, apiUrl, payload);
       } else if (apiUrl) {
         const response = await fetch(apiUrl, {
           method: "POST",
@@ -1650,7 +1672,7 @@ function setupContactForm() {
       }
 
       form.reset();
-      success.innerHTML = "<strong>Message envoye !</strong> Merci pour votre demande. Nous vous contacterons tres prochainement.";
+      success.innerHTML = "<strong>Demande envoyée !</strong> Merci. Notre équipe vous recontactera pour faire le point sur vos travaux.";
       success.hidden = false;
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
@@ -1659,7 +1681,7 @@ function setupContactForm() {
       }, 4500);
     } catch (error) {
       console.warn("Contact submit failed.", error);
-      success.innerHTML = "<strong>Envoi indisponible</strong> Merci de nous appeler ou de nous ecrire directement a adazrenov@gmail.com.";
+      success.innerHTML = `<strong>Envoi indisponible</strong> ${escapeHtml(contactConfig.deliveryProvider === "resend" ? error.message : "Merci de nous appeler ou de nous écrire directement à adazrenov@gmail.com.")}`;
       success.hidden = false;
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } finally {
@@ -1771,7 +1793,7 @@ function formatCurrency(value) {
 
 function getSavedAiProject() {
   try {
-    return JSON.parse(window.localStorage.getItem("adazrenov-ai-project-v2") || "{}");
+    return window.adazAiProject || JSON.parse(window.localStorage.getItem("adazrenov-ai-project-v4") || "{}");
   } catch (error) {
     return {};
   }
@@ -2007,6 +2029,7 @@ function setupAiMaterialAdvisor() {
       solutions: [
         { name: "PVC double vitrage performant", priorities: ["budget", "isolation", "confort"], budgets: ["eco", "moyen"], strengths: ["bon rapport qualité/prix", "isolation thermique", "entretien réduit"] },
         { name: "Aluminium à rupture de pont thermique", priorities: ["design", "durabilite", "isolation"], budgets: ["moyen", "premium"], strengths: ["profils fins", "grandes dimensions", "finition contemporaine"] },
+        { name: "Bois — finition et entretien à prévoir", priorities: ["design", "isolation"], budgets: ["moyen", "premium"], strengths: ["aspect naturel", "choix des finitions", "entretien régulier à prévoir"] },
         { name: "Pose avec traitement de l'étanchéité", priorities: ["isolation", "durabilite", "confort"], budgets: ["eco", "moyen", "premium"], strengths: ["moins d'infiltrations d'air", "meilleure acoustique", "performance réelle"] },
       ],
     },
@@ -2057,13 +2080,17 @@ function setupAiMaterialAdvisor() {
 
     const formData = new FormData(form);
     const zone = String(formData.get("zone") || "interieur");
-    const priority = String(formData.get("priority") || "design");
+    const priority = getSavedAiProject().priority || "budget";
     const budget = String(formData.get("budget") || "moyen");
-    const constraint = String(formData.get("finish") || "standard");
-    const notes = String(formData.get("notes") || "").trim();
+    const constraint = getSavedAiProject().constraint || "standard";
+    const notes = getSavedAiProject().notes || "";
     const profile = zoneProfiles[zone];
     const savedProject = getSavedAiProject();
-
+    if (savedProject.workType === "construction" || savedProject.workType === "amenagement") {
+      result.innerHTML = `<div class="tool-result-card"><h3>Les choix à préparer avec notre équipe</h3><p>Précisez l’usage, les matériaux souhaités et les contraintes du lieu. Nous examinerons les solutions techniques et leur coût après relevés.</p>${notes ? `<p>Votre besoin : ${escapeHtml(notes)}</p>` : ""}</div>`;
+      result.hidden = false;
+      return;
+    }
     if (!profile) return;
 
     const scored = profile.solutions
@@ -2071,6 +2098,7 @@ function setupAiMaterialAdvisor() {
         let score = 0;
         const reasons = [];
 
+        if (savedProject.details?.material && savedProject.details.material !== "inconnu" && item.name.toLowerCase().includes(savedProject.details.material)) score += 10;
         if (item.priorities.includes(priority)) {
           score += 3;
           reasons.push("répond à votre priorité principale");
@@ -2081,11 +2109,10 @@ function setupAiMaterialAdvisor() {
           reasons.push("cohérent avec votre investissement");
         }
 
-        const fit = Math.max(68, Math.min(96, 70 + score * 6));
-        return { ...item, score, reasons, fit };
+        return { ...item, score, reasons };
       })
       .sort((a, b) => b.score - a.score)
-      .slice(0, 3);
+      .slice(0, 2);
 
     const strategy =
       priority === "isolation"
@@ -2108,7 +2135,7 @@ function setupAiMaterialAdvisor() {
     result.innerHTML = `
       <div class="tool-result-card">
         <span class="result-kicker">Stratégie recommandée</span>
-        <h3>Priorités pour votre ${profile.label}</h3>
+        <h3>Les options pour ${["fenetres","portes"].includes(savedProject.workType)?"vos":"votre"} ${profile.label}</h3>
         <p>${strategy}</p>
         <div class="recommendation-list">
           ${scored
@@ -2117,8 +2144,9 @@ function setupAiMaterialAdvisor() {
                 <article class="recommendation-card">
                   <div class="recommendation-rank">0${index + 1}</div>
                   <div>
+                    <span class="result-kicker">${/PVC|Aluminium|Bois|Grès|Peinture|Sol |Enduit|Porte|Bloc-porte|Appareillage|Plan de travail/.test(item.name) ? "Matériau ou équipement" : "Intervention à prévoir"}</span>
                     <h4>${item.name}</h4>
-                    <p>Compatibilité estimée : <strong>${item.fit}%</strong>${item.reasons.length ? ` · ${item.reasons.join(" · ")}` : ""}.</p>
+                    <p>À envisager si vous privilégiez : ${item.strengths.slice(0, 2).join(" et ")}.</p>
                     <div class="tag-row">
                       ${item.strengths.map((strength) => `<span class="tag">${strength}</span>`).join("")}
                     </div>
@@ -2876,6 +2904,14 @@ function getChatConfig() {
   });
 }
 
+function formatAiQuantity(type, quantity) {
+  const count = Number(quantity);
+  if (!Number.isFinite(count)) return "À préciser";
+  const unit = type === "fenetres" ? (count === 1 ? "fenêtre" : "fenêtres")
+    : type === "portes" ? (count === 1 ? "porte" : "portes") : "m²";
+  return `${count.toLocaleString("fr-FR")} ${unit}`;
+}
+
 function setupAiEstimator() {
   const form = document.querySelector("#ai-estimator-form");
   const result = document.querySelector("#ai-estimator-result");
@@ -2929,63 +2965,10 @@ function setupAiEstimator() {
     "plus-40000": { max: Infinity },
   };
 
-  const constrainedScopes = {
-    interieur: (quantity) => [
-      `Rafraîchissement ciblé d'environ ${quantity} m²`,
-      "Préparation légère, peinture et finitions essentielles",
-      "Conservation des réseaux et éléments encore en bon état",
-    ],
-    "salle-de-bain": () => [
-      "Intervention ciblée plutôt qu'une rénovation complète",
-      "Réparations prioritaires, meuble ou robinetterie selon l'état",
-      "Conservation du carrelage et des réseaux lorsqu'ils sont fiables",
-    ],
-    cuisine: () => [
-      "Modernisation partielle de la cuisine existante",
-      "Façades, peinture, crédence ou plan de travail selon priorité",
-      "Conservation de l'implantation et des réseaux",
-    ],
-    fenetres: (quantity) => [
-      `Remplacement prioritaire de ${quantity} fenêtre(s)`,
-      "Dimensions et coloris standards",
-      "Options décoratives reportées si nécessaire",
-    ],
-    portes: (quantity) => [
-      `Remplacement prioritaire de ${quantity} porte(s)`,
-      "Modèle standard avec pose et réglages",
-      "Options premium reportées",
-    ],
-    electricite: (quantity) => [
-      `Sécurisation ciblée d'environ ${quantity} m²`,
-      "Traitement des anomalies prioritaires",
-      "Extension complète du réseau planifiée dans une seconde phase",
-    ],
-    facade: (quantity) => [
-      `Réparation ciblée d'environ ${quantity} m²`,
-      "Traitement des fissures et zones dégradées",
-      "Ravalement global reporté",
-    ],
-    toiture: (quantity) => [
-      `Réparation ciblée d'environ ${quantity} m²`,
-      "Étanchéité et points d'infiltration prioritaires",
-      "Réfection complète reportée",
-    ],
-    construction: () => [
-      "Étude, relevés et préparation du projet",
-      "Priorisation des démarches et du chiffrage",
-      "Travaux de construction à prévoir dans une enveloppe séparée",
-    ],
-    amenagement: (quantity) => [
-      `Aménagement ciblé d'environ ${quantity} m²`,
-      "Fonctions essentielles et matériaux standards",
-      "Éléments sur mesure complexes reportés",
-    ],
-  };
-
   function updateMeasureField() {
     const profile = profiles[typeSelect?.value] || profiles.interieur;
     const usesUnits = ["fenetres", "portes"].includes(typeSelect?.value);
-    if (measureLabel) measureLabel.textContent = usesUnits ? `Nombre de ${profile.unit}` : "Surface concernée (m²)";
+    if (measureLabel) measureLabel.textContent = usesUnits ? `Nombre de ${typeSelect?.value === "fenetres" ? "fenêtres" : "portes"}` : "Surface concernée (m²)";
     if (measureInput) {
       measureInput.min = "1";
       measureInput.step = "1";
@@ -2996,189 +2979,55 @@ function setupAiEstimator() {
   typeSelect?.addEventListener("change", updateMeasureField);
   updateMeasureField();
 
-  const packageProfiles = {
-    interieur: [
-      { label: "Preparation & protection", share: 0.12 },
-      { label: "Corps d'etat techniques", share: 0.38 },
-      { label: "Finitions", share: 0.5 },
-    ],
-    "salle-de-bain": [
-      { label: "Demolition & supports", share: 0.2 },
-      { label: "Plomberie / etancheite", share: 0.42 },
-      { label: "Finitions & equipements", share: 0.38 },
-    ],
-    cuisine: [
-      { label: "Preparation reseaux", share: 0.22 },
-      { label: "Mobilier & plan de travail", share: 0.48 },
-      { label: "Pose & finitions", share: 0.3 },
-    ],
-    fenetres: [
-      { label: "Releves & preparation", share: 0.18 },
-      { label: "Menuiseries", share: 0.62 },
-      { label: "Pose & finitions d'etancheite", share: 0.2 },
-    ],
-    portes: [
-      { label: "Depose & preparation", share: 0.2 },
-      { label: "Bloc porte / securite", share: 0.58 },
-      { label: "Pose & reglages", share: 0.22 },
-    ],
-    electricite: [
-      { label: "Diagnostic & securite", share: 0.2 },
-      { label: "Tableau / circuits", share: 0.5 },
-      { label: "Appareillage & verification", share: 0.3 },
-    ],
-    facade: [
-      { label: "Preparation supports", share: 0.24 },
-      { label: "Isolation / enduits", share: 0.52 },
-      { label: "Finitions", share: 0.24 },
-    ],
-    toiture: [
-      { label: "Diagnostic & securisation", share: 0.18 },
-      { label: "Couverture / etancheite", share: 0.58 },
-      { label: "Finitions & evacuation eaux", share: 0.24 },
-    ],
-    construction: [
-      { label: "Gros oeuvre", share: 0.45 },
-      { label: "Second oeuvre", share: 0.35 },
-      { label: "Finitions", share: 0.2 },
-    ],
-    amenagement: [
-      { label: "Conception / releves", share: 0.2 },
-      { label: "Fabrication / pose", share: 0.55 },
-      { label: "Reglages finaux", share: 0.25 },
-    ],
-  };
-
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-
-    const formData = new FormData(form);
-    const type = String(formData.get("work_type") || "interieur");
-    const area = Number(formData.get("surface") || 0);
-    const complexity = String(formData.get("complexity") || "standard");
-    const finish = String(formData.get("finish") || "equilibre");
-    const occupancy = String(formData.get("occupancy") || "libre");
-    const city = String(formData.get("city") || "").trim();
-    const projectState = String(formData.get("project_state") || "renovation-complete");
-    const deadline = String(formData.get("deadline") || "1-3-mois");
-    const desiredBudget = String(formData.get("desired_budget") || "a-definir");
-
-    const profile = profiles[type];
-    const factor =
-      (complexityFactors[complexity] || 1) *
-      (finishFactors[finish] || 1) *
-      (occupancyFactors[occupancy] || 1) *
-      (stateFactors[projectState] || 1);
-
-    const fullMinBudget = Math.max(profile.minimum, Math.round(profile.min * area * factor));
-    const fullMaxBudget = Math.max(Math.round(profile.minimum * 1.35), Math.round(profile.max * area * factor));
-    const budgetCap = budgetRanges[desiredBudget]?.max ?? Infinity;
-    const isBudgetConstrained = Number.isFinite(budgetCap) && fullMinBudget > budgetCap;
-    const scenarioMinBudget = isBudgetConstrained
-      ? Math.max(500, Math.round(budgetCap * 0.68))
-      : fullMinBudget;
-    const scenarioMaxBudget = Number.isFinite(budgetCap)
-      ? Math.min(fullMaxBudget, budgetCap)
-      : fullMaxBudget;
-    const affordableQuantity = Math.max(
-      1,
-      Math.floor((Number.isFinite(budgetCap) ? budgetCap : fullMinBudget) / Math.max(1, profile.min * factor))
-    );
-    const baseDays = Math.max(2, Math.round(profile.daysPerUnit * area));
-    const scopeRatio = isBudgetConstrained ? Math.min(1, affordableQuantity / Math.max(1, area)) : 1;
-    const durationMin = Math.max(1, Math.round(baseDays * scopeRatio * 0.85));
-    const durationMax = Math.max(durationMin + 2, Math.round(baseDays * scopeRatio * factor * 1.12));
-    const confidence = Math.max(62, Math.min(91, 74 + (complexity === "standard" ? 5 : 1) + (projectState === "moyen" ? 4 : 0) - (occupancy === "occupe" ? 3 : 0)));
-
-    const packs = (packageProfiles[type] || packageProfiles.interieur).map((pack) => ({
-      ...pack,
-      min: Math.round(scenarioMinBudget * pack.share),
-      max: Math.round(scenarioMaxBudget * pack.share),
-    }));
-
-    const stateLabels = {
-      bon: "bon état / préparation légère",
-      moyen: "état moyen / reprises habituelles",
-      mauvais: "mauvais état / dépose importante",
-    };
-
-    const deadlineLabels = {
-      urgent: "urgent",
-      mois: "ce mois-ci",
-      "1-3-mois": "dans 1 a 3 mois",
-      "plus-tard": "plus tard",
-    };
-
-    const budgetLabels = {
-      "a-definir": "à définir",
-      "moins-5000": "maximum 5 000 EUR",
-      "5000-15000": "maximum 15 000 EUR",
-      "15000-40000": "maximum 40 000 EUR",
-      "plus-40000": "plus de 40 000 EUR",
-    };
-
-    const scopeItems = isBudgetConstrained
-      ? (constrainedScopes[type] || constrainedScopes.interieur)(affordableQuantity)
-      : [
-          "Périmètre déclaré conservé dans le scénario",
-          "Niveau de finition et contraintes pris en compte",
-          "Marge finale à confirmer après visite technique",
-        ];
-    const budgetStatus = desiredBudget === "a-definir"
-      ? "Votre budget reste à définir."
-      : isBudgetConstrained
-        ? `Le projet complet dépasse votre limite. ADAZAI a réduit le périmètre pour rester strictement sous ${formatCurrency(budgetCap)}.`
-        : `Le scénario proposé respecte votre plafond de ${formatCurrency(budgetCap)}.`;
-
-    result.innerHTML = `
-      <div class="tool-result-card">
-        <span class="result-kicker">${isBudgetConstrained ? "Scénario ajusté au budget" : "Estimation personnalisée"}</span>
-        <h3>${profile.label.charAt(0).toUpperCase() + profile.label.slice(1)}</h3>
-        <div class="estimate-strip">
-          <div class="estimate-box">
-            <span>Budget à respecter</span>
-            <strong>${formatCurrency(scenarioMinBudget)} - ${formatCurrency(scenarioMaxBudget)}</strong>
-          </div>
-          <div class="estimate-box">
-            <span>Duree probable</span>
-            <strong>${durationMin} a ${durationMax} jours ouvres</strong>
-          </div>
-        </div>
-        <h4>${isBudgetConstrained ? "Ce qui est réaliste dans votre enveloppe" : "Périmètre pris en compte"}</h4>
-        <ul class="feature-list">
-          ${scopeItems.map((item) => `<li><span class="check">&#10003;</span><span>${item}</span></li>`).join("")}
-        </ul>
-        <div class="result-tags">
-          <span class="badge">Indice de confiance: ${confidence}%</span>
-          <span class="badge">${profile.unit === "m²" ? "Surface" : "Quantité"} : ${area} ${profile.unit}</span>
-          ${city ? `<span class="badge">Zone: ${escapeHtml(city)}</span>` : ""}
-        </div>
-        <h4>Repartition budgetaire proposee</h4>
-        <ul class="feature-list">
-          ${packs
-            .map(
-              (pack) =>
-                `<li><span class="check">&#10003;</span><span>${pack.label}: <strong>${formatCurrency(pack.min)} - ${formatCurrency(pack.max)}</strong></span></li>`
-            )
-            .join("")}
-        </ul>
-        <ul class="feature-list">
-          <li><span class="check">&#10003;</span><span>Accès chantier : <strong>${complexity}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>Niveau de finition : <strong>${finish}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>État actuel : <strong>${escapeHtml(stateLabels[projectState] || projectState)}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>Budget client: <strong>${escapeHtml(budgetLabels[desiredBudget] || desiredBudget)}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>Delai souhaite: <strong>${escapeHtml(deadlineLabels[deadline] || deadline)}</strong></span></li>
-          <li><span class="check">&#10003;</span><span>Logement: <strong>${occupancy === "occupe" ? "occupe pendant travaux" : "libre pendant travaux"}</strong></span></li>
-        </ul>
-        <div class="budget-fit-note">${budgetStatus}</div>
-        <div class="result-note">
-          Cette estimation reste indicative. Pour une vraie offre commerciale, il faut une visite technique, des mesures, la verification de l'acces et un devis detaille.
-        </div>
-      </div>
-    `;
-
-    result.hidden = false;
-    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const cityField=form.elements.city;
+    cityField.setCustomValidity(cityField.value.trim()?"":"Indiquez la ville du chantier.");
+    if(!form.reportValidity())return;
+    const data=new FormData(form);
+    const type=String(data.get("work_type"));
+    const area=Number(data.get("surface"));
+    const profile=profiles[type];
+    if(!profile||!Number.isFinite(area)||area<=0)return;
+    const project=getSavedAiProject();
+    const factor=(complexityFactors[data.get("complexity")]||1)*(finishFactors[data.get("finish")]||1)*(occupancyFactors[data.get("occupancy")]||1)*(stateFactors[data.get("project_state")]||1);
+    const min=Math.max(profile.minimum,Math.round(profile.min*area*factor));
+    const max=Math.max(Math.round(profile.minimum*1.35),Math.round(profile.max*area*factor));
+    const cap=budgetRanges[data.get("desired_budget")]?.max??Infinity;
+    const durationMin=Math.max(1,Math.round(Math.max(2,profile.daysPerUnit*area)*.85));
+    const durationMax=Math.max(durationMin+2,Math.round(Math.max(2,profile.daysPerUnit*area)*factor*1.12));
+    const manual=type==="construction"||(type==="salle-de-bain"&&project.details?.scope==="partielle")||(["fenetres","portes"].includes(type)&&project.details?.installation==="neuf")||(type==="cuisine"&&project.details?.furniture==="non");
+    const scope={
+      interieur:["Préparation et protection du chantier","Travaux intérieurs à préciser selon votre demande","Finitions et contrôle"],
+      'salle-de-bain':["Dépose et préparation des supports","Plomberie, étanchéité et revêtements","Installation des équipements et finitions"],
+      cuisine:["Relevés et préparation de l’implantation","Mobilier et plan de travail à définir","Pose, raccordements et finitions — électroménager à préciser"],
+      fenetres:[`Fourniture de ${formatAiQuantity(type, area)} — dimensions et vitrage à confirmer`,"Dépose, pose, étanchéité et réglages","Finitions et évacuation à préciser après relevés"],
+      portes:[`Fourniture de ${formatAiQuantity(type, area)} — modèle et dimensions à confirmer`,"Dépose, pose et réglages","Finitions et évacuation à préciser après relevés"],
+      electricite:["Vérification des installations existantes","Tableau, circuits et appareillage selon les besoins","Contrôle et finitions"],
+      facade:["Diagnostic et préparation des supports","Réparations et revêtement à définir","Finitions et nettoyage"],
+      toiture:["Diagnostic et sécurisation","Couverture, étanchéité et isolation à préciser","Contrôle et évacuation des déchets"],
+      construction:["Étude du projet et des contraintes du terrain","Autorisations et choix techniques à vérifier","Chiffrage des travaux par notre équipe"],
+      amenagement:["Relevés et conception","Fabrication et pose à définir","Réglages et finitions"]
+    }[type];
+    const details=[...form.querySelectorAll('.ai-project-details input,.ai-project-details select')].map(e=>`${form.querySelector(`label[for="${e.id}"]`).textContent} : ${e.tagName==="SELECT"?e.selectedOptions[0]?.textContent:e.value||"à préciser"}`);
+    const assumptions=[...form.querySelectorAll('select[name="project_state"],select[name="complexity"],select[name="occupancy"],select[name="finish"]')].map(e=>`${form.querySelector(`label[for="${e.id}"]`).textContent} : ${e.selectedOptions[0]?.textContent}`);
+    const alternativeQuantity=["fenetres","portes"].includes(type)&&Number.isFinite(cap)&&max>cap?Math.floor(cap/(profile.max*factor)):0;
+    const canOffer=alternativeQuantity>=1&&alternativeQuantity<area&&Math.round(profile.minimum*1.35)<=cap;
+    const budgetNote=!Number.isFinite(cap)?"Vous pourrez préciser votre budget avec notre équipe.":min>cap?`La fourchette du projet complet commence ${formatCurrency(min-cap)} au-dessus de votre budget de ${formatCurrency(cap)}.`:max>cap?`La partie haute de cette estimation dépasse votre budget de ${formatCurrency(cap)} de ${formatCurrency(max-cap)}.`:"Cette fourchette indicative se situe dans le budget envisagé. Le prix sera confirmé par un devis.";
+    result.innerHTML=`<div class="tool-result-card"><span class="result-kicker">${project.originalQuantity?"Intervention prioritaire choisie":"Projet complet"}</span><h3>${escapeHtml(profile.label.charAt(0).toUpperCase()+profile.label.slice(1))}</h3><div class="estimate-strip"><div class="estimate-box"><span>Budget estimé</span><strong>${manual?"Étude avec notre équipe":`${formatCurrency(min)} – ${formatCurrency(max)}`}</strong></div><div class="estimate-box"><span>Durée estimée des travaux</span><strong>${manual?"À confirmer":`${durationMin} à ${durationMax} jours ouvrés`}</strong></div></div><p>${manual?"Les informations et la grille actuelle ne permettent pas un chiffrage automatique adapté à ce projet. Notre équipe étudiera votre demande.":"Fourchette issue de la grille indicative actuelle. Les prestations et quantités seront vérifiées avant devis."}</p><h4>Travaux envisagés — à confirmer</h4><ul class="feature-list">${scope.map(x=>`<li><span class="check">✓</span><span>${escapeHtml(x)}</span></li>`).join("")}</ul><div class="result-tags"><span class="badge">${formatAiQuantity(type, area)}</span><span class="badge">${escapeHtml(cityField.value.trim())}</span></div><h4>Hypothèses de l’estimation</h4><ul class="feature-list">${[...assumptions,...details].map(x=>`<li><span>${escapeHtml(x)}</span></li>`).join("")}</ul>${manual?"":`<div class="budget-fit-note">${budgetNote}</div>`}${canOffer&&!manual?`<div class="ai-budget-alternative"><h4>Une intervention en plusieurs fois ?</h4><p>Vous pouvez retenir ${formatAiQuantity(type, alternativeQuantity)} prioritaires maintenant et prévoir le reste plus tard. Fourchette indicative : ${formatCurrency(Math.max(profile.minimum,Math.round(profile.min*alternativeQuantity*factor)))} – ${formatCurrency(Math.max(Math.round(profile.minimum*1.35),Math.round(profile.max*alternativeQuantity*factor)))}.</p><button class="button small secondary" type="button" data-ai-alternative="${alternativeQuantity}">Choisir cette alternative</button></div>`:""}${project.originalQuantity?`<button class="button small light" type="button" data-ai-original="${Number(project.originalQuantity)}">Revenir au projet complet (${formatAiQuantity(type, project.originalQuantity)})</button>`:""}<div class="result-note">Estimation indicative, hors délais de fabrication et de livraison. Notre équipe confirme les prestations, le prix et le calendrier après étude du projet.</div></div>`;
+    result.hidden=false;
+    document.dispatchEvent(new CustomEvent("adaz:estimate",{detail:{type,quantity:area,min:manual?null:min,max:manual?null:max,durationMin:manual?null:durationMin,durationMax:manual?null:durationMax,manual}}));
+  });
+  result.addEventListener("click",event=>{
+    const button=event.target.closest("[data-ai-alternative],[data-ai-original]");
+    if(!button)return;
+    const state=getSavedAiProject();
+    const original=state.originalQuantity||Number(form.elements.surface.value);
+    form.elements.surface.value=button.dataset.aiAlternative||button.dataset.aiOriginal;
+    form.elements.surface.dispatchEvent(new Event("input",{bubbles:true}));
+    state.originalQuantity=button.dataset.aiOriginal?null:original;
+    // Recalculation uses the selected quantity for every downstream result.
+    form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
   });
 }
 
@@ -3361,563 +3210,185 @@ function setupAiConceptIdeator() {
 }
 
 function setupAiRoadmapPlanner() {
-  const form = document.querySelector("#ai-roadmap-form");
-  const result = document.querySelector("#ai-roadmap-result");
-  const typeSelect = form?.querySelector('[name="type"]');
-  const measureLabel = document.querySelector("#ai-roadmap-measure-label");
-
-  if (!form || !result) return;
-
-  const profiles = {
-    interieur: { label: "renovation interieure", baseDaysPer100: 42, minDays: 8, unit: "m²", risks: ["reseaux / electricite", "phases poussiereuses", "sequencage des corps d'etat"] },
-    "salle-de-bain": { label: "salle de bain", baseDaysPer100: 145, minDays: 7, unit: "m²", risks: ["etancheite", "delai de livraison sanitaires", "coordination plomberie / elec"] },
-    cuisine: { label: "cuisine", baseDaysPer100: 110, minDays: 7, unit: "m²", risks: ["reseaux cuisine", "ajustage mobilier", "ventilation"] },
-    fenetres: { label: "remplacement de fenetres", baseDaysPer100: 65, minDays: 2, unit: "fenêtre(s)", risks: ["relevés exacts", "délais de fabrication", "étanchéité de pose"] },
-    portes: { label: "remplacement de portes", baseDaysPer100: 55, minDays: 2, unit: "porte(s)", risks: ["dimensions des tableaux", "sens d'ouverture", "réglages et finitions"] },
-    electricite: { label: "installation electrique", baseDaysPer100: 28, minDays: 4, unit: "m²", risks: ["mise en sécurité", "passage des circuits", "contrôles finaux"] },
-    facade: { label: "facade", baseDaysPer100: 30, minDays: 6, unit: "m²", risks: ["meteo", "isolation exterieure", "finition uniforme"] },
-    toiture: { label: "toiture", baseDaysPer100: 34, minDays: 5, unit: "m²", risks: ["météo et sécurisation", "étanchéité", "évacuation des eaux"] },
-    extension: { label: "extension / construction", baseDaysPer100: 120, minDays: 20, unit: "m²", risks: ["fondations", "structures porteuses", "coordination etancheite / isolation"] },
+  const form=document.querySelector("#ai-roadmap-form"),result=document.querySelector("#ai-roadmap-result");
+  if(!form||!result)return;
+  const phases={
+    fenetres:[["Relevés et choix des menuiseries","Vérifier les dimensions, le vitrage et les contraintes de pose."],["Commande et fabrication","Confirmer les délais auprès du fournisseur avant de prévoir la pose."],["Dépose et pose","Protéger les pièces, remplacer les fenêtres et réaliser l’étanchéité."],["Finitions et contrôle","Vérifier les réglages, les joints et le fonctionnement."]],
+    portes:[["Relevés et choix des portes","Vérifier les dimensions, le sens d’ouverture et les supports."],["Commande et fabrication","Confirmer les délais avant l’intervention."],["Dépose et pose","Protéger les lieux, poser les blocs-portes et régler la quincaillerie."],["Finitions et contrôle","Contrôler l’ouverture, la fermeture et les finitions."]],
+    'salle-de-bain':[["Relevés et choix des équipements","Vérifier la plomberie, l’implantation et les supports."],["Dépose et préparation","Protéger les lieux et préparer les réseaux et l’étanchéité."],["Revêtements et équipements","Respecter les temps de séchage et poser les équipements."],["Contrôle et réception","Vérifier l’étanchéité, la ventilation et les finitions."]],
+    cuisine:[["Relevés et implantation","Valider les dimensions, le mobilier et les équipements."],["Commande et préparation des réseaux","Coordonner les livraisons, la plomberie et l’électricité."],["Pose et raccordements","Installer le mobilier, le plan de travail et les équipements retenus."],["Réglages et contrôle","Vérifier les raccordements et le fonctionnement."]],
+    interieur:[["Relevés et choix des travaux","Définir les pièces et les interventions."],["Protection et préparation","Protéger le logement et vérifier les supports et réseaux."],["Travaux et finitions","Coordonner les corps de métier et les temps de séchage."],["Contrôle et réception","Vérifier les travaux et nettoyer les zones d’intervention."]],
+    facade:[["Diagnostic des supports","Identifier les fissures, l’humidité et les accès."],["Protection et préparation","Sécuriser les lieux et réparer les supports."],["Travaux de façade","Appliquer les solutions retenues en tenant compte de la météo."],["Contrôle et nettoyage","Vérifier les finitions et libérer le chantier."]],
+    toiture:[["Diagnostic et sécurisation","Vérifier la couverture et les causes des désordres."],["Approvisionnement et préparation","Confirmer les matériaux et prévoir les protections."],["Travaux de toiture","Intervenir sur la couverture et l’étanchéité selon le diagnostic."],["Contrôle et évacuation","Vérifier les points sensibles et nettoyer le chantier."]],
+    electricite:[["Diagnostic et besoins","Repérer les installations existantes et les circuits nécessaires."],["Préparation et mise en sécurité","Organiser les coupures et le passage des réseaux."],["Installation","Poser les circuits, protections et appareillages retenus."],["Vérifications finales","Contrôler l’installation et les finitions."]],
+    construction:[["Étude et relevés","Examiner le terrain et les contraintes du projet."],["Autorisations et choix techniques","Vérifier les démarches et définir les prestations."],["Devis et organisation","Valider le chiffrage, les commandes et le calendrier avec l’équipe."],["Travaux et réception","Réaliser les étapes définies après étude et contrôler leur exécution."]],
+    amenagement:[["Relevés et conception","Définir l’usage et les dimensions."],["Choix et fabrication","Valider les matériaux et les délais de fabrication."],["Pose","Installer les éléments et protéger les surfaces existantes."],["Réglages et réception","Vérifier le fonctionnement et les finitions."]]
   };
-
-  function updateMeasureLabel() {
-    const profile = profiles[typeSelect?.value] || profiles.interieur;
-    if (measureLabel) {
-      measureLabel.textContent = profile.unit === "m²" ? "Surface concernée (m²)" : `Nombre de ${profile.unit}`;
-    }
-  }
-
-  typeSelect?.addEventListener("change", updateMeasureLabel);
-  updateMeasureLabel();
-
-  const scopeFactors = {
-    rafraichissement: 0.8,
-    renovation: 1,
-    lourd: 1.22,
-  };
-
-  const urgencyFactors = {
-    basse: 1,
-    normale: 0.95,
-    haute: 0.88,
-  };
-
-  const occupancyFactors = {
-    libre: 1,
-    occupe: 1.12,
-  };
-
-  const urgencyNotes = {
-    basse: "planification souple, fenetre de lancement modulable",
-    normale: "demarrage sous quelques semaines, planning standard",
-    haute: "priorisation des phases critiques et chevauchement possible",
-  };
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-    const type = String(formData.get("type") || "interieur");
-    const scope = String(formData.get("scope") || "renovation");
-    const urgency = String(formData.get("urgency") || "normale");
-    const occupancy = String(formData.get("occupancy") || "libre");
-    const surface = Number(formData.get("surface") || 0);
-
-    const profile = profiles[type];
-    if (!profile || !surface) return;
-    const savedProject = getSavedAiProject();
-
-    const factor = (scopeFactors[scope] || 1) * (occupancyFactors[occupancy] || 1);
-    const base = Math.max(profile.minDays, Math.round((profile.baseDaysPer100 / 100) * surface * factor));
-    const adjusted = Math.max(profile.minDays, Math.round(base * (urgencyFactors[urgency] || 1)));
-    const buffer = Math.max(2, Math.round(adjusted * 0.08));
-
-    const phases = [
-      { label: "Diagnostic & planning", weight: 0.16, note: "releves, planning corps d'etat, jalons" },
-      { label: "Reseaux / gros oeuvre", weight: 0.32, note: profile.risks[0] },
-      { label: "Second oeuvre", weight: 0.28, note: profile.risks[1] },
-      { label: "Finitions & controles", weight: 0.24, note: profile.risks[2] },
-    ];
-
-    const timeline = phases.map((phase) => {
-      const days = Math.max(2, Math.round(adjusted * phase.weight));
-      return { ...phase, days };
-    });
-
-    const totalDays = timeline.reduce((acc, item) => acc + item.days, 0);
-    const criticalRisks = profile.risks.slice(0, 2).join(" · ");
-    const budgetNotes = {
-      "moins-5000": "Avancer par intervention ciblée et valider chaque dépense avant commande.",
-      "5000-15000": "Séparer les travaux indispensables des améliorations optionnelles.",
-      "15000-40000": "Prévoir les commandes principales avant le démarrage pour protéger le planning.",
-      "plus-40000": "Verrouiller les choix techniques et les finitions avec un planning d'approvisionnement.",
-      "a-definir": "Définir une enveloppe avant de valider les commandes et le calendrier.",
-    };
-    const projectAdjustments = [
-      savedProject.projectState === "mauvais" ? "Ajouter une validation des supports après dépose." : "",
-      savedProject.finish === "premium" || savedProject.finish === "prestige"
-        ? "Valider les échantillons et délais des finitions avant lancement."
-        : "",
-      savedProject.deadline === "urgent" ? "Confirmer immédiatement la disponibilité des matériaux et équipes." : "",
-    ].filter(Boolean);
-
-    result.innerHTML = `
-      <div class="tool-result-card">
-        <span class="result-kicker">Plan IA</span>
-        <h3>${profile.label.charAt(0).toUpperCase() + profile.label.slice(1)}</h3>
-        <div class="estimate-strip">
-          <div class="estimate-box">
-            <span>Duree indicative</span>
-            <strong>${totalDays} jours ouvres</strong>
-          </div>
-          <div class="estimate-box">
-            <span>Mode chantier</span>
-            <strong>${scope} · ${occupancy === "occupe" ? "occupe" : "libre"}</strong>
-          </div>
-          <div class="estimate-box">
-            <span>Marge securite</span>
-            <strong>${buffer} jours (imprevus)</strong>
-          </div>
-        </div>
-        <div class="phase-list">
-          ${timeline
-            .map(
-              (phase) => `
-                <div class="phase-step">
-                  <strong>${phase.label}</strong>
-                  <div class="phase-meta">${phase.days} jours · ${phase.note}</div>
-                </div>
-              `
-            )
-            .join("")}
-        </div>
-        <ul class="feature-list" style="margin-top:16px;">
-          <li><span class="check">&#10003;</span><span>Urgence: ${urgencyNotes[urgency]}</span></li>
-          <li><span class="check">&#10003;</span><span>Risques prioritaires: ${profile.risks.join(", ")}.</span></li>
-          <li><span class="check">&#10003;</span><span>Étape critique: ${criticalRisks}.</span></li>
-          <li><span class="check">&#10003;</span><span>${profile.unit === "m²" ? "Surface" : "Quantité"} déclarée : ${surface} ${profile.unit}, à ajuster après visite.</span></li>
-          <li><span class="check">&#10003;</span><span>Règle budget : ${budgetNotes[savedProject.desiredBudget || "a-definir"]}</span></li>
-          ${projectAdjustments
-            .map((item) => `<li><span class="check">&#10003;</span><span>${item}</span></li>`)
-            .join("")}
-        </ul>
-        <div class="result-note">Ce plan est indicatif. Une visite technique permettra de verrouiller les jalons, les acces et la logistique.</div>
-      </div>
-    `;
-
-    result.hidden = false;
-    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  form.addEventListener("submit",event=>{
+    event.preventDefault();const state=getSavedAiProject(),estimate=state.lastEstimate;
+    if(!estimate)return;
+    result.innerHTML=`<div class="tool-result-card"><p>${formatAiQuantity(estimate.type, estimate.quantity)} — ${state.originalQuantity?"intervention prioritaire choisie":"projet complet"}.</p><p><strong>Durée de l’intervention :</strong> ${estimate.manual?"à confirmer après étude":`${estimate.durationMin} à ${estimate.durationMax} jours ouvrés`}.</p><div class="phase-list">${phases[estimate.type].map(([label,note])=>`<div class="phase-step"><strong>${label}</strong><div class="phase-meta">${note}</div></div>`).join("")}</div><div class="result-note">Les délais de fabrication, de livraison et de séchage sont distincts du temps d’intervention. Le calendrier sera confirmé avec notre équipe.</div></div>`;
+    result.hidden=false;
   });
 }
 
 function setupAiToolsNavigation() {
   const menu = document.querySelector(".ai-tool-menu");
-  if (!menu) return;
-
-  const panels = {
-    estimate: document.querySelector("#ai-estimator-form")?.closest(".tool-panel"),
-    advice: document.querySelector("#outil-conseil"),
-    plan: document.querySelector("#outil-plan"),
-    booking: document.querySelector("#outil-programmation"),
-  };
-  if (Object.values(panels).some((panel) => !panel)) return;
-
-  panels.estimate.id = "outil-estimateur";
-  const introSection = menu.closest("section");
+  const form = document.querySelector("#ai-estimator-form");
+  if (!menu || !form) return;
+  const estimate = form.closest(".tool-panel");
+  const advice = document.querySelector("#outil-conseil");
+  const plan = document.querySelector("#outil-plan");
+  const booking = document.querySelector("#outil-programmation");
+  const project = document.createElement("article");
+  project.id = "outil-projet";
+  project.className = "tool-panel is-current";
+  project.innerHTML = '<div class="tool-heading"><span class="tool-heading-number">01</span><div><h3>Votre projet</h3></div></div><p>Précisez vos travaux et la ville du chantier. Vous pouvez laisser les questions techniques à « Je ne sais pas ».</p>';
+  project.append(form);
+  estimate.id = "outil-estimateur";
+  estimate.querySelector(".tool-heading-number").textContent = "02";
   const workspace = document.createElement("section");
   workspace.className = "section section-muted ai-configurator";
-  workspace.innerHTML = `
-    <div class="container ai-configurator-shell">
-      <aside class="ai-project-summary" aria-live="polite">
-        <span class="result-kicker">Votre projet</span>
-        <h2>Résumé intelligent</h2>
-        <p>Vos choix sont mémorisés et utilisés dans chaque étape.</p>
-        <div class="ai-progress-head">
-          <span>Préparation du projet</span>
-          <strong data-ai-progress-value>0%</strong>
-        </div>
-        <div class="ai-summary-progress" role="progressbar" aria-label="Préparation du projet" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <span data-ai-progress-bar></span>
-        </div>
-        <p class="ai-progress-message" data-ai-progress-message>Commencez par préciser votre projet.</p>
-        <div class="ai-summary-list">
-          <div><span>Projet</span><strong data-summary-type>À définir</strong></div>
-          <div><span>Mesure</span><strong data-summary-surface>À définir</strong></div>
-          <div><span>Budget maximum</span><strong data-summary-budget>À définir</strong></div>
-          <div><span>Finition</span><strong data-summary-finish>Équilibrée</strong></div>
-          <div><span>Contrainte</span><strong data-summary-constraint>Aucune</strong></div>
-        </div>
-        <button class="ai-summary-reset" type="button" data-ai-reset>Recommencer le projet</button>
-      </aside>
-      <div class="ai-configurator-content"></div>
-    </div>
-  `;
-  introSection.insertAdjacentElement("afterend", workspace);
-  const content = workspace.querySelector(".ai-configurator-content");
-  const orderedKeys = ["estimate", "advice", "plan", "booking"];
-
-  orderedKeys.forEach((key, index) => {
-    const panel = panels[key];
-    panel.dataset.aiStep = String(index + 1);
-    panel.hidden = index !== 0;
-    content.appendChild(panel);
-
-    const nav = document.createElement("div");
-    nav.className = "ai-step-actions";
-    nav.innerHTML = `
-      ${index > 0 ? `<button class="button light" type="button" data-ai-previous="${orderedKeys[index - 1]}">Étape précédente</button>` : "<span></span>"}
-      ${index < orderedKeys.length - 1 ? `<button class="button secondary" type="button" data-ai-next="${orderedKeys[index + 1]}">Continuer</button>` : ""}
-    `;
-    panel.appendChild(nav);
+  workspace.innerHTML = `<div class="container ai-configurator-shell"><aside class="ai-project-summary" aria-live="polite"><h2>Votre projet en bref</h2><div class="ai-summary-list" data-ai-summary></div><p class="ai-progress-message" data-ai-status>Précisez vos travaux pour commencer.</p><button class="ai-summary-reset" type="button" data-ai-reset>Recommencer le projet</button></aside><div class="ai-configurator-content"></div></div>`;
+  menu.closest("section").insertAdjacentElement("afterend",workspace);
+  const panels = {project, estimate, booking};
+  Object.entries(panels).forEach(([key,panel]) => {
+    panel.dataset.aiStep = key;
+    workspace.querySelector(".ai-configurator-content").append(panel);
+    const nav = document.createElement("div"); nav.className = "ai-step-actions";
+    nav.innerHTML = key === "project" ? '' : key === "estimate"
+      ? '<button class="button light" type="button" data-ai-go="project">Modifier mon projet</button><button class="button secondary" type="button" data-ai-go="booking">Échanger avec l’équipe</button>'
+      : '<button class="button light" type="button" data-ai-go="estimate">Voir mon estimation</button>';
+    panel.append(nav);
   });
-
-  document.querySelectorAll(".ai-tool-stack").forEach((stack) => {
-    if (!stack.children.length) stack.closest("section")?.remove();
+  advice.querySelector("form").hidden = true;
+  plan.querySelector("form").hidden = true;
+  [advice,plan].forEach(panel => {
+    panel.querySelector(".tool-heading-number").remove();
+    panel.classList.add("ai-result-section");
+    estimate.insertBefore(panel, estimate.querySelector(".ai-step-actions"));
   });
-
-  const links = [...menu.querySelectorAll("[data-ai-tab]")];
-  const storageKey = "adazrenov-ai-project-v3";
-  const savedState = (() => {
-    try {
-      return JSON.parse(window.localStorage.getItem(storageKey) || "{}");
-    } catch (error) {
-      return {};
-    }
-  })();
-  const state = {
-    workType: "interieur",
-    surface: "",
-    city: "",
-    projectState: "moyen",
-    complexity: "standard",
-    finish: "equilibre",
-    occupancy: "libre",
-    deadline: "1-3-mois",
-    desiredBudget: "a-definir",
-    priority: "budget",
-    constraint: "standard",
-    notes: "",
-    roadmapScope: "renovation",
-    roadmapUrgency: "normale",
-    roadmapOccupancy: "libre",
-    touched: {},
-    ...savedState,
+  // These preferences belong to the project, not to another form after the result.
+  ["#ai-priority", "#ai-finish", "#ai-project-notes"].forEach(selector => {
+    const field = document.querySelector(selector).closest(".tool-field");
+    form.insertBefore(field,form.querySelector('button[type="submit"]'));
+  });
+  const details = document.createElement("div"); details.className = "ai-project-details";
+  form.insertBefore(details, form.querySelector(".tool-form-row:nth-child(3)"));
+  const storageKey = "adazrenov-ai-project-v4";
+  const fields = {work_type:"workType",surface:"surface",city:"city",project_state:"projectState",complexity:"complexity",finish:"finish",occupancy:"occupancy",deadline:"deadline",desired_budget:"desiredBudget",priority:"priority",notes:"notes"};
+  // The moved constraint selector used the same name as the finish selector.
+  document.querySelector("#ai-finish").name = "constraint";
+  fields.constraint = "constraint";
+  let restored = {};
+  try { restored = JSON.parse(localStorage.getItem(storageKey)||"{}"); } catch (_) {}
+  const defaults = {workType:"",surface:"",city:"",projectState:"inconnu",complexity:"inconnu",finish:"equilibre",occupancy:"inconnu",deadline:"1-3-mois",desiredBudget:"a-definir",priority:"budget",constraint:"standard",notes:""};
+  const state = {...defaults, details:{}, ...restored, lastEstimate:null, originalQuantity:Number(restored.originalQuantity)||null};
+  window.adazAiProject = state;
+  const types = {interieur:"Rénovation intérieure","salle-de-bain":"Salle de bain",cuisine:"Cuisine",fenetres:"Fenêtres",portes:"Portes",electricite:"Installation électrique",facade:"Façade",toiture:"Toiture",construction:"Construction / extension",amenagement:"Aménagement sur mesure"};
+  const budgets = {"a-definir":"À définir","moins-5000":"Maximum 5 000 €","5000-15000":"Maximum 15 000 €","15000-40000":"Maximum 40 000 €","plus-40000":"Plus de 40 000 €"};
+  const priorities = {budget:"Maîtriser le budget",confort:"Améliorer le confort",isolation:"Isolation / économies",design:"Moderniser le design",durabilite:"Durabilité / entretien"};
+  const typeSelect = form.elements.work_type;
+  typeSelect.insertAdjacentHTML("afterbegin",'<option value="">Choisissez le type de travaux</option>');
+  Object.entries(fields).forEach(([name,key]) => { if(form.elements[name]) form.elements[name].value=state[key]??""; });
+  const questionSets = {
+    fenetres:[['installation','Intervention souhaitée',[['remplacement','Remplacement de fenêtres'],['neuf','Montage neuf'],['inconnu','Je ne sais pas']]],['material','Matériau souhaité',[['inconnu','Je ne sais pas'],['pvc','PVC'],['aluminium','Aluminium'],['bois','Bois']]],['dimensions','Dimensions approximatives — facultatif',null]],
+    portes:[['installation','Intervention souhaitée',[['remplacement','Remplacement'],['neuf','Montage neuf'],['inconnu','Je ne sais pas']]],['dimensions','Dimensions approximatives — facultatif',null]],
+    'salle-de-bain':[['scope','Travaux souhaités',[['complete','Rénovation complète'],['partielle','Rénovation partielle'],['inconnu','Je ne sais pas']]],['networks','Plomberie',[['inconnu','Je ne sais pas'],['conserver','Conserver l’implantation'],['deplacer','Déplacer les installations']]]],
+    cuisine:[['furniture','Mobilier à prévoir',[['inconnu','Je ne sais pas'],['oui','Nouveau mobilier'],['non','Conserver le mobilier']]],['appliances','Électroménager',[['inconnu','Je ne sais pas'],['oui','À prévoir'],['non','Déjà disponible']]],['networks','Installations',[['inconnu','Je ne sais pas'],['conserver','Conserver l’implantation'],['deplacer','Modifier les installations']]]],
+    interieur:[['works','Travaux souhaités — peinture, sols, cloisons, électricité…',null]],
+    facade:[['works','Intervention souhaitée et problèmes connus',null]],
+    toiture:[['works','Intervention souhaitée et problèmes connus',null]],
+    construction:[['works','Description de la construction ou de l’extension',null]],
+    amenagement:[['works','Aménagement souhaité',null]],electricite:[['works','Installation ou travaux souhaités',null]]
   };
-  state.touched = state.touched && typeof state.touched === "object" ? state.touched : {};
-
-  const typeLabels = {
-    interieur: "Rénovation intérieure",
-    "salle-de-bain": "Salle de bain",
-    cuisine: "Cuisine",
-    fenetres: "Fenêtres",
-    portes: "Portes",
-    electricite: "Installation électrique",
-    facade: "Façade",
-    toiture: "Toiture",
-    construction: "Construction / extension",
-    amenagement: "Aménagement sur mesure",
-  };
-  const budgetLabels = {
-    "a-definir": "À définir",
-    "moins-5000": "5 000 EUR",
-    "5000-15000": "15 000 EUR",
-    "15000-40000": "40 000 EUR",
-    "plus-40000": "Plus de 40 000 EUR",
-  };
-  const finishLabels = {
-    essentiel: "Essentielle",
-    equilibre: "Équilibrée",
-    premium: "Premium",
-    prestige: "Prestige",
-  };
-  const constraintLabels = {
-    standard: "Aucune",
-    humidite: "Humidité",
-    ancien: "Support dégradé",
-    occupe: "Logement occupé",
-    urgence: "Prioritaire",
-  };
-
-  function setFormValue(selector, value) {
-    const field = document.querySelector(selector);
-    if (field && value !== undefined && value !== null) field.value = String(value);
+  function renderQuestions() {
+    const unit=["fenetres","portes"].includes(state.workType);
+    document.querySelector("#ai-est-measure-label").textContent=unit?`Nombre de ${state.workType==="fenetres"?"fenêtres":"portes"}`:"Surface concernée (m²)";
+    form.elements.surface.step=unit?"1":"any";
+    form.elements.surface.placeholder=unit?"4":"80";
+    const finishField=document.querySelector("#ai-est-finish").closest(".tool-field");
+    finishField.hidden=unit;
+    if(unit) {state.finish="equilibre";form.elements.finish.value="equilibre";}
+    details.innerHTML=(questionSets[state.workType]||[]).map(([key,label,options])=>`<div class="tool-field"><label for="ai-detail-${key}">${label}</label>${options?`<select id="ai-detail-${key}" name="detail_${key}">${options.map(([value,text])=>`<option value="${value}">${text}</option>`).join("")}</select>`:`<input id="ai-detail-${key}" name="detail_${key}" type="text" ${state.workType==="construction"?'required':''}>`}</div>`).join("");
+    details.querySelectorAll("input,select").forEach(e=>{const key=e.name.slice(7); if(state.details[key])e.value=state.details[key];state.details[key]=e.value;});
   }
-
-  function syncDerivedFields() {
-    const adviceZone = {
-      construction: "interieur",
-      amenagement: "interieur",
-    }[state.workType] || state.workType;
-    const planType = {
-      construction: "extension",
-      amenagement: "interieur",
-    }[state.workType] || state.workType;
-    const service = {
-      interieur: "Rénovation intérieure",
-      "salle-de-bain": "Salle de bain",
-      cuisine: "Cuisine",
-      fenetres: "Fourniture de fenêtres et pose",
-      portes: "Portes et menuiseries",
-      electricite: "Installation Électrique",
-      facade: "Travaux Maçonnerie",
-      toiture: "Travaux Maçonnerie",
-      construction: "Travaux Maçonnerie",
-      amenagement: "Rénovation intérieure",
-    }[state.workType];
-    const adviceBudget =
-      state.desiredBudget === "moins-5000"
-        ? "eco"
-        : ["15000-40000", "plus-40000"].includes(state.desiredBudget)
-          ? "premium"
-          : "moyen";
-
-    setFormValue("#ai-work-type", state.workType);
-    setFormValue("#ai-desired-budget", state.desiredBudget);
-    setFormValue("#ai-zone", adviceZone);
-    setFormValue("#ai-budget", adviceBudget);
-    setFormValue("#ai-roadmap-type", planType);
-    setFormValue("#ai-roadmap-scope", state.roadmapScope);
-    setFormValue("#ai-roadmap-urgency", state.roadmapUrgency);
-    setFormValue("#ai-roadmap-occupancy", state.roadmapOccupancy);
-    if (state.surface) setFormValue("#ai-roadmap-surface", state.surface);
-    if (service) setFormValue("#ai-booking-service", service);
-    const roadmapMeasureLabel = document.querySelector("#ai-roadmap-measure-label");
-    const estimatorMeasureLabel = document.querySelector("#ai-est-measure-label");
-    const estimatorMeasureInput = document.querySelector("#ai-est-surface");
-    const usesUnits = ["fenetres", "portes"].includes(state.workType);
-    if (estimatorMeasureLabel) {
-      estimatorMeasureLabel.textContent = usesUnits
-        ? `Nombre de ${state.workType === "fenetres" ? "fenêtre(s)" : "porte(s)"}`
-        : "Surface concernée (m²)";
-    }
-    if (estimatorMeasureInput) estimatorMeasureInput.placeholder = usesUnits ? "4" : "80";
-    if (roadmapMeasureLabel) {
-      roadmapMeasureLabel.textContent = usesUnits
-        ? `Nombre de ${state.workType === "fenetres" ? "fenêtre(s)" : "porte(s)"}`
-        : "Surface concernée (m²)";
-    }
-    const bookingNotes = document.querySelector("#ai-booking-notes");
-    if (bookingNotes && (!bookingNotes.value || bookingNotes.dataset.aiGenerated === "true") && state.surface) {
-      const measure = ["fenetres", "portes"].includes(state.workType)
-        ? `${state.surface} élément(s)`
-        : `${state.surface} m²`;
-      bookingNotes.value = `${typeLabels[state.workType] || "Projet"} · ${measure} · budget ${budgetLabels[state.desiredBudget] || "à définir"}.`;
-      bookingNotes.dataset.aiGenerated = "true";
-    }
+  function persist() {try {localStorage.setItem(storageKey,JSON.stringify({...state,lastEstimate:null}));} catch (_) {}}
+  function value(selector,val) { const e=document.querySelector(selector);if(e)e.value=val; }
+  function sync() {
+    value("#ai-zone",["construction","amenagement"].includes(state.workType)?"interieur":state.workType);
+    value("#ai-budget",state.desiredBudget==="moins-5000"?"eco":["15000-40000","plus-40000"].includes(state.desiredBudget)?"premium":"moyen");
+    value("#ai-roadmap-type",state.workType==="construction"?"extension":state.workType==="amenagement"?"interieur":state.workType);
+    value("#ai-roadmap-surface",state.surface);
+    value("#ai-roadmap-occupancy",state.occupancy);
+    value("#ai-roadmap-scope",state.details.scope==="partielle"?"rafraichissement":"renovation");
+    value("#ai-roadmap-urgency",state.deadline==="urgent"?"haute":"normale");
+    const service = types[state.workType] || "Rénovation intérieure";
+    const serviceSelect = document.querySelector("#ai-booking-service");
+    if (![...serviceSelect.options].some(option => option.value === service)) serviceSelect.add(new Option(service, service));
+    value("#ai-booking-service", service);
   }
-
-  function renderSummary() {
-    const usesUnits = ["fenetres", "portes"].includes(state.workType);
-    workspace.querySelector("[data-summary-type]").textContent = state.touched.workType
-      ? typeLabels[state.workType] || "À définir"
-      : "À définir";
-    workspace.querySelector("[data-summary-surface]").textContent = state.touched.surface && state.surface
-      ? `${state.surface} ${usesUnits ? "élément(s)" : "m²"}`
-      : "À définir";
-    workspace.querySelector("[data-summary-budget]").textContent = state.touched.desiredBudget
-      ? budgetLabels[state.desiredBudget] || "À définir"
-      : "À définir";
-    workspace.querySelector("[data-summary-finish]").textContent = state.touched.finish
-      ? finishLabels[state.finish] || "Équilibrée"
-      : "À définir";
-    workspace.querySelector("[data-summary-constraint]").textContent = state.touched.constraint
-      ? constraintLabels[state.constraint] || "Aucune"
-      : "À définir";
-    const readinessFields = [
-      { complete: state.touched.workType, weight: 10, missing: "le type de projet" },
-      { complete: state.touched.surface && Number(state.surface) > 0, weight: 14, missing: "la surface ou la quantité" },
-      { complete: state.touched.city && Boolean(state.city.trim()), weight: 8, missing: "la ville" },
-      { complete: state.touched.projectState, weight: 8, missing: "l'état actuel" },
-      { complete: state.touched.complexity, weight: 7, missing: "l'accès au chantier" },
-      { complete: state.touched.finish, weight: 8, missing: "la finition" },
-      { complete: state.touched.occupancy, weight: 7, missing: "l'occupation du logement" },
-      { complete: state.touched.deadline, weight: 7, missing: "le délai souhaité" },
-      { complete: state.touched.desiredBudget && state.desiredBudget !== "a-definir", weight: 14, missing: "le budget maximum" },
-      { complete: state.touched.priority, weight: 7, missing: "votre priorité" },
-      { complete: state.touched.constraint, weight: 5, missing: "une contrainte éventuelle", optional: true },
-      { complete: state.touched.notes && Boolean(state.notes.trim()), weight: 5, missing: "un besoin précis", optional: true },
-    ];
-    const progress = readinessFields.reduce((total, field) => total + (field.complete ? field.weight : 0), 0);
-    const missingRequired = readinessFields.filter((field) => !field.complete && !field.optional);
-    const progressBar = workspace.querySelector("[data-ai-progress-bar]");
-    const progressRoot = progressBar.closest(".ai-summary-progress");
-    const progressValue = workspace.querySelector("[data-ai-progress-value]");
-    const progressMessage = workspace.querySelector("[data-ai-progress-message]");
-
-    progressBar.style.width = `${progress}%`;
-    progressRoot.setAttribute("aria-valuenow", String(progress));
-    progressValue.textContent = `${progress}%`;
-    progressRoot.classList.toggle("is-ready", progress >= 85);
-
-    if (progress >= 95) {
-      progressMessage.textContent = "Projet très bien préparé pour une première analyse.";
-    } else if (progress >= 75) {
-      progressMessage.textContent = missingRequired.length
-        ? `Presque prêt : ajoutez ${missingRequired[0].missing}.`
-        : "Ajoutez un détail personnel pour affiner la recommandation.";
-    } else if (progress >= 45) {
-      progressMessage.textContent = missingRequired.length
-        ? `Bonne base. Prochaine information utile : ${missingRequired[0].missing}.`
-        : "Continuez pour affiner le projet.";
-    } else {
-      progressMessage.textContent = missingRequired.length
-        ? `Pour continuer, précisez ${missingRequired[0].missing}.`
-        : "Commencez par préciser votre projet.";
-    }
+  function summary() {
+    const range=state.lastEstimate;
+    const rows=[["Projet",types[state.workType]||"À définir"],["Mesure",state.surface?formatAiQuantity(state.workType,state.surface):"À définir"],["Ville",state.city||"À définir"],["Budget envisagé",budgets[state.desiredBudget]],["Priorité",priorities[state.priority]],["Variante",state.originalQuantity?"Intervention prioritaire choisie":"Projet complet"]];
+    if(range)rows.push(["Estimation",range.manual?"À étudier avec l’équipe":`${formatCurrency(range.min)} – ${formatCurrency(range.max)}`]);
+    const html=rows.map(([label,text])=>`<div><span>${label}</span><strong>${escapeHtml(text)}</strong></div>`).join("");
+    workspace.querySelector("[data-ai-summary]").innerHTML=html;
+    document.querySelector("#ai-booking-summary").innerHTML=`<h4>Votre projet en bref</h4><div class="ai-summary-list">${html}</div>`;
+    workspace.querySelector("[data-ai-status]").textContent=range?"Vous pouvez comparer les options et échanger avec notre équipe.":"Renseignez votre projet, puis calculez votre estimation.";
   }
-
-  function saveState() {
-    window.localStorage.setItem(storageKey, JSON.stringify(state));
-    syncDerivedFields();
-    renderSummary();
+  function invalidate() {
+    const hadResult=Boolean(state.lastEstimate)||!document.querySelector("#ai-estimator-result").hidden;
+    state.lastEstimate=null;
+    ["#ai-material-result","#ai-roadmap-result","#ai-booking-result"].forEach(id=>{document.querySelector(id).hidden=true;});
+    if(hadResult){const result=document.querySelector("#ai-estimator-result");result.innerHTML='<div class="ai-stale-notice" role="status">Votre projet a changé. Recalculez votre estimation.<button class="button small" type="button" data-ai-recalculate>Mettre à jour mon estimation</button></div>';result.hidden=false;}
+    form.querySelector('button[type="submit"]').textContent=hadResult?"Mettre à jour mon estimation":"Obtenir mon estimation";
+    persist();sync();summary();
   }
-
-  function hydrateForms() {
-    setFormValue("#ai-work-type", state.workType);
-    setFormValue("#ai-est-surface", state.surface);
-    setFormValue("#ai-est-city", state.city);
-    setFormValue("#ai-project-state", state.projectState);
-    setFormValue("#ai-complexity", state.complexity);
-    setFormValue("#ai-est-finish", state.finish);
-    setFormValue("#ai-occupancy", state.occupancy);
-    setFormValue("#ai-deadline", state.deadline);
-    setFormValue("#ai-desired-budget", state.desiredBudget);
-    setFormValue("#ai-priority", state.priority);
-    setFormValue("#ai-finish", state.constraint);
-    setFormValue("#ai-project-notes", state.notes);
-    setFormValue("#ai-roadmap-scope", state.roadmapScope);
-    setFormValue("#ai-roadmap-urgency", state.roadmapUrgency);
-    setFormValue("#ai-roadmap-occupancy", state.roadmapOccupancy);
-    syncDerivedFields();
-    renderSummary();
+  function show(key,scroll=true) {
+    if(key!=="project"&&!state.lastEstimate){show("project",false);const city=form.elements.city;city.setCustomValidity(city.value.trim()?"":"Indiquez la ville du chantier.");if(form.reportValidity())form.requestSubmit();return;}
+    Object.entries(panels).forEach(([id,panel])=>{panel.hidden=id!==key;panel.classList.toggle("is-current",id===key);});
+    menu.querySelectorAll("[data-ai-tab]").forEach(link=>{const active=link.dataset.aiTab===key;link.classList.toggle("is-active",active);link.setAttribute("aria-current",active?"step":"false");});
+    if(scroll)workspace.scrollIntoView({behavior:"smooth",block:"start"});
   }
-
-  function showStep(key, shouldScroll = true) {
-    orderedKeys.forEach((entryKey) => {
-      const active = entryKey === key;
-      panels[entryKey].hidden = !active;
-      panels[entryKey].classList.toggle("is-current", active);
-    });
-    links.forEach((link) => {
-      const active = link.dataset.aiTab === key;
-      link.classList.toggle("is-active", active);
-      link.setAttribute("aria-current", active ? "step" : "false");
-    });
-    if (shouldScroll) workspace.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  links.forEach((link) => {
-    link.addEventListener("click", (event) => {
-      event.preventDefault();
-      showStep(link.dataset.aiTab);
-    });
+  document.querySelector('.hero-actions a[href="#outil-projet"]')?.addEventListener("click",e=>{e.preventDefault();show("project");});
+  menu.addEventListener("click",e=>{const link=e.target.closest("[data-ai-tab]");if(link){e.preventDefault();show(link.dataset.aiTab);}});
+  workspace.addEventListener("click",e=>{const go=e.target.closest("[data-ai-go]");if(go)show(go.dataset.aiGo);if(e.target.closest("[data-ai-recalculate]")){show("project",false);form.requestSubmit();}});
+  form.addEventListener("input",e=>{
+    if(e.target.name.startsWith("detail_"))state.details[e.target.name.slice(7)]=e.target.value;
+    else if(fields[e.target.name])state[fields[e.target.name]]=e.target.value;
+    if(e.target.name==="city")e.target.setCustomValidity("");
+    if(e.target.name==="work_type"){state.details={};state.originalQuantity=null;renderQuestions();}
+    if(e.target.name==="surface")state.originalQuantity=null;
+    invalidate();
   });
-  workspace.addEventListener("click", (event) => {
-    const next = event.target.closest("[data-ai-next]")?.dataset.aiNext;
-    const previous = event.target.closest("[data-ai-previous]")?.dataset.aiPrevious;
-    if (next || previous) showStep(next || previous);
+  document.addEventListener("adaz:estimate",e=>{
+    state.lastEstimate=e.detail;
+    sync();summary();persist();
+    document.querySelector("#ai-material-form").requestSubmit();
+    document.querySelector("#ai-roadmap-form").dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
+    show("estimate");
   });
-
-  const estimatorMap = {
-    work_type: "workType",
-    surface: "surface",
-    city: "city",
-    project_state: "projectState",
-    complexity: "complexity",
-    finish: "finish",
-    occupancy: "occupancy",
-    deadline: "deadline",
-    desired_budget: "desiredBudget",
-  };
-  document.querySelector("#ai-estimator-form")?.addEventListener("input", (event) => {
-    const stateKey = estimatorMap[event.target.name];
-    if (!stateKey) return;
-    state[stateKey] = event.target.value;
-    state.touched[stateKey] = true;
-    saveState();
-  });
-  document.querySelector("#ai-estimator-form")?.addEventListener("submit", () => {
-    Object.values(estimatorMap).forEach((stateKey) => {
-      state.touched[stateKey] = true;
-    });
-    saveState();
-  });
-  document.querySelector("#ai-material-form")?.addEventListener("input", (event) => {
-    if (event.target.name === "zone") {
-      state.workType = event.target.value;
-      state.touched.workType = true;
-    }
-    if (event.target.name === "budget") {
-      state.desiredBudget = {
-        eco: "moins-5000",
-        moyen: "5000-15000",
-        premium: "15000-40000",
-      }[event.target.value] || state.desiredBudget;
-      state.touched.desiredBudget = true;
-    }
-    if (event.target.name === "priority") {
-      state.priority = event.target.value;
-      state.touched.priority = true;
-    }
-    if (event.target.name === "finish") {
-      state.constraint = event.target.value;
-      state.touched.constraint = true;
-    }
-    if (event.target.name === "notes") {
-      state.notes = event.target.value;
-      state.touched.notes = true;
-    }
-    saveState();
-  });
-  document.querySelector("#ai-roadmap-form")?.addEventListener("input", (event) => {
-    if (event.target.name === "type") {
-      state.workType = event.target.value === "extension" ? "construction" : event.target.value;
-      state.touched.workType = true;
-    }
-    if (event.target.name === "scope") {
-      state.roadmapScope = event.target.value;
-      state.touched.roadmapScope = true;
-    }
-    if (event.target.name === "urgency") {
-      state.roadmapUrgency = event.target.value;
-      state.deadline = event.target.value === "haute" ? "urgent" : state.deadline;
-      state.touched.deadline = true;
-    }
-    if (event.target.name === "occupancy") {
-      state.roadmapOccupancy = event.target.value;
-      state.occupancy = event.target.value;
-      state.touched.occupancy = true;
-    }
-    if (event.target.name === "surface") {
-      state.surface = event.target.value;
-      state.touched.surface = true;
-    }
-    saveState();
-  });
-  document.querySelector("#ai-booking-notes")?.addEventListener("input", (event) => {
-    delete event.target.dataset.aiGenerated;
-  });
-
   workspace.querySelector("[data-ai-reset]").addEventListener("click", () => {
-    window.localStorage.removeItem(storageKey);
-    window.localStorage.removeItem("adazrenov-ai-project-v2");
-    window.location.reload();
-  });
-
-  document.querySelectorAll(".ai-configurator .tool-inline-result").forEach((result) => {
-    const panel = result.closest(".tool-panel");
-    const updateCompletion = () => panel.classList.toggle("is-complete", !result.hidden && Boolean(result.textContent.trim()));
-    new MutationObserver(updateCompletion).observe(result, {
-      attributes: true,
-      attributeFilter: ["hidden"],
-      childList: true,
-      subtree: true,
+    Object.assign(state, defaults, {details:{}, lastEstimate:null, originalQuantity:null});
+    form.reset();
+    Object.entries(fields).forEach(([name,key]) => { form.elements[name].value = state[key]; });
+    form.elements.city.setCustomValidity("");
+    form.querySelector('button[type="submit"]').textContent = "Obtenir mon estimation";
+    document.querySelector("#ai-booking-form").reset();
+    aiBookingState.selectedSlotId = "";
+    document.querySelector("#ai-booking-slot").value = "";
+    document.querySelectorAll(".slot-pill").forEach(button => button.classList.remove("is-active"));
+    document.querySelector("[data-ai-slot-field]").hidden = false;
+    ["#ai-estimator-result", "#ai-material-result", "#ai-roadmap-result", "#ai-booking-result"].forEach(id => {
+      const result = document.querySelector(id); result.hidden = true; result.replaceChildren();
     });
-    updateCompletion();
+    renderQuestions(); sync(); summary(); show("project");
+    try { localStorage.removeItem(storageKey); } catch (_) {}
   });
-
-  hydrateForms();
-  showStep("estimate", false);
+  const bookingService=document.querySelector("#ai-booking-service");bookingService.closest(".tool-field").hidden=true;
+  document.querySelectorAll(".ai-tool-stack").forEach(stack=>{if(!stack.children.length)stack.closest("section")?.remove();});
+  renderQuestions();sync();summary();show("project",false);
 }
 
 const aiBookingState = {
@@ -3994,7 +3465,7 @@ function buildFallbackBookingSlots(count = 6) {
         id: `demo-${start.toISOString()}`,
         start,
         end,
-        service: index === 0 ? "Consultation" : "Disponible",
+        service: "Créneau souhaité",
         advisor: "ADAZ RENOV",
         source: "demo",
       });
@@ -4194,230 +3665,171 @@ function downloadTextFile(filename, content, mimeType) {
 }
 
 function setupAiBookingPlanner() {
-  const form = document.querySelector("#ai-booking-form");
-  const slotList = document.querySelector("#ai-slot-list");
-  const slotInput = document.querySelector("#ai-booking-slot");
-  const result = document.querySelector("#ai-booking-result");
-
-  if (!form || !slotList || !slotInput || !result) return;
-
-  async function renderSlots() {
-    const slots = aiBookingState.slots.length ? aiBookingState.slots : await loadAiBookingSlots();
-    aiBookingState.slots = slots;
-    if (!aiBookingState.selectedSlotId || !slots.some((slot) => slot.id === aiBookingState.selectedSlotId)) {
-      aiBookingState.selectedSlotId = slots[0]?.id || "";
-    }
-    slotInput.value = aiBookingState.selectedSlotId;
-
-    slotList.innerHTML = slots
-      .map((slot) => {
-        const active = slot.id === aiBookingState.selectedSlotId ? "is-active" : "";
-        return `
-          <button type="button" class="slot-pill ${active}" data-slot-id="${escapeHtml(slot.id)}">
-            <strong>${escapeHtml(formatBookingDateOnly(slot.start))}</strong>
-            <span>${escapeHtml(formatBookingSlot(slot.start))}</span>
-            <small>${escapeHtml(slot.service)} · ${escapeHtml(slot.advisor)}</small>
-          </button>
-        `;
-      })
-      .join("");
-
-    slotList.querySelectorAll("[data-slot-id]").forEach((button) => {
-      button.addEventListener("click", () => {
-        aiBookingState.selectedSlotId = button.dataset.slotId || "";
-        slotInput.value = aiBookingState.selectedSlotId;
-        renderSlots();
-      });
-    });
+  const form=document.querySelector("#ai-booking-form"),slotList=document.querySelector("#ai-slot-list"),slotInput=document.querySelector("#ai-booking-slot"),result=document.querySelector("#ai-booking-result");
+  if(!form||!slotList||!result)return;
+  const preference=form.elements.contact_preference;
+  function renderSlots(){
+    const slots=aiBookingState.slots;
+    if(!slots.some(s=>s.id===aiBookingState.selectedSlotId))aiBookingState.selectedSlotId="";
+    slotInput.value=aiBookingState.selectedSlotId;
+    slotList.innerHTML=slots.map(slot=>`<button type="button" class="slot-pill ${slot.id===aiBookingState.selectedSlotId?"is-active":""}" data-slot-id="${escapeHtml(slot.id)}"><strong>${escapeHtml(formatBookingDateOnly(slot.start))}</strong><span>${escapeHtml(formatBookingSlot(slot.start))}</span><small>Créneau souhaité — à confirmer</small></button>`).join("");
+    slotList.querySelectorAll("button").forEach(button=>button.addEventListener("click",()=>{aiBookingState.selectedSlotId=button.dataset.slotId;renderSlots();}));
   }
-
-  loadAiBookingSlots().then((slots) => {
-    aiBookingState.slots = slots;
-    renderSlots();
-  });
-
-  watchAiBookingSlots((slots) => {
-    if (!slots.length) return;
-    aiBookingState.slots = slots;
-    if (!slots.some((slot) => slot.id === aiBookingState.selectedSlotId)) {
-      aiBookingState.selectedSlotId = slots[0]?.id || "";
-    }
-    renderSlots();
-  }).then((unsubscribe) => {
-    if (typeof unsubscribe === "function") {
-      window.addEventListener("beforeunload", unsubscribe, { once: true });
-    }
-  });
-
-  form.addEventListener("submit", async (event) => {
+  loadAiBookingSlots().then(slots=>{aiBookingState.slots=slots;renderSlots();});
+  watchAiBookingSlots(slots=>{aiBookingState.slots=slots;renderSlots();}).then(unsubscribe=>{if(typeof unsubscribe==="function")window.addEventListener("beforeunload",unsubscribe,{once:true});});
+  preference.addEventListener("change",()=>{document.querySelector("[data-ai-slot-field]").hidden=preference.value==="callback";result.hidden=true;});
+  form.addEventListener("submit", event => {
     event.preventDefault();
-
-    const formData = new FormData(form);
-    const slotId = String(formData.get("slot") || aiBookingState.selectedSlotId || "");
-    const slot = aiBookingState.slots.find((entry) => entry.id === slotId) || aiBookingState.slots[0];
-
-    if (!slot) {
-      result.innerHTML = `<div class="tool-result-card"><h3>Aucun créneau disponible</h3><p>Rechargez la liste des dates ou ajoutez des disponibilités dans Firebase.</p></div>`;
-      result.hidden = false;
-      return;
-    }
-
-    const payload = {
-      firstname: String(formData.get("firstname") || "").trim(),
-      lastname: String(formData.get("lastname") || "").trim(),
-      phone: String(formData.get("phone") || "").trim(),
-      email: String(formData.get("email") || "").trim(),
-      service: String(formData.get("service") || ""),
-      calendarMode: String(formData.get("calendar_mode") || "google"),
-      notes: String(formData.get("notes") || "").trim(),
-      slotId: slot.id,
-      slotStart: slot.start.toISOString(),
-      slotEnd: slot.end.toISOString(),
-    };
-
-    const bookingConfig = getAiBookingConfig();
-    let bookingSource = slot.source === "firebase" ? "Firebase" : "aperçu local";
-
-    const bookingApiUrl = getConfiguredFunctionUrl("createBooking", bookingConfig.bookingApiUrl || "");
-    if (bookingApiUrl) {
-      try {
-        const response = await fetch(bookingApiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (response.ok) {
-          bookingSource = "API calendrier";
-        } else if (response.status === 409) {
-          result.innerHTML = `<div class="tool-result-card"><h3>Creneau deja reserve</h3><p>Ce creneau n'est plus disponible. Choisissez une autre date dans la liste.</p></div>`;
-          result.hidden = false;
-          aiBookingState.slots = [];
-          renderSlots();
-          return;
-        }
-      } catch (error) {
-        console.warn("Booking API unavailable, trying Firebase fallback.", error);
-      }
-    }
-
-    if (bookingSource !== "API calendrier") {
-      const firebase = await getFirebaseBookingApi();
-      if (firebase) {
-        try {
-          const collectionName = bookingConfig.appointmentsCollection || "aiAppointments";
-          const appointmentRef = await firebase.addDoc(firebase.collection(firebase.db, collectionName), {
-            ...payload,
-            status: "pending",
-            createdAt: firebase.serverTimestamp(),
-          });
-          if (slot.source === "firebase" && firebase.doc && firebase.setDoc) {
-            const slotRef = firebase.doc(firebase.db, bookingConfig.availabilityCollection || "aiAvailabilitySlots", slot.id);
-            await firebase.setDoc(
-              slotRef,
-              {
-                status: "booked",
-                appointmentId: appointmentRef.id,
-                bookedAt: firebase.serverTimestamp(),
-              },
-              { merge: true }
-            );
-          }
-          bookingSource = "Firebase";
-        } catch (error) {
-          console.warn("Could not save booking to Firebase.", error);
-          bookingSource = "aperçu local";
-        }
-      }
-    }
-
-    if (bookingSource !== "API calendrier" && getWeb3FormsAccessKey()) {
-      try {
-        await submitToWeb3Forms({
-          subject: `ADAZ RENOV - Demande de programmation: ${payload.service}`,
-          from_name: `${payload.firstname} ${payload.lastname}`,
-          email: payload.email,
-          telephone: payload.phone,
-          service: payload.service,
-          creneau: `${slot.start.toISOString()} - ${slot.end.toISOString()}`,
-          canal_calendrier: payload.calendarMode,
-          message: payload.notes || "Aucun message",
-          page: window.location.href,
-          source: "Programmation ADAZAI",
-        });
-        bookingSource = "Email Web3Forms";
-      } catch (error) {
-        console.warn("Could not send booking lead by email.", error);
-      }
-    }
-
-    const googleUrl = buildGoogleCalendarUrl(slot, payload);
-    const icsContent = buildIcsContent(slot, payload);
-
-    result.innerHTML = `
-      <div class="tool-result-card">
-        <span class="result-kicker">Demande de consultation</span>
-        <h3>Programmation preparee</h3>
-        <p>
-          Merci ${escapeHtml(payload.firstname)} ${escapeHtml(payload.lastname)}. Nous avons prepare
-          votre demande pour ${escapeHtml(payload.service)} le ${escapeHtml(formatBookingSlot(slot.start))}.
-        </p>
-        <div class="estimate-strip">
-          <div class="estimate-box">
-            <span>Téléphone</span>
-            <strong>${escapeHtml(payload.phone)}</strong>
-          </div>
-          <div class="estimate-box">
-            <span>Créneau demandé</span>
-            <strong>${escapeHtml(formatBookingSlot(slot.start))}</strong>
-          </div>
-        </div>
-        <div class="booking-actions">
-          <a class="button small secondary" href="${googleUrl}" target="_blank" rel="noreferrer">Ouvrir Google Calendar</a>
-          <button class="button small light" type="button" data-download-ics>Télécharger Apple Calendar</button>
-        </div>
-        <div class="result-note">La demande a bien été transmise. Le rendez-vous sera définitif après confirmation par l'équipe ADAZ RENOV.</div>
-      </div>
-    `;
-
+    result.innerHTML = '<div class="tool-result-card"><p>Pour transmettre votre demande à notre équipe, utilisez le formulaire Contact.</p><a class="button small" href="contact.html#contact-devis">Ouvrir le formulaire Contact</a></div>';
     result.hidden = false;
-
-    const downloadButton = result.querySelector("[data-download-ics]");
-    if (downloadButton) {
-      downloadButton.addEventListener("click", () => {
-        const safeDate = slot.start.toISOString().slice(0, 10);
-        downloadTextFile(`adaz-renov-consultation-${safeDate}.ics`, icsContent, "text/calendar;charset=utf-8");
-      });
-    }
-
-    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
+}
+
+function normalizeSiteSearch(value) {
+  return String(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/œ/g, "oe").replace(/[^a-z0-9]+/g, " ")
+    .replace(/\b([a-z]{4,})s\b/g, "$1").trim();
+}
+
+function rankSiteSearch(records, query) {
+  const tokens = normalizeSiteSearch(query).split(/\s+/).filter(token => token && !["de", "du", "des", "la", "le", "les", "a", "en", "et", "un", "une", "pour", "d", "l"].includes(token));
+  if (!tokens.length) return [];
+  return records.map(record => {
+    const title = normalizeSiteSearch(record.title);
+    const description = normalizeSiteSearch(record.description);
+    const keywords = normalizeSiteSearch(record.keywords);
+    const matches = tokens.every(token => `${title} ${description} ${keywords}`.includes(token));
+    const score = matches ? tokens.reduce((total, token) => total + (title.includes(token) ? 12 : description.includes(token) ? 4 : 1), 0) : 0;
+    return { record, score };
+  }).filter(result => result.score).sort((a, b) => b.score - a.score).map(result => result.record);
+}
+
+function setupSearchTarget() {
+  function reveal() {
+    let id;
+    try { id = decodeURIComponent(window.location.hash.slice(1)); } catch { return; }
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    const group = target.dataset.group;
+    if (group === "products" || group === "projects") {
+      const filter = group === "products" ? (target.dataset.tags || "").split(" ")[0] : "all";
+      document.querySelector(`[data-filter-group="${group}"] [data-filter="${filter}"]`)?.click();
+      if (group === "products") document.querySelector(`[data-subfilter-panel="${filter}"] [data-subfilter="all"]`)?.click();
+    } else if (target.tagName === "DETAILS") {
+      target.open = true;
+    } else return;
+    window.requestAnimationFrame(() => target.scrollIntoView({ block: "start", behavior: "instant" }));
+  }
+  reveal();
+  window.addEventListener("hashchange", reveal);
+  document.addEventListener("productcataloguechange", reveal);
+}
+
+const adazChatCacheKey = "adazrenov-chat-session";
+const adazChatIdleMs = 60 * 1000;
+
+function readAdazChatCache() {
+  try {
+    const raw = sessionStorage.getItem(adazChatCacheKey);
+    if (!raw) return null;
+    if (raw.length > 200000) throw new Error("Conversation too large");
+    const saved = JSON.parse(raw);
+    if (saved.version !== 1 || !Number.isFinite(saved.expiresAt) || !Array.isArray(saved.messages)) {
+      sessionStorage.removeItem(adazChatCacheKey);
+      return null;
+    }
+    if (saved.expiresAt <= Date.now()) {
+      sessionStorage.removeItem(adazChatCacheKey);
+      window.dispatchEvent(new Event("adazchatcacheexpired"));
+      return null;
+    }
+    const messages = saved.messages.slice(-60).filter(record =>
+      ["user", "assistant"].includes(record?.role) && typeof record.text === "string" && record.text.length <= 5000 &&
+      typeof record.timestamp === "string" && Number.isFinite(Date.parse(record.timestamp)) &&
+      !(record.role === "assistant" && /^La limite de réponses personnalisées est atteinte/.test(record.text))
+    );
+    return messages.length ? { ...saved, messages, conversationId: String(saved.conversationId || "").slice(0, 80) } : null;
+  } catch {
+    try { sessionStorage.removeItem(adazChatCacheKey); } catch {}
+    return null;
+  }
+}
+
+function writeAdazChatCache(saved) {
+  try {
+    if (saved) sessionStorage.setItem(adazChatCacheKey, JSON.stringify(saved));
+    else sessionStorage.removeItem(adazChatCacheKey);
+  } catch {}
+  window.dispatchEvent(new Event("adazchatcachechange"));
+}
+
+// Runs on every page, including when the assistant bundle has not been opened.
+function setupAdazChatCacheExpiry() {
+  if (window.ADAZ_CHAT_EXPIRY_READY) return;
+  window.ADAZ_CHAT_EXPIRY_READY = true;
+  let timer;
+  function schedule() {
+    window.clearTimeout(timer);
+    const saved = readAdazChatCache();
+    if (saved) timer = window.setTimeout(schedule, Math.min(adazChatIdleMs, Math.max(1, saved.expiresAt - Date.now())) + 10);
+  }
+  window.addEventListener("adazchatcachechange", schedule);
+  window.addEventListener("pageshow", schedule);
+  schedule();
 }
 
 function setupGlobalAdazaiWidget() {
   if (document.querySelector(".adazai-widget")) return;
+  setupAdazChatCacheExpiry();
 
   const widget = document.createElement("div");
   widget.className = "adazai-widget";
   widget.innerHTML = `
-    <button class="adazai-floating-cta" type="button" aria-label="Ouvrir Assistant IA" aria-expanded="false" aria-controls="adazai-widget-panel">
-      <span class="adazai-floating-cta-icon" aria-hidden="true">IA</span>
-      <span class="adazai-floating-cta-title">Assistant IA</span>
+    <button class="adazai-floating-cta" type="button" aria-label="Ouvrir l’assistant ADAZRENOV" aria-expanded="false" aria-controls="adazai-widget-panel">
+      <span class="adazai-floating-cta-icon" aria-hidden="true"><img src="${headerLogoPath}" alt=""></span>
+      <span class="adazai-floating-cta-title">Ask ADAZRENOV</span>
     </button>
-    <aside class="adazai-widget-panel" id="adazai-widget-panel" aria-label="Assistant IA Adazrenov" hidden>
+    <aside class="adazai-widget-panel" id="adazai-widget-panel" aria-label="Votre assistant ADAZRENOV" hidden>
+      <div class="adazai-widget-header">
       <div class="adazai-chat-head">
         <img class="adazai-chat-logo" src="${headerLogoPath}" alt="">
         <div class="adazai-chat-title">
           <strong>ADAZRENOV</strong>
-          <span>Assistant IA</span>
+          <span>Votre assistant personnel · 24/7</span>
         </div>
         <div class="adazai-head-actions">
-          <button class="adazai-widget-close" type="button" aria-label="Fermer Assistant IA">×</button>
+          <button class="adazai-chat-clear" type="button" title="Effacer la conversation" aria-label="Effacer la conversation et recommencer">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2.7 8.4M3 4v6h6"/></svg>
+          </button>
+          <button class="adazai-widget-close" type="button" aria-label="Fermer votre assistant ADAZRENOV">×</button>
         </div>
       </div>
-      <div class="adazai-widget-log" role="log" aria-label="Conversation avec ADAZAI" aria-live="polite"></div>
+      <div class="adazai-mode-bar">
+        <button type="button" class="adazai-open-search">Rechercher sur le site</button>
+        <button type="button" class="adazai-back-chat" hidden>Retour à la conversation</button>
+      </div>
+      </div>
+      <section class="adazai-site-search" aria-label="Recherche sur le site" hidden>
+        <form class="adazai-search-form" role="search">
+          <input type="search" aria-label="Rechercher dans le site" placeholder="Fenêtres, salle de bain, devis…" autocomplete="off" maxlength="160">
+          <button type="button" class="adazai-search-clear" aria-label="Effacer la recherche">Effacer</button>
+        </form>
+        <div class="adazai-search-results">
+          <button type="button" class="adazai-ask-search">
+            <img src="${headerLogoPath}" alt="">
+            <span><strong>Demander à ADAZRENOV</strong><small>Posez votre question à notre assistant.</small></span>
+          </button>
+          <p class="adazai-search-status" role="status" aria-live="polite"></p>
+          <div class="adazai-search-matches"></div>
+        </div>
+        <p class="adazai-search-help">↑ ↓ pour naviguer · Échap pour revenir au chat</p>
+      </section>
+      <div class="adazai-widget-log" role="log" aria-label="Conversation avec ADAZAI" aria-live="polite" tabindex="0"></div>
       <form class="adazai-widget-form">
         <input type="text" autocomplete="off" aria-label="Votre message" placeholder="Écrivez votre question...">
-        <button class="button small" type="submit" aria-label="Envoyer">→</button>
+        <button class="button small" data-chat-send type="submit" aria-label="Envoyer" disabled>→</button>
+        <button class="button small adazai-stop" type="button" aria-label="Arrêter la réponse" hidden>Stop</button>
       </form>
     </aside>
   `;
@@ -4427,48 +3839,399 @@ function setupGlobalAdazaiWidget() {
   const toggle = widget.querySelector(".adazai-floating-cta");
   const panel = widget.querySelector(".adazai-widget-panel");
   const closeButton = widget.querySelector(".adazai-widget-close");
+  const clearChatButton = widget.querySelector(".adazai-chat-clear");
   const form = widget.querySelector(".adazai-widget-form");
   const input = widget.querySelector(".adazai-widget-form input");
   const log = widget.querySelector(".adazai-widget-log");
+  const sendButton = form.querySelector("[data-chat-send]");
+  const stopButton = form.querySelector(".adazai-stop");
+  const searchView = widget.querySelector(".adazai-site-search");
+  const searchButton = widget.querySelector(".adazai-open-search");
+  const backButton = widget.querySelector(".adazai-back-chat");
+  const searchInput = widget.querySelector(".adazai-search-form input");
+  const clearSearch = widget.querySelector(".adazai-search-clear");
+  const matchesRoot = widget.querySelector(".adazai-search-matches");
+  const searchStatus = widget.querySelector(".adazai-search-status");
+  const askSearch = widget.querySelector(".adazai-ask-search");
+  let searchPromise = null;
+  let searchVersion = 0;
+  let searchTimer = null;
   let typingBubble = null;
+  let activeTurn = null;
+  let followTail = true;
 
   const state = { messages: [], conversationId: "" };
   let conversationVersion = 0;
-  let pendingRequest = null;
+  let heartbeat = null;
   const localTime = new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
     hourCycle: "h23",
   });
 
-  function scrollLog() {
-    log.scrollTop = log.scrollHeight;
+  function focusInputOnDesktop(field) {
+    if (!window.matchMedia("(max-width: 640px), (pointer: coarse)").matches) {
+      field.focus({ preventScroll: true });
+    }
   }
 
-  function appendMessage(role, text, persist = true, type = "message") {
-    const sentAt = new Date();
+  function showConversation(focus = true) {
+    searchVersion += 1;
+    window.clearTimeout(searchTimer);
+    searchView.hidden = true;
+    log.hidden = false;
+    form.hidden = false;
+    searchButton.hidden = false;
+    backButton.hidden = true;
+    if (focus && !input.disabled) focusInputOnDesktop(input);
+    scrollLog();
+  }
+
+  function showSearch() {
+    if (activeTurn) return;
+    log.hidden = true;
+    form.hidden = true;
+    searchView.hidden = false;
+    searchButton.hidden = true;
+    backButton.hidden = false;
+    renderSearch();
+    focusInputOnDesktop(searchInput);
+  }
+
+  function loadSearchIndex() {
+    if (!searchPromise) searchPromise = fetch(adazSiteSearchUrl)
+      .then(response => {
+        if (!response.ok) throw new Error("Search index unavailable");
+        return response.json();
+      }).then(records => {
+        if (!Array.isArray(records)) throw new Error("Invalid search index");
+        return records.filter(record => typeof record.title === "string" && typeof record.href === "string" && record.href.startsWith("/") && !record.href.startsWith("//"));
+      }).catch(error => { searchPromise = null; throw error; });
+    return searchPromise;
+  }
+
+  function renderSearchLink(record) {
+    const result = document.createElement("article");
+    result.className = "adazai-search-result";
+    const link = document.createElement("a");
+    link.className = "adazai-search-result-link";
+    link.href = record.href;
+    link.addEventListener("click", persistConversation);
+    const heading = document.createElement("div");
+    heading.className = "adazai-search-result-heading";
+    const title = document.createElement("strong");
+    title.textContent = record.title;
+    const type = document.createElement("span");
+    type.className = "adazai-search-type";
+    type.textContent = record.type;
+    link.appendChild(title);
+    heading.append(link, type);
+    result.appendChild(heading);
+    if (!record.question) {
+      const description = document.createElement("p");
+      const full = String(record.description || "");
+      description.textContent = full.length > 145 ? full.slice(0, 142) + "…" : full;
+      result.appendChild(description);
+    }
+    const question = record.question || (record.type === "FAQ" ? record.title : `Que pouvez-vous me dire sur « ${record.title} » ?`);
+    const ask = document.createElement("button");
+    ask.type = "button";
+    ask.className = "adazai-search-question";
+    ask.setAttribute("aria-label", `Poser la question : ${question}`);
+    const text = document.createElement("span");
+    text.textContent = question;
+    ask.appendChild(text);
+    ask.addEventListener("click", () => {
+      showConversation(false);
+      sendMessage(question);
+    });
+    result.appendChild(ask);
+    matchesRoot.appendChild(result);
+  }
+
+  async function renderSearch() {
+    const version = ++searchVersion;
+    const query = searchInput.value.trim();
+    clearSearch.hidden = !query;
+    askSearch.querySelector("strong").textContent = query ? `Demander à ADAZRENOV : ${query}` : "Demander à ADAZRENOV";
+    matchesRoot.replaceChildren();
+    if (!query) {
+      searchStatus.textContent = "Accès rapides";
+      [
+        { title: "Nos services", type: "Service", href: "/services", question: "Quels travaux réalisez-vous ?" },
+        { title: "Portes, fenêtres et volets", type: "Produit", href: "/produits", question: "Que trouve-t-on dans votre catalogue ?" },
+        { title: "Nos réalisations", type: "Projet", href: "/projets", question: "Quels projets avez-vous réalisés ?" },
+        { title: "Demander un devis gratuit", type: "Contact", href: "/contact#contact-devis", question: "Comment demander un devis ?" },
+      ].forEach(renderSearchLink);
+      return;
+    }
+    searchStatus.textContent = "Recherche en cours…";
+    try {
+      const records = await loadSearchIndex();
+      if (version !== searchVersion || searchView.hidden) return;
+      const results = rankSiteSearch(records, query);
+      results.slice(0, 8).forEach(renderSearchLink);
+      searchStatus.textContent = results.length ? `${results.length} résultat${results.length > 1 ? "s" : ""}${results.length > 8 ? " — les 8 plus pertinents" : ""}` : "Aucun résultat. Essayez un autre mot ou posez votre question à ADAZRENOV.";
+    } catch {
+      if (version !== searchVersion || searchView.hidden) return;
+      searchStatus.textContent = "La recherche est momentanément indisponible.";
+      const retry = document.createElement("button");
+      retry.type = "button";
+      retry.className = "adazai-search-retry";
+      retry.textContent = "Réessayer";
+      retry.addEventListener("click", renderSearch);
+      matchesRoot.appendChild(retry);
+    }
+  }
+
+  searchButton.addEventListener("click", showSearch);
+  backButton.addEventListener("click", () => showConversation());
+  searchInput.addEventListener("input", () => {
+    searchVersion += 1;
+    window.clearTimeout(searchTimer);
+    searchTimer = window.setTimeout(renderSearch, 120);
+  });
+  clearSearch.addEventListener("click", () => {
+    searchInput.value = "";
+    renderSearch();
+    focusInputOnDesktop(searchInput);
+  });
+  askSearch.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    showConversation();
+    if (query) sendMessage(query);
+  });
+  widget.querySelector(".adazai-search-form").addEventListener("submit", event => {
+    event.preventDefault();
+    askSearch.click();
+  });
+  searchView.addEventListener("keydown", event => {
+    if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
+    const items = [askSearch, ...matchesRoot.querySelectorAll("a, button")];
+    const current = items.indexOf(document.activeElement);
+    const next = current < 0 ? (event.key === "ArrowDown" ? 0 : items.length - 1) : (current + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+    event.preventDefault();
+    items[next].focus();
+  });
+
+  function scrollLog() {
+    if (followTail) log.scrollTop = log.scrollHeight;
+  }
+
+  log.addEventListener("scroll", () => {
+    followTail = log.scrollHeight - log.scrollTop - log.clientHeight < 48;
+  }, { passive: true });
+
+  function appendMessage(role, text, saved = null) {
+    const sentAt = new Date(saved?.timestamp || Date.now());
     const row = document.createElement("div");
     row.className = `adazai-message-row ${role}`;
-    row.innerHTML = `<div class="adazai-message-stack"><div class="chat-message ${role}"><p>${formatChatMessage(text)}</p></div></div>`;
+    const stack = document.createElement("div");
+    stack.className = "adazai-message-stack";
+    const bubble = document.createElement("div");
+    bubble.className = `chat-message ${role}`;
+    const paragraph = document.createElement("p");
+    paragraph.innerHTML = formatChatMessage(text);
+    bubble.appendChild(paragraph);
     const timestamp = document.createElement("time");
     timestamp.className = "adazai-message-time";
     timestamp.dateTime = sentAt.toISOString();
     timestamp.textContent = localTime.format(sentAt);
     timestamp.title = sentAt.toLocaleString();
-    row.querySelector(".adazai-message-stack").appendChild(timestamp);
+    stack.append(bubble, timestamp);
+    row.appendChild(stack);
     log.appendChild(row);
     scrollLog();
+    const record = { ...saved, role, text, timestamp: sentAt.toISOString() };
+    state.messages.push(record);
+    return { row, stack, paragraph, record };
+  }
 
-    if (persist) {
-      state.messages.push({ role, text, type, timestamp: sentAt.toISOString() });
+  function waitForTurn(ms, signal) {
+    return new Promise((resolve, reject) => {
+      if (signal.aborted) return reject(new DOMException("Interrupted", "AbortError"));
+      const onAbort = () => {
+        window.clearTimeout(timer);
+        reject(new DOMException("Interrupted", "AbortError"));
+      };
+      const timer = window.setTimeout(() => {
+        signal.removeEventListener("abort", onAbort);
+        resolve();
+      }, ms);
+      signal.addEventListener("abort", onAbort, { once: true });
+    });
+  }
+
+  async function animateMessage(role, text, turn) {
+    const signal = turn.controller.signal;
+    if (signal.aborted) throw new DOMException("Interrupted", "AbortError");
+    if (role === "user") {
+      const message = appendMessage(role, text);
+      turn.userMessage = message;
+      return message;
     }
+    const message = appendMessage(role, "");
+    if (role === "user") turn.userMessage = message;
+    else turn.assistantMessage = message;
+    message.row.setAttribute("aria-busy", "true");
+    const characters = Array.from(text);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const chunkSize = Math.max(3, Math.ceil(characters.length / 220));
+    try {
+      if (reducedMotion) {
+        message.record.text = text;
+        message.paragraph.textContent = text;
+      } else {
+        for (let end = chunkSize; end < characters.length + chunkSize; end += chunkSize) {
+          if (signal.aborted) throw new DOMException("Interrupted", "AbortError");
+          message.record.text = characters.slice(0, end).join("");
+          message.paragraph.textContent = message.record.text;
+          scrollLog();
+          if (end < characters.length) await waitForTurn(24, signal);
+        }
+      }
+      return message;
+    } finally {
+      message.paragraph.innerHTML = formatChatMessage(message.record.text);
+      message.row.setAttribute("aria-busy", "false");
+      scrollLog();
+    }
+  }
+
+  function addAnswerActions(message, links = [], interrupted = false, questions = []) {
+    if (message.actionsAdded) return;
+    message.actionsAdded = true;
+    links = (Array.isArray(links) ? links : []).filter(link => {
+      if (typeof link?.label !== "string" || typeof link?.href !== "string" || link.href.includes("\\")) return false;
+      try { return ["http:", "https:"].includes(new URL(link.href, window.location.href).protocol); } catch { return false; }
+    }).slice(0, 3);
+    questions = (Array.isArray(questions) ? questions : []).filter(question => typeof question === "string" && question.trim() && question.length <= 180).slice(0, 2);
+    message.record.links = links;
+    message.record.questions = questions;
+    message.record.interrupted = interrupted;
+    if (interrupted) {
+      const note = document.createElement("span");
+      note.className = "adazai-interrupted-note";
+      note.textContent = "Réponse interrompue.";
+      message.stack.appendChild(note);
+    }
+    if (links.length && !interrupted) {
+      const usefulLinks = document.createElement("nav");
+      usefulLinks.className = "adazai-answer-links";
+      usefulLinks.setAttribute("aria-label", "Liens utiles pour cette réponse");
+      links.forEach(({ label, href }) => {
+        const link = document.createElement("a");
+        link.textContent = label;
+        link.href = href;
+        link.addEventListener("click", persistConversation);
+        usefulLinks.appendChild(link);
+      });
+      message.stack.appendChild(usefulLinks);
+    }
+    if (questions.length && !interrupted) {
+      appendQuestionButtons(message.stack, questions.map(question => ({ question })), true);
+    }
+    scrollLog();
+  }
+
+  function setBusy(busy) {
+    input.disabled = busy;
+    sendButton.hidden = busy;
+    sendButton.disabled = busy || !input.value.trim();
+    stopButton.hidden = !busy;
+    log.setAttribute("aria-busy", String(busy));
+    searchButton.disabled = busy;
+  }
+
+  function cancelTurn(silent = false) {
+    if (!activeTurn) return;
+    activeTurn.controller.abort();
+    if (silent) {
+      conversationVersion += 1;
+      activeTurn = null;
+      hideTyping();
+      setBusy(false);
+    }
+  }
+
+  function getPreparedQuestions() {
+    return [
+      {
+        question: "Quels travaux réalisez-vous ?",
+        links: [{ label: "Voir nos services", href: "/services" }, { label: "Voir nos produits", href: "/produits" }],
+        answer: "ADAZ RENOV réalise des travaux de rénovation intérieure et extérieure : fourniture et pose de fenêtres, rénovation de salles de bain, installation électrique, interphones et visiophones, maçonnerie, peinture et décoration.\n\nQuel type de travaux envisagez-vous ? Vous pouvez découvrir notre offre sur la page Services.",
+      },
+      {
+        question: "Comment demander un devis ?",
+        links: [{ label: "Demander un devis", href: "/contact#contact-devis" }],
+        answer: "Vous pouvez utiliser le formulaire de la page Contact ou appeler notre équipe au +33 1 86 04 74 68. Indiquez les travaux souhaités, la ville du chantier et, si vous la connaissez, la surface concernée. Le devis est gratuit et sans engagement.",
+      },
+      {
+        question: "Où intervenez-vous ?",
+        links: [{ label: "Contacter notre équipe", href: "/contact" }],
+        answer: "Notre entreprise est située à Noiseau, dans le Val-de-Marne. Nous intervenons principalement à Paris et en Île-de-France. Pour un chantier dans une autre ville, contactez notre équipe afin de vérifier notre disponibilité.",
+      },
+      {
+        question: "Comment estimer mes travaux ?",
+        links: [{ label: "Estimer mes travaux", href: "/ia-travaux#outil-projet" }],
+        answer: "Oui. L’outil de la page Assistant IA vous permet de renseigner le type de travaux, la surface ou le nombre d’éléments et la ville du chantier pour obtenir une première fourchette indicative. Cette estimation ne remplace pas un devis : notre équipe confirme les travaux et le prix après étude de votre projet.",
+      },
+    ];
+  }
+
+  const allowanceStorageKey = "adazrenov-chat-simple-until";
+  let simpleUntil = 0;
+  function isSimpleMode() {
+    try { simpleUntil = Math.max(simpleUntil, Number(localStorage.getItem(allowanceStorageKey)) || 0); } catch {}
+    return Date.now() < simpleUntil;
+  }
+
+  function enterSimpleMode(retryAfter) {
+    simpleUntil = Date.now() + Math.max(1, Math.min(86400, Number(retryAfter) || 600)) * 1000;
+    try { localStorage.setItem(allowanceStorageKey, String(simpleUntil)); } catch {}
+  }
+
+  function getPreparedAnswer(message, suggestion) {
+    return (suggestion?.answer ? suggestion : getPreparedQuestions().find(item => item.question === message)) || {
+      answer: "Choisissez une question ci-dessous pour obtenir des informations sur nos services, les devis ou notre zone d’intervention. Pour une demande précise, contactez notre équipe.",
+      links: [{ label: "Contacter notre équipe", href: "/contact" }],
+    };
+  }
+
+  function appendQuestionButtons(root, questions, followUp = false) {
+    const suggestions = document.createElement("div");
+    suggestions.className = `adazai-suggestions${followUp ? " adazai-followup-questions" : ""}`;
+    suggestions.setAttribute("role", "group");
+    suggestions.setAttribute("aria-label", followUp ? "Continuer la conversation" : "Questions pour commencer");
+    questions.forEach(({ question, answer, links }, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "adazai-suggestion";
+      button.style.setProperty("--question-delay", `${180 + index * 130}ms`);
+      const text = document.createElement("span");
+      text.textContent = question;
+      const arrow = document.createElement("span");
+      arrow.className = "adazai-suggestion-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "→";
+      button.append(text, arrow);
+      button.addEventListener("click", () => sendMessage(question, answer ? { answer, links } : null));
+      suggestions.appendChild(button);
+    });
+    root.appendChild(suggestions);
+  }
+
+  function showSuggestedQuestions(resetScroll = true) {
+    appendQuestionButtons(log, getPreparedQuestions());
+    if (resetScroll) log.scrollTop = 0;
+    else scrollLog();
   }
 
   function showTyping() {
     hideTyping();
     typingBubble = document.createElement("div");
     typingBubble.className = "adazai-message-row assistant is-typing-row";
-    typingBubble.innerHTML = '<div class="adazai-message-stack"><div class="chat-message assistant is-typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>';
+    typingBubble.innerHTML = '<div class="adazai-message-stack"><div class="chat-message assistant is-typing"><span class="adazai-typing-label">ADAZRENOV écrit…</span><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>';
     log.appendChild(typingBubble);
     scrollLog();
   }
@@ -4480,9 +4243,102 @@ function setupGlobalAdazaiWidget() {
     }
   }
 
+  function persistConversation() {
+    if (!state.messages.length) return;
+    writeAdazChatCache({
+      version: 1,
+      expiresAt: Date.now() + adazChatIdleMs,
+      messages: state.messages.slice(-60),
+      conversationId: state.conversationId,
+      scrollTop: log.scrollTop,
+      followTail
+    });
+  }
+
+  function stopPersistence() {
+    window.clearInterval(heartbeat);
+    heartbeat = null;
+  }
+
+  function startPersistence() {
+    stopPersistence();
+    persistConversation();
+    heartbeat = window.setInterval(() => {
+      if (!panel.hidden && document.visibilityState !== "hidden") persistConversation();
+    }, 10000);
+  }
+
+  function suspendConversation() {
+    stopPersistence();
+    if (panel.hidden) return;
+    if (activeTurn) {
+      const partial = activeTurn.assistantMessage;
+      cancelTurn(true);
+      if (partial?.record.text) addAnswerActions(partial, [], true);
+      else appendMessage("assistant", "Réponse interrompue. Vous pouvez poser une autre question.");
+    }
+    persistConversation();
+  }
+
+  function resetConversationDisplay() {
+    conversationVersion += 1;
+    cancelTurn(true);
+    hideTyping();
+    state.messages = [];
+    state.conversationId = "";
+    log.replaceChildren();
+    form.reset();
+    searchInput.value = "";
+    setBusy(false);
+    followTail = true;
+  }
+
+  function showWelcomeMessage() {
+    appendMessage(
+      "assistant",
+      document.body.dataset.page === "ai"
+        ? "Bonjour et bienvenue ! Je suis l’assistant virtuel d’ADAZ RENOV. Je peux vous aider à comprendre votre estimation et à préparer vos travaux.\n\nÉcrivez-moi ou choisissez une question ci-dessous 👇"
+        : "Bonjour et bienvenue ! Je suis l’assistant virtuel d’ADAZ RENOV. Une question sur notre entreprise ou vos travaux ? Je suis là pour vous aider.\n\nÉcrivez-moi ou choisissez une question ci-dessous 👇"
+    );
+    showSuggestedQuestions();
+  }
+
+  function showSimpleAnswerLabel(message) {
+    message.record.simpleAnswer = true;
+    const label = document.createElement("span");
+    label.className = "adazai-interrupted-note";
+    label.textContent = "Réponse prédéfinie · sans IA";
+    message.stack.appendChild(label);
+  }
+
+  function restoreConversation(saved) {
+    state.conversationId = saved.conversationId;
+    saved.messages.forEach((record, index) => {
+      const message = appendMessage(record.role, record.text, record);
+      if (record.role === "assistant") {
+        addAnswerActions(message, record.links, record.interrupted, index === saved.messages.length - 1 ? record.questions : []);
+        if (record.simpleAnswer) showSimpleAnswerLabel(message);
+      }
+    });
+    if (!state.messages.some(record => record.role === "user") || isSimpleMode()) showSuggestedQuestions(false);
+    followTail = saved.followTail !== false;
+    log.scrollTop = Number(saved.scrollTop) || 0;
+    if (followTail) scrollLog();
+  }
+
+  function resumeConversation() {
+    const saved = readAdazChatCache();
+    resetConversationDisplay();
+    showConversation(false);
+    if (saved) restoreConversation(saved);
+    else showWelcomeMessage();
+    startPersistence();
+  }
+
   async function getRemoteWidgetAnswer(message, signal) {
     const apiUrl = getConfiguredFunctionUrl("adazChat", window.AI_AISSTEN_CHAT_CONFIG?.apiUrl || "");
     if (!apiUrl) throw new Error("Chat API is not configured.");
+    const project = document.body.dataset.page === "ai" ? getSavedAiProject() : null;
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -4490,6 +4346,7 @@ function setupGlobalAdazaiWidget() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message,
+        ...(project?.workType ? { projectContext: { type: project.workType, quantite: project.surface, ville: project.city, priorite: project.priority, details: project.details, estimation: project.lastEstimate, estimationARecalculer: !project.lastEstimate } } : {}),
         conversationId: state.conversationId,
         context: "ADAZ RENOV global website assistant",
         page: document.body.dataset.page || "",
@@ -4497,65 +4354,43 @@ function setupGlobalAdazaiWidget() {
       }),
     });
 
-    if (!response.ok) throw new Error(`Chat API unavailable: ${response.status}`);
+    if (!response.ok) {
+      let details = {};
+      try { details = await response.json(); } catch {}
+      throw Object.assign(new Error(`Chat API unavailable: ${response.status}`), {
+        simpleMode: response.status === 429 && details.mode === "simple",
+        retryAfter: details.retryAfter
+      });
+    }
     const data = await response.json();
     const answer = String(data.answer || "").trim();
     if (!answer) throw new Error("Chat API returned an empty answer.");
-    return { answer, conversationId: String(data.conversationId || "") };
-  }
-
-  async function handleFreeText(message) {
-    const version = conversationVersion;
-    const controller = new AbortController();
-    pendingRequest = controller;
-    appendMessage("user", message);
-    showTyping();
-
-    try {
-      const response = await getRemoteWidgetAnswer(message, controller.signal);
-      if (version !== conversationVersion) return;
-      state.conversationId = response.conversationId || state.conversationId;
-      hideTyping();
-      appendMessage("assistant", response.answer);
-    } catch (error) {
-      if (version !== conversationVersion || error.name === "AbortError") return;
-      console.warn("ADAZAI chat unavailable.", error);
-      hideTyping();
-      appendMessage(
-        "assistant",
-        "Le chat est momentanément indisponible. Vous pouvez réessayer ou contacter notre équipe au +33 1 86 04 74 68 ou à adazrenov@gmail.com."
-      );
-    } finally {
-      if (pendingRequest === controller) pendingRequest = null;
-    }
+    const links = (Array.isArray(data.links) ? data.links : []).filter(link =>
+      typeof link?.label === "string" && typeof link?.href === "string" && link.href.startsWith("/") && !link.href.startsWith("//") && !link.href.includes("\\")
+    ).slice(0, 3);
+    const questions = [...new Set((Array.isArray(data.questions) ? data.questions : [])
+      .filter(question => typeof question === "string" && question.trim() && question.length <= 180)
+      .map(question => question.trim()))].slice(0, 2);
+    return { answer, links, questions, conversationId: String(data.conversationId || "") };
   }
 
   function openWidget() {
     if (!panel.hidden) return;
-    conversationVersion += 1;
-    pendingRequest?.abort();
-    pendingRequest = null;
-    hideTyping();
-    state.messages = [];
-    state.conversationId = "";
-    log.replaceChildren();
-    form.reset();
-    input.disabled = false;
-    form.querySelector("button").disabled = false;
     panel.hidden = false;
     widget.classList.add("is-open");
     toggle.setAttribute("aria-expanded", "true");
-    appendMessage(
-      "assistant",
-      "Bonjour, je suis ADAZAI, votre assistant rénovation. Décrivez votre projet ou posez-moi votre question : nous pouvons en discuter ici."
-    );
-    window.setTimeout(() => input.focus(), 40);
+    resumeConversation();
+    window.setTimeout(() => {
+      if (!panel.hidden) focusInputOnDesktop(input);
+    }, 40);
   }
 
   function closeWidget() {
+    suspendConversation();
     panel.hidden = true;
     widget.classList.remove("is-open");
     toggle.setAttribute("aria-expanded", "false");
+    toggle.focus({ preventScroll: true });
   }
 
   toggle.addEventListener("click", () => {
@@ -4564,33 +4399,325 @@ function setupGlobalAdazaiWidget() {
   });
 
   closeButton.addEventListener("click", closeWidget);
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const message = input.value.trim();
-    if (!message || input.disabled) return;
+  clearChatButton.addEventListener("click", () => {
+    stopPersistence();
+    writeAdazChatCache(null);
+    resetConversationDisplay();
+    showConversation(false);
+    showWelcomeMessage();
+    startPersistence();
+  });
+  window.addEventListener("adazchatcacheexpired", () => {
+    stopPersistence();
+    resetConversationDisplay();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") suspendConversation();
+    else if (!panel.hidden) resumeConversation();
+  });
+  window.addEventListener("pagehide", () => {
+    suspendConversation();
+    panel.hidden = true;
+    widget.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+  async function sendMessage(text, suggestion = null) {
+    const message = text.trim();
+    if (!message || activeTurn || panel.hidden) return;
+    log.querySelectorAll(".adazai-suggestions").forEach(questions => questions.remove());
+    state.messages.forEach(record => { record.questions = []; });
     input.value = "";
-    input.disabled = true;
-    form.querySelector("button").disabled = true;
-    const version = conversationVersion;
+    followTail = true;
+    const turn = { controller: new AbortController(), version: conversationVersion };
+    activeTurn = turn;
+    setBusy(true);
     try {
-      await handleFreeText(message);
+      await animateMessage("user", message, turn);
+      showTyping();
+      let answer;
+      let answerLinks = suggestion?.links || [];
+      let answerQuestions = [];
+      if (isSimpleMode()) {
+        const prepared = getPreparedAnswer(message, suggestion);
+        await waitForTurn(280, turn.controller.signal);
+        answer = prepared.answer;
+        answerLinks = prepared.links;
+      } else {
+        try {
+          const response = await getRemoteWidgetAnswer(message, turn.controller.signal);
+          if (turn.version !== conversationVersion) return;
+          state.conversationId = response.conversationId || state.conversationId;
+          answer = response.answer;
+          answerLinks = response.links;
+          answerQuestions = response.questions;
+        } catch (error) {
+          if (!error.simpleMode) throw error;
+          enterSimpleMode(error.retryAfter);
+          const prepared = getPreparedAnswer(message, suggestion);
+          answer = prepared.answer;
+          answerLinks = prepared.links;
+        }
+      }
+      if (turn.version !== conversationVersion) return;
+      hideTyping();
+      const responseMessage = await animateMessage("assistant", answer, turn);
+      addAnswerActions(responseMessage, answerLinks, false, answerQuestions);
+      if (isSimpleMode()) {
+        showSimpleAnswerLabel(responseMessage);
+        showSuggestedQuestions(false);
+      }
+    } catch (error) {
+      if (turn.version !== conversationVersion) return;
+      hideTyping();
+      if (error.name === "AbortError") {
+        if (turn.userMessage) {
+          turn.userMessage.record.text = message;
+          turn.userMessage.paragraph.textContent = message;
+        }
+        if (turn.assistantMessage?.record.text) addAnswerActions(turn.assistantMessage, [], true);
+        else appendMessage("assistant", "Réponse interrompue. Vous pouvez poser une autre question.");
+      } else {
+        console.warn("ADAZAI chat unavailable.", error);
+        const failure = appendMessage("assistant", "Le chat est momentanément indisponible. Vous pouvez réessayer ou contacter notre équipe au +33 1 86 04 74 68 ou à adazrenov@gmail.com.");
+        addAnswerActions(failure, [{ label: "Contacter notre équipe", href: "/contact" }]);
+      }
     } finally {
-      if (version === conversationVersion) {
-        input.disabled = false;
-        form.querySelector("button").disabled = false;
-        if (!panel.hidden) input.focus();
+      if (activeTurn === turn) {
+        activeTurn = null;
+        setBusy(false);
+        persistConversation();
+        if (!panel.hidden) focusInputOnDesktop(input);
       }
     }
+  }
+
+  stopButton.addEventListener("click", () => cancelTurn());
+  input.addEventListener("input", () => { sendButton.disabled = !input.value.trim() || !!activeTurn; });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    sendMessage(input.value);
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !panel.hidden) closeWidget();
+    if (event.key === "Escape" && !panel.hidden) {
+      event.preventDefault();
+      if (!searchView.hidden) showConversation();
+      else closeWidget();
+    }
   });
 
   document.querySelectorAll("[data-open-adazai-widget]").forEach((button) => {
     button.addEventListener("click", openWidget);
   });
 
+}
+
+function setAdazAnalyticsConsent(allowed) {
+  const measurementId = "G-BHFBX11D7X";
+  const state = window.ADAZ_ANALYTICS_STATE ||= { enabled: false, configured: false };
+  // Keep local development out of the production property's reports.
+  const local = ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
+  const enabled = allowed === true && !local;
+  window[`ga-disable-${measurementId}`] = !enabled;
+
+  if (!enabled) {
+    state.enabled = false;
+    const domains = window.location.hostname.split(".");
+    const cookieNames = ["_ga", "_ga_BHFBX11D7X"];
+    cookieNames.forEach(name => {
+      document.cookie = `${name}=; Max-Age=0; path=/`;
+      for (let i = 0; i < domains.length - 1; i += 1) {
+        document.cookie = `${name}=; Max-Age=0; path=/; domain=${domains.slice(i).join(".")}`;
+      }
+    });
+    return;
+  }
+  if (state.enabled) return;
+  state.enabled = true;
+  window.dataLayer ||= [];
+  window.gtag ||= function () { window.dataLayer.push(arguments); };
+  const deniedAds = { ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" };
+  const pageLocation = window.location.origin + window.location.pathname;
+  let pageReferrer = "";
+  try {
+    const referrer = new URL(document.referrer);
+    pageReferrer = referrer.origin + referrer.pathname;
+  } catch {}
+
+  if (!state.configured) {
+    window.gtag("consent", "default", { analytics_storage: "denied", ...deniedAds });
+    window.gtag("consent", "update", { analytics_storage: "granted", ...deniedAds });
+    window.gtag("js", new Date());
+    window.gtag("config", measurementId, {
+      allow_google_signals: false,
+      allow_ad_personalization_signals: false,
+      cookie_expires: 365 * 86400,
+      cookie_update: false,
+      page_location: pageLocation,
+      page_referrer: pageReferrer,
+    });
+    state.configured = true;
+    const tag = document.createElement("script");
+    tag.id = "adaz-google-analytics";
+    tag.async = true;
+    tag.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    tag.onerror = () => {
+      tag.remove();
+      state.configured = false;
+      state.enabled = false;
+    };
+    document.head.appendChild(tag);
+  } else {
+    window.gtag("event", "page_view", { send_to: measurementId, page_location: pageLocation, page_referrer: pageReferrer });
+  }
+}
+
+function setupCookieConsent() {
+  if (document.querySelector(".cookie-banner")) return;
+  const storageKey = "adazrenov-cookie-preferences-v1";
+  let preferences = null;
+  let returnFocus = null;
+  function readPreferences() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+      const now = Date.now();
+      if (saved?.version === 2 && typeof saved.external === "boolean" && typeof saved.analytics === "boolean" &&
+          Number.isFinite(saved.savedAt) && Number.isFinite(saved.expiresAt) &&
+          saved.savedAt <= now && saved.expiresAt > now &&
+          saved.expiresAt <= saved.savedAt + 184 * 86400000) return saved;
+      localStorage.removeItem(storageKey);
+    } catch {}
+    return null;
+  }
+  preferences = readPreferences();
+  const banner = document.createElement("section");
+  banner.className = "cookie-banner";
+  banner.setAttribute("aria-label", "Préférences de confidentialité");
+  banner.innerHTML = `
+    <div class="cookie-banner-intro">
+      <img src="${headerLogoPath}" width="38" height="44" alt="">
+      <div><h2>Cookies : vous avez le choix</h2>
+        <p>Les cookies nécessaires permettent au site de fonctionner. Avec votre accord, Google Analytics mesure les visites et Google Maps affiche notre adresse. Vous pouvez les refuser et continuer à utiliser le site.
+          <a href="politique-confidentialite.html#cookies">Comprendre l’utilisation des cookies</a></p></div>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="cookie-button cookie-reject" data-cookie-refuse>Tout refuser</button>
+      <button type="button" class="cookie-button cookie-accept" data-cookie-accept>Tout accepter</button>
+    </div>
+    <button type="button" class="cookie-personalize" data-cookie-settings>Choisir mes préférences</button>`;
+  const dialog = document.createElement("dialog");
+  dialog.id = "cookie-preferences";
+  dialog.className = "cookie-dialog";
+  dialog.hidden = true;
+  dialog.setAttribute("aria-labelledby", "cookie-dialog-title");
+  dialog.setAttribute("aria-describedby", "cookie-dialog-description");
+  dialog.innerHTML = `
+    <div class="cookie-dialog-body">
+      <button type="button" class="cookie-dialog-close" aria-label="Fermer sans modifier mes choix">Fermer</button>
+      <span class="eyebrow">ADAZ RENOV · CONFIDENTIALITÉ</span>
+      <h2 id="cookie-dialog-title">Choisissez ce que vous autorisez</h2>
+      <p id="cookie-dialog-description">Les fonctions nécessaires restent actives. Vous choisissez séparément si vous autorisez les statistiques Google Analytics et la carte Google Maps.</p>
+      <p>Votre refus n’empêche pas de consulter le site, de demander un devis ou d’utiliser l’assistant.</p>
+      <a href="politique-confidentialite.html#cookies">Voir les données utilisées et leur durée de conservation</a>
+      <h3>Mes choix pour ce site</h3>
+      <div class="cookie-category">
+        <details><summary>Fonctions nécessaires du site</summary>
+          <p>Ces fonctions restent disponibles lorsque vous refusez la carte Google Maps. Elles utilisent le stockage de votre navigateur pour les besoins suivants :</p>
+          <p><strong>Vos préférences :</strong> conserver votre acceptation ou votre refus pendant six mois, afin de ne pas vous redemander à chaque page.</p>
+          <p><strong>Votre estimation :</strong> retrouver les travaux, la surface, la ville et les autres informations que vous avez saisies. Elles restent dans ce navigateur jusqu’à la réinitialisation du projet ou à l’effacement des données du site.</p>
+          <p><strong>Votre chat :</strong> reprendre la conversation après un changement de page. La copie locale est effacée après une minute sans rouvrir le chat une fois celui-ci fermé. Cela ne supprime pas les échanges enregistrés côté serveur.</p>
+          <p><strong>La protection de l’assistant :</strong> mémoriser une limite temporaire de demandes pour éviter les abus, pendant le délai indiqué, au maximum 24 heures.</p>
+          <p>Ce stockage ne sert pas à vous adresser de la publicité.</p>
+        </details>
+        <span class="cookie-always-active">Toujours actif</span>
+      </div>
+      <div class="cookie-category">
+        <details><summary>Statistiques Google Analytics · facultatives</summary>
+          <p>Avec votre accord, Google Analytics mesure les visites et les pages consultées pour nous aider à améliorer le site. Google reçoit des informations de navigation et de connexion. Les cookies de statistiques ont une durée maximale d’un an.</p>
+          <p>Sans votre accord, Google Analytics ne se charge pas. Vous pouvez retirer cet accord ici à tout moment. Les fonctions publicitaires sont désactivées.</p>
+          <a href="https://policies.google.com/privacy?hl=fr" target="_blank" rel="noopener noreferrer">Confidentialité chez Google</a>
+        </details>
+        <input type="checkbox" role="switch" class="cookie-switch cookie-analytics-switch" aria-label="Autoriser les statistiques Google Analytics">
+      </div>
+      <div class="cookie-category">
+        <details><summary>Carte Google Maps · facultative</summary>
+          <p><strong>Si vous l’autorisez :</strong> la carte de notre adresse à Noiseau peut se charger sur la page Contact. Votre navigateur contacte Google, qui reçoit notamment votre adresse IP et des informations techniques sur votre navigateur. Google peut aussi déposer ou lire ses propres cookies.</p>
+          <p><strong>Si vous la refusez :</strong> la carte intégrée reste bloquée. Notre adresse reste visible et le lien « Ouvrir Google Maps » permet de consulter la carte directement sur le site de Google.</p>
+          <p>Vous pouvez retirer votre accord ici à tout moment. La carte intégrée est alors désactivée ; ce retrait n’efface pas les données ou cookies déjà reçus par Google.</p>
+          <a href="https://policies.google.com/privacy?hl=fr" target="_blank" rel="noopener noreferrer">Comment Google utilise vos données</a>
+        </details>
+        <input type="checkbox" role="switch" class="cookie-switch cookie-external-switch" aria-label="Autoriser la carte intégrée Google Maps sur la page Contact">
+      </div>
+      <p class="cookie-dialog-note">« Tout accepter » autorise les statistiques et la carte. « Tout refuser » les bloque. « Enregistrer mes choix » applique vos réglages. Fermer la fenêtre ne modifie pas vos choix. Ils sont conservés six mois et peuvent être modifiés via « Préférences cookies » en bas du site.</p>
+    </div>
+    <div class="cookie-dialog-actions">
+      <button type="button" class="cookie-button cookie-reject" data-cookie-refuse>Tout refuser</button>
+      <button type="button" class="cookie-button cookie-accept" data-cookie-accept>Tout accepter</button>
+      <button type="button" class="cookie-button cookie-confirm">Enregistrer mes choix</button>
+    </div>`;
+  document.body.append(banner, dialog);
+  const externalSwitch = dialog.querySelector(".cookie-external-switch");
+  const analyticsSwitch = dialog.querySelector(".cookie-analytics-switch");
+  function applyPreferences() {
+    setAdazAnalyticsConsent(preferences?.analytics === true);
+    document.querySelectorAll("iframe[data-consent-src]").forEach(frame => {
+      const allowed = preferences?.external === true;
+      if (allowed) {
+        if (!frame.hasAttribute("src")) frame.src = frame.dataset.consentSrc;
+      } else frame.removeAttribute("src");
+      frame.hidden = !allowed;
+      frame.parentElement.classList.toggle("is-consent-blocked", !allowed);
+      const placeholder = frame.parentElement.querySelector(".map-consent-placeholder");
+      if (placeholder) placeholder.hidden = allowed;
+    });
+    banner.hidden = !!preferences || dialog.open;
+  }
+  function closePreferences() {
+    if (typeof dialog.close === "function" && dialog.open) dialog.close();
+    else dialog.removeAttribute("open");
+    dialog.hidden = true;
+    applyPreferences();
+    if (returnFocus?.isConnected && !returnFocus.closest("[hidden]")) returnFocus.focus({ preventScroll: true });
+  }
+  function openPreferences(event) {
+    returnFocus = event?.currentTarget || document.activeElement;
+    preferences = readPreferences();
+    externalSwitch.checked = preferences?.external === true;
+    analyticsSwitch.checked = preferences?.analytics === true;
+    banner.hidden = true;
+    dialog.hidden = false;
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+    dialog.querySelector(".cookie-dialog-close").focus({ preventScroll: true });
+  }
+  function savePreferences(external, analytics) {
+    const now = new Date();
+    const expiry = new Date(now);
+    expiry.setMonth(expiry.getMonth() + 6);
+    preferences = { version: 2, external, analytics, savedAt: now.getTime(), expiresAt: expiry.getTime() };
+    try { localStorage.setItem(storageKey, JSON.stringify(preferences)); } catch {}
+    closePreferences();
+    applyPreferences();
+  }
+  document.querySelectorAll("[data-cookie-settings]").forEach(button => {
+    button.setAttribute("aria-haspopup", "dialog");
+    button.setAttribute("aria-controls", dialog.id);
+    button.addEventListener("click", openPreferences);
+  });
+  document.querySelectorAll("[data-cookie-refuse]").forEach(button => button.addEventListener("click", () => savePreferences(false, false)));
+  document.querySelectorAll("[data-cookie-accept]").forEach(button => button.addEventListener("click", () => savePreferences(true, true)));
+  dialog.querySelector(".cookie-confirm").addEventListener("click", () => savePreferences(externalSwitch.checked, analyticsSwitch.checked));
+  dialog.querySelector(".cookie-dialog-close").addEventListener("click", closePreferences);
+  dialog.addEventListener("cancel", event => { event.preventDefault(); closePreferences(); });
+  window.addEventListener("storage", event => {
+    if (event.key !== storageKey && event.key !== null) return;
+    preferences = readPreferences();
+    externalSwitch.checked = preferences?.external === true;
+    analyticsSwitch.checked = preferences?.analytics === true;
+    applyPreferences();
+  });
+  applyPreferences();
 }
 
 function setupSiteShell() {
@@ -4648,6 +4775,7 @@ function setupProductCatalogue() {
 
 document.addEventListener("DOMContentLoaded", () => {
   setupSiteShell();
+  setupCookieConsent();
   if (document.querySelector("#door-products, #window-products, #shutter-products")) {
     setupProductCatalogue();
   } else {
