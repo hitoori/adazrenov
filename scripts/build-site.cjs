@@ -140,6 +140,8 @@ async function build() {
   const sourceJs = normalizeLinks(replaceMedia(await fs.readFile(path.join(ROOT, 'script.js'), 'utf8'), manifest.media)
     .replace(/const headerLogoPath = "[^"]+";/, `const headerLogoPath = "${manifest.icons['header-logo.webp']}";`));
   const sourceCss = replaceMedia(await fs.readFile(path.join(ROOT, 'styles.css'), 'utf8'), manifest.media);
+  const publicConfig = await fs.readFile(path.join(ROOT, 'ai-config.js'), 'utf8');
+  const configFile = `assets/runtime/config.${fingerprint(publicConfig)}.js`;
   const runtime = createRuntime(sourceJs, replacements);
   const pageSources = new Map(await Promise.all(pages.map(async page => [page, await fs.readFile(path.join(ROOT, page), 'utf8')])));
   const searchRecords = buildSearchIndex(pageSources, runtime.catalogues);
@@ -162,6 +164,7 @@ async function build() {
   await fs.mkdir(path.join(OUTPUT, 'assets/runtime'), { recursive: true });
   await fs.mkdir(path.join(OUTPUT, '.well-known'), { recursive: true });
   await Promise.all([
+    fs.writeFile(path.join(OUTPUT, configFile), publicConfig),
     fs.copyFile(path.join(ROOT, '.well-known/security.txt'), path.join(OUTPUT, '.well-known/security.txt')),
     fs.writeFile(path.join(OUTPUT, widgetFile), widget.code),
     fs.writeFile(path.join(OUTPUT, searchFile), searchJson),
@@ -178,7 +181,8 @@ async function build() {
     const jsFile = `assets/runtime/page.${fingerprint(js.code)}.js`;
     await fs.writeFile(path.join(OUTPUT, jsFile), js.code);
     pageBytes[page] = Buffer.byteLength(js.code);
-    let html = optimizeHtml(prerender(source, runtime, page), page, metadata, manifest.icons, cssFile, jsFile);
+    let html = optimizeHtml(prerender(source, runtime, page), page, metadata, manifest.icons, cssFile, jsFile)
+      .replace('src="ai-config.js"', `src="${configFile}"`);
     html = structuredData(html, page, canonicalUrl(page), DOMAIN, runtime);
     emittedSources.push(html);
     await fs.writeFile(path.join(OUTPUT, page), html);
