@@ -74,7 +74,7 @@ function structuredData(html, page, canonical, domain, runtime) {
     isPartOf: { '@id': `${domain}/#website` }, about: { '@id': `${domain}/#business` },
   }];
   if (page === 'index.html') {
-    graph.push({ '@type': 'WebSite', '@id': `${domain}/#website`, name: 'ADAZ RENOV', url: `${domain}/`, inLanguage: 'fr-FR', publisher: { '@id': `${domain}/#business` } });
+    graph.push({ '@type': 'WebSite', '@id': `${domain}/#website`, name: 'ADAZ RENOV', alternateName: 'ADAZRENOV', url: `${domain}/`, inLanguage: 'fr-FR', publisher: { '@id': `${domain}/#business` } });
     // Enrich the existing business with a stable ID; retain its verified contact details.
     html = html.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (tag, text) => {
       const business = JSON.parse(text);
