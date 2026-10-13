@@ -1602,15 +1602,20 @@ function setupContactProtection(form) {
   script.onload = () => {
     window.clearTimeout(timer);
     try {
-      window.turnstile.ready(() => {
-        widgetId = window.turnstile.render(container, {
-          sitekey, action: "contact", language: "fr", theme: "light", size: "flexible",
-          callback: () => say(""),
-          "expired-callback": () => say("Vérification de sécurité en cours…"),
-          "error-callback": () => { unavailable(); return true; },
-        });
+      widgetId = window.turnstile.render(container, {
+        sitekey, action: "contact", language: "fr", theme: "light", size: "flexible",
+        callback: () => say(""),
+        "expired-callback": () => say("Vérification de sécurité en cours…"),
+        "error-callback": (code) => {
+          console.warn("Contact security verification failed.", String(code));
+          unavailable();
+          return true;
+        },
       });
-    } catch { unavailable(); }
+    } catch (error) {
+      console.warn("Contact security verification could not load.", error.message);
+      unavailable();
+    }
   };
   document.head.appendChild(script);
   return protection;
