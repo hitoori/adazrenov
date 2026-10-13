@@ -26,7 +26,7 @@ function getConfiguredFunctionUrl(functionName, explicitUrl = "") {
   return baseUrl ? `${baseUrl}/${functionName}` : "";
 }
 
-async function submitAdazForm(form, apiUrl, payload) {
+async function submitAdazForm(form, apiUrl, payload, turnstileToken = "") {
   // Reuse the identifier after an uncertain response; Resend deduplicates retries.
   const fingerprint = JSON.stringify(payload);
   if (form.adazSubmission?.fingerprint !== fingerprint) {
@@ -34,7 +34,7 @@ async function submitAdazForm(form, apiUrl, payload) {
   }
   const response = await fetch(apiUrl, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...payload, requestId: form.adazSubmission.id, website: String(form.elements.website?.value || "") }),
+    body: JSON.stringify({ ...payload, turnstileToken, requestId: form.adazSubmission.id, website: String(form.elements.website?.value || "") }),
   });
   const result = await response.json().catch(() => ({}));
   if (!response.ok || result.ok !== true) {
@@ -1576,12 +1576,53 @@ function setupContactProjectPicker(form) {
   sync();
 }
 
+function setupContactProtection(form) {
+  const container = form.querySelector("#contact-protection");
+  const status = form.querySelector("#contact-protection-status");
+  const sitekey = window.AI_AISSTEN_CONTACT_CONFIG?.turnstileSiteKey;
+  let widgetId;
+  const say = (message) => { if (status) status.textContent = message; };
+  const unavailable = () => say("Vérification indisponible. Rechargez la page ou contactez-nous par téléphone.");
+  const protection = {
+    getToken: () => widgetId !== undefined ? window.turnstile?.getResponse(widgetId) || "" : "",
+    reset: () => {
+      if (widgetId !== undefined) {
+        say("Vérification de sécurité en cours…");
+        window.turnstile.reset(widgetId);
+      }
+    },
+  };
+  if (!sitekey || !container) { unavailable(); return protection; }
+  say("Vérification de sécurité en cours…");
+  const script = document.createElement("script");
+  script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+  script.async = true;
+  const timer = window.setTimeout(unavailable, 15000);
+  script.onerror = () => { window.clearTimeout(timer); unavailable(); };
+  script.onload = () => {
+    window.clearTimeout(timer);
+    try {
+      window.turnstile.ready(() => {
+        widgetId = window.turnstile.render(container, {
+          sitekey, action: "contact", language: "fr", theme: "light", size: "flexible",
+          callback: () => say(""),
+          "expired-callback": () => say("Vérification de sécurité en cours…"),
+          "error-callback": () => { unavailable(); return true; },
+        });
+      });
+    } catch { unavailable(); }
+  };
+  document.head.appendChild(script);
+  return protection;
+}
+
 function setupContactForm() {
   const form = document.querySelector("#contact-form");
   const success = document.querySelector("#contact-success");
 
   if (!form || !success) return;
   setupContactProjectPicker(form);
+  const protection = setupContactProtection(form);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1607,6 +1648,13 @@ function setupContactForm() {
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
       return;
     }
+    const turnstileToken = protection.getToken();
+    if (!turnstileToken) {
+      success.innerHTML = "<strong>Vérification de sécurité</strong> Attendez la fin de la vérification. Si elle reste indisponible, rechargez la page ou appelez-nous.";
+      success.hidden = false;
+      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
 
     if (submitButton) {
       submitButton.disabled = true;
@@ -1614,7 +1662,7 @@ function setupContactForm() {
     }
 
     try {
-      await submitAdazForm(form, apiUrl, payload);
+      await submitAdazForm(form, apiUrl, payload, turnstileToken);
 
       form.reset();
       success.innerHTML = "<strong>Demande envoyée !</strong> Merci. Notre équipe vous recontactera pour faire le point sur vos travaux.";
@@ -1630,6 +1678,7 @@ function setupContactForm() {
       success.hidden = false;
       success.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } finally {
+      protection.reset();
       if (submitButton) {
         submitButton.disabled = false;
         submitButton.textContent = originalLabel;

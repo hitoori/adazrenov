@@ -98,3 +98,74 @@ test('mail quotas are separate from chat quotas and block repeated sends', async
   assert.ok(Number(blocked.headers.get('Retry-After')) > 0);
   assert.equal(api.mock.calls.length, 3);
 });
+
+test('Turnstile permits email only after successful validation for the Contact action on our domain', async t => {
+  const calls = [];
+  t.mock.method(globalThis, 'fetch', async (url, options) => {
+    calls.push(url);
+    if (url.includes('/siteverify')) {
+      assert.deepEqual(JSON.parse(options.body), { secret: 'test-only-turnstile', response: 'valid-test-token' });
+      return Response.json({ success: true, hostname: 'adazrenov.fr', action: 'contact' });
+    }
+    assert.equal(url, 'https://api.resend.com/emails');
+    return sent();
+  });
+  const response = await worker.fetch(request({ ...contact, turnstileToken: 'valid-test-token' }), {
+    ...env(), TURNSTILE_REQUIRED: 'true', TURNSTILE_SECRET_KEY: 'test-only-turnstile',
+  });
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 2);
+  assert.match(calls[0], /siteverify$/);
+});
+
+test('missing protection secret or malformed tokens cannot send an email', async t => {
+  const api = t.mock.method(globalThis, 'fetch', () => { throw new Error('Must not send'); });
+  assert.equal((await worker.fetch(request(), { ...env(), TURNSTILE_REQUIRED: 'true' })).status, 503);
+  for (const turnstileToken of [undefined, '', 42, 'x'.repeat(2049)]) {
+    assert.equal((await worker.fetch(request({ ...contact, turnstileToken }), {
+      ...env(), TURNSTILE_REQUIRED: 'true', TURNSTILE_SECRET_KEY: 'test-only-turnstile',
+    })).status, 400);
+  }
+  assert.equal(api.mock.calls.length, 0);
+});
+
+test('rejected, replayed, foreign hostname and wrong-action tokens cannot reach Resend', async t => {
+  let result;
+  const api = t.mock.method(globalThis, 'fetch', async url => {
+    assert.match(url, /siteverify$/);
+    return Response.json(result);
+  });
+  for (const invalid of [
+    { success: false, 'error-codes': ['invalid-input-response'] },
+    { success: false, 'error-codes': ['timeout-or-duplicate'] },
+    { success: true, hostname: 'attacker.example', action: 'contact' },
+    { success: true, hostname: 'adazrenov.fr', action: 'login' },
+    { success: true },
+  ]) {
+    result = invalid;
+    const response = await worker.fetch(request({ ...contact, turnstileToken: 'test-token' }), {
+      ...env(), TURNSTILE_SECRET_KEY: 'test-only-turnstile',
+    });
+    assert.equal(response.status, 400);
+  }
+  assert.equal(api.mock.calls.length, 5);
+});
+
+test('Turnstile network and service errors fail closed without exposing credentials', async t => {
+  let providerResponse;
+  const api = t.mock.method(globalThis, 'fetch', async url => {
+    assert.match(url, /siteverify$/);
+    if (providerResponse instanceof Error) throw providerResponse;
+    return providerResponse;
+  });
+  for (const unavailable of [new Error('test-only-turnstile'), Response.json({}, { status: 500 }),
+    Response.json({ success: false, 'error-codes': ['invalid-input-secret'] }), new Response('invalid JSON')]) {
+    providerResponse = unavailable;
+    const response = await worker.fetch(request({ ...contact, turnstileToken: 'test-token' }), {
+      ...env(), TURNSTILE_SECRET_KEY: 'test-only-turnstile',
+    });
+    assert.equal(response.status, 503);
+    assert.ok(!(await response.text()).includes('test-only-turnstile'));
+  }
+  assert.equal(api.mock.calls.length, 4);
+});

@@ -8,6 +8,7 @@ window.AI_AISSTEN_FUNCTIONS_BASE_URL = "";
 window.AI_AISSTEN_CONTACT_CONFIG = {
   deliveryProvider: "resend",
   apiUrl: "https://adazai-api.adazrenov.workers.dev/contact",
+  turnstileSiteKey: "0x4AAAAAAFWFiQoUgyRBi-_K",
 };
 
 window.AI_AISSTEN_BOOKING_CONFIG = {

@@ -100,11 +100,32 @@ E-mailurile merg doar la firmă; clientul nu primește o confirmare automată.
 Adresa clientului este folosită ca `reply_to`. Conținutul formularului nu este arhivat în D1; ajunge în Resend și în căsuța destinatarului.
 Limitele sunt separate de chat: 3 cereri/10 minute și 10/24 ore per IP,
 50/24 ore pentru toate formularele. Un câmp ascuns blochează spamul simplu.
-Aceste limite nu înlocuiesc o verificare CAPTCHA. Resend primește un identificator
+Turnstile verifică formularul Contact înainte de apelul Resend. Resend primește un identificator
 unic pentru a evita dublarea aceleiași cereri la reluarea după o eroare de rețea.
 Testele simulează serviciul; nu trimit e-mailuri reale.
 
 Documentație: https://resend.com/docs/api-reference/emails/send-email
+
+### Verificarea Turnstile
+
+Widgetul « ADAZ RENOV — Contact » folosește modul Managed, domeniul
+`adazrenov.fr` (inclusiv subdomeniile) și acțiunea `contact`. Cheia publică se află
+în `ai-config.js`; cheia privată trebuie salvată ca Secret `TURNSTILE_SECRET_KEY`
+în Worker. `TURNSTILE_REQUIRED: "true"` oprește trimiterea dacă secretul lipsește.
+Publicarea nu încarcă cheile din fișierele locale sau din mediul terminalului.
+
+Serverul validează tokenul cu Siteverify și acceptă numai hostname-urile
+`adazrenov.fr` și `www.adazrenov.fr`, pentru acțiunea `contact`. Nu stochează
+tokenurile și nu le transmite către Resend. Erorile de verificare nu trimit
+e-mailuri. Interfața păstrează formularul după un eșec și obține o verificare nouă;
+identificatorul e-mailului rămâne același la o reluare a aceleiași cereri.
+
+Widgetul de producție nu autorizează localhost sau domeniile de preview Pages.
+Pentru dezvoltare, se folosesc separat cheile de test Turnstile și un Worker
+local. Nu se configurează chei de test în producție. Asistentul nu folosește
+widgetul și nu trimite e-mailuri.
+
+Documentație: https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
 
 ## Verificare fără consum OpenAI
 

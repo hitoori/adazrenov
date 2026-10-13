@@ -160,7 +160,9 @@ async function build() {
   await fs.rm(OUTPUT, { recursive: true, force: true });
   await fs.mkdir(OUTPUT, { recursive: true });
   await fs.mkdir(path.join(OUTPUT, 'assets/runtime'), { recursive: true });
+  await fs.mkdir(path.join(OUTPUT, '.well-known'), { recursive: true });
   await Promise.all([
+    fs.copyFile(path.join(ROOT, '.well-known/security.txt'), path.join(OUTPUT, '.well-known/security.txt')),
     fs.writeFile(path.join(OUTPUT, widgetFile), widget.code),
     fs.writeFile(path.join(OUTPUT, searchFile), searchJson),
     fs.writeFile(path.join(OUTPUT, cssFile), css.code),
@@ -207,6 +209,7 @@ async function build() {
     '/assets/fonts/*', '  Cache-Control: public, max-age=31536000, immutable', '',
     '/styles.*.css', '  Cache-Control: public, max-age=31536000, immutable', '',
     '/ai-config.js', '  Cache-Control: no-cache', '',
+    '/.well-known/security.txt', '  Content-Type: text/plain; charset=utf-8', '  Cache-Control: public, max-age=3600', '',
     'https://:project.pages.dev/*', '  X-Robots-Tag: noindex', '',
     'https://:version.:project.pages.dev/*', '  X-Robots-Tag: noindex', '',
   ].join('\n');

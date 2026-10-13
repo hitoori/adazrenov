@@ -12,7 +12,8 @@
     "MAX_DAILY_REQUESTS": "100",
     "MAX_CLIENT_DAILY_REQUESTS": "20",
     "RESEND_FROM": "ADAZ RENOV <contact@adazrenov.fr>",
-    "CONTACT_TO": "octavian.chiticgd@gmail.com"
+    "CONTACT_TO": "octavian.chiticgd@gmail.com",
+    "TURNSTILE_REQUIRED": "true"
   },
   "d1_databases": [
     {
@@ -23,7 +24,8 @@
   ],
   "secrets": {
     "required": [
-      "OPENAI_API_KEY"
+      "OPENAI_API_KEY",
+      "TURNSTILE_SECRET_KEY"
     ]
   }
 }

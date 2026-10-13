@@ -1,4 +1,5 @@
 import { renderContactEmail } from './email-template.js';
+import { verifyContactToken } from './contact-protection.js';
 
 const EMAIL = /^[^\s<>@,;]+@[^\s<>@,;]+\.[^\s<>@,;]+$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -51,6 +52,10 @@ export async function handleContactEmail(request, env, headers, { json, getClien
     }
     const global = await allowRequest(env.DB, 'mail-global', 50, 24 * 3600000);
     if (!global.allowed) return json({ error: 'L’envoi est momentanément indisponible. Contactez-nous par téléphone.' }, 429, { ...headers, 'Retry-After': String(global.retryAfter) });
+    const verificationStatus = await verifyContactToken(body.turnstileToken, env);
+    if (verificationStatus !== 200) return json({ error: verificationStatus === 400
+      ? 'La vérification de sécurité a expiré ou n’a pas abouti. Réessayez.'
+      : 'La vérification de sécurité est momentanément indisponible. Réessayez ou appelez-nous.' }, verificationStatus, headers);
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `adaz-form-${body.requestId}` },

@@ -12,6 +12,7 @@ await writeFile(emptyEnvFile, "", { mode: 0o600 });
 const deploymentEnv = { ...process.env };
 delete deploymentEnv.OPENAI_API_KEY;
 delete deploymentEnv.RESEND_API_KEY;
+delete deploymentEnv.TURNSTILE_SECRET_KEY;
 deploymentEnv.CLOUDFLARE_INCLUDE_PROCESS_ENV = "false";
 const wrangler = fileURLToPath(new URL("../node_modules/wrangler/bin/wrangler.js", import.meta.url));
 
