@@ -2,6 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');
+const { securityHeaders } = require('./site-policy.cjs');
 
 const root = path.resolve(__dirname, '..', 'dist');
 const port = Number(process.env.ADAZ_PREVIEW_PORT || 8765);
@@ -25,6 +26,10 @@ const server = http.createServer((request, response) => {
   let pathname;
   try { pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname); }
   catch { response.writeHead(400); return response.end(); }
+  if (pathname === '/security.txt') {
+    response.writeHead(301, { ...securityHeaders, Location: '/.well-known/security.txt' });
+    return response.end();
+  }
   let file = path.resolve(root, '.' + pathname);
   if (file !== root && !file.startsWith(root + path.sep)) {
     response.writeHead(403); return response.end();
@@ -37,9 +42,10 @@ const server = http.createServer((request, response) => {
   try { stat = fs.statSync(file); if (!stat.isFile()) throw new Error('Not a file'); }
   catch { file = path.join(root, '404.html'); stat = fs.statSync(file); status = 404; }
   const headers = {
+    ...securityHeaders,
     'Content-Type': types[path.extname(file)] || 'application/octet-stream',
     'Content-Length': stat.size, 'Cache-Control': 'no-cache',
-    'Accept-Ranges': 'bytes', 'X-Content-Type-Options': 'nosniff',
+    'Accept-Ranges': 'bytes',
   };
   if (/\.(?:html|css|js|json|xml|txt)$/.test(file) && stat.size > 1000 && !request.headers.range) {
     headers.Vary = 'Accept-Encoding';

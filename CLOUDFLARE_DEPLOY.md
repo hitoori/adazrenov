@@ -20,7 +20,8 @@ format. Oprește-l cu `Ctrl+C`.
 
 Build-ul:
 
-- include cele opt pagini publice și o pagină 404;
+- include nouă pagini și o pagină 404; cele șapte pagini comerciale sunt indexabile,
+  iar paginile juridice rămân `noindex, follow`;
 - folosește copiile optimizate din `assets/optimized`;
 - generează CSS și JavaScript comprimate, cu hash în numele fișierului;
 - elimină codul nefolosit din JavaScript separat pentru fiecare pagină;
@@ -35,6 +36,11 @@ Build-ul:
   oferte sau recenzii inventate;
 - generează reguli de cache în `_headers`, inclusiv `noindex` pentru domeniile
   temporare `pages.dev`;
+- aplică CSP, protecție împotriva încadrării în iframe și permisiuni limitate;
+  aceleași antete sunt active în previzualizarea locală;
+- generează metadate Open Graph și Twitter pentru paginile comerciale;
+- verifică automat paginile generate, sitemap-ul, linkurile și ancorele interne,
+  imaginile, datele structurate, favicon-ul și fișierele de securitate;
 - exclude sursele backend, documentația, originalele media, fișierele `.env`,
   logurile și `node_modules`;
 - refuză fișierele de cel puțin 25 MiB și peste 20.000 de fișiere.
@@ -71,14 +77,47 @@ Vezi [ghidul oficial pentru redirectarea www](https://developers.cloudflare.com/
 
 ## Verificări SEO după conectarea domeniului
 
-Adaugă domeniul în Google Search Console și trimite
-`https://adazrenov.fr/sitemap.xml`. Verifică indexarea paginilor, datele structurate
-și performanța pe dispozitive reale. Scorurile locale sunt verificări tehnice;
+Proprietatea `https://adazrenov.fr/` este deja verificată în Google Search Console,
+iar `https://adazrenov.fr/sitemap.xml` este înregistrat și a fost citit fără erori.
+La verificarea din 19 octombrie 2026, șase dintre cele șapte pagini comerciale erau
+indexate; `/services` era încă necunoscută pentru Google. După publicarea versiunii
+noi, inspectează această adresă și folosește „Request indexing” din interfața GSC.
+Verifică datele structurate și performanța pe dispozitive reale. Verificările locale
+confirmă funcționarea tehnică;
 poziționarea în căutări depinde și de conținut, concurență și reputația firmei.
 
-Adresa firmei existentă în site este Noiseau. Zona efectivă de intervenție și
-informațiile comerciale suplimentare trebuie confirmate înainte de adăugarea
-unor pagini pentru alte localități.
+`sitemap.xml` conține numai adrese canonice HTTPS fără extensie. Nu include
+fișierele de verificare Google, pagina 404 sau paginile juridice. Nu se adaugă date
+`lastmod` artificiale la fiecare build. Dacă se adaugă o pagină nouă indexabilă,
+actualizează și lista din fișierul sursă `sitemap.xml`; verificarea automată semnalează
+orice diferență față de sitemap-ul generat.
+
+Verificările se pot repeta separat cu `npm run check`, după `npm run build`.
+
+## security.txt și antetele de securitate
+
+Fișierul de contact pentru raportarea vulnerabilităților este
+`/.well-known/security.txt`. Adresa `/security.txt` redirecționează permanent către
+acest fișier. Conține adresa publică a firmei și expiră la
+`2027-10-13T23:59:59Z`; datele trebuie reverificate înainte de expirare. Build-ul
+refuză un fișier expirat și avertizează în ultimele 30 de zile de valabilitate.
+Fișierul este un canal de contact și nu înlocuiește protecția aplicației.
+
+Politica CSP este definită în `scripts/site-policy.cjs`. Permite resursele proprii,
+Cloudflare Turnstile, Worker-ul ADAZAI, harta Google încărcată după consimțământ,
+Google Analytics fără funcții publicitare și beacon-ul Cloudflare. Sunt păstrate
+stilurile inline necesare interfeței; scripturile inline executabile și `eval`
+sunt blocate. Înainte de adăugarea unui nou furnizor extern, verifică directivele.
+
+După publicare, verifică antetele pe domeniul public și formularul cu Turnstile.
+Cheia de producție nu permite localhost; eroarea locală `110200` este separată de
+CSP și nu trebuie rezolvată prin dezactivarea protecției.
+
+Sediul firmei este la Noiseau. Zona principală de intervenție, confirmată de
+proprietar, cuprinde toate cele opt departamente din Île-de-France. Pentru
+șantiere de amploare sunt posibile deplasări în toată Franța, după discutarea
+proiectului. Informațiile comerciale suplimentare și exemplele locale trebuie
+confirmate înainte de adăugarea unor pagini pentru alte localități.
 
 ## Optimizarea unor fișiere media noi
 
@@ -98,9 +137,11 @@ rulează optimizarea și include noile copii și manifestul în Git.
 
 ## Formulare și backend
 
-Logica și configurația formularelor au fost păstrate. Integrarea ulterioară cu
-Redmine, verificarea trimiterilor și configurarea backend-ului se fac separat.
-Cloudflare Pages publică frontend-ul; nu mută automat funcțiile Firebase.
+Formularul de contact trimite către Worker-ul Cloudflare din `ai-config.js`, care
+verifică Turnstile și livrează cererea prin Resend. Asistentul folosește ruta
+`/chat` a aceluiași Worker. Codul și secretele Worker-ului se publică separat de
+frontend; `dist` nu include sursele backend sau configurații private. Codul
+Firebase păstrat în repository nu se publică prin acest build.
 
 Chatul ADAZAI folosește în continuare endpoint-ul din `ai-config.js`. Pentru
 testarea chatului pe un domeniu temporar `pages.dev`, originea respectivă trebuie

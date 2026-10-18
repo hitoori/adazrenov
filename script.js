@@ -13,6 +13,8 @@ const adazSiteSearchUrl = "site-search.json";
 const headerLogoPath = "assets/brand/adaz-renov-logo.png";
 const companyPhoneDisplay = "+33 1 86 04 74 68";
 const companyPhoneHref = "tel:+33186047468";
+const companyMobileDisplay = "06 52 31 72 88";
+const companyMobileHref = "tel:+33652317288";
 const companyEmail = "adazrenov@gmail.com";
 const socialLinks = {
   facebook: "https://www.facebook.com/profile.php?id=61562185566929#",
@@ -55,7 +57,7 @@ function buildHeader(currentPage) {
   return `
     <div class="site-header-shell">
       <div class="container site-nav">
-        <a class="brand" href="index.html" aria-label="ADAZ RENOV Renovation &amp; Construction - Accueil">
+        <a class="brand" href="index.html" aria-label="ADAZ RENOV, rénovation et construction - Accueil">
           <span class="logo-mark" aria-hidden="true">
             <img src="${headerLogoPath}" alt="">
           </span>
@@ -63,7 +65,7 @@ function buildHeader(currentPage) {
             <strong>
               ADAZ RENOV
             </strong>
-            <span>Renovation &amp; Construction</span>
+            <span>Rénovation &amp; Construction</span>
           </div>
         </a>
         <nav class="nav-links" aria-label="Navigation principale">
@@ -89,7 +91,8 @@ function buildHeader(currentPage) {
 }
 
 function buildFooter() {
-  const description = "Rénovation, construction et menuiserie depuis 2021. Basés à Noiseau, nous intervenons à Paris, en Île-de-France et dans toute la France.";
+  const description = "Rénovation, construction et menuiserie depuis 2021. Basés à Noiseau, nous intervenons dans toute l’Île-de-France.";
+  const travelDescription = "Déplacements possibles dans toute la France pour les chantiers d’envergure, après étude du projet.";
   return `
     <footer class="footer-shell">
       <div class="container footer-grid">
@@ -100,6 +103,7 @@ function buildFooter() {
           <p>
             ${description}
           </p>
+          <p class="footer-travel">${travelDescription}</p>
           <div class="social-row" aria-label="Réseaux sociaux">
             <a class="social-pill" href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Facebook ADAZ RENOV"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z"/></svg></a>
             <a class="social-pill" href="${socialLinks.instagram}" target="_blank" rel="noopener noreferrer" aria-label="Instagram ADAZ RENOV"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M224.3 141a115 115 0 1 0 -.6 230 115 115 0 1 0 .6-230zm-.6 40.4a74.6 74.6 0 1 1 .6 149.2 74.6 74.6 0 1 1 -.6-149.2zm93.4-45.1a26.8 26.8 0 1 1 53.6 0 26.8 26.8 0 1 1 -53.6 0zm129.7 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM399 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
@@ -126,7 +130,7 @@ function buildFooter() {
             <li><a href="services.html#service-interphone">Interphone et visiophone</a></li>
             <li><a href="services.html#service-electricite">Installation électrique</a></li>
             <li><a href="services.html#service-maconnerie">Travaux de maçonnerie</a></li>
-            <li><a href="services.html#service-peinture">Peinture et décoration</a></li>
+            <li><a href="services.html#service-peinture">Peinture et enduits</a></li>
           </ul>
         </div>
         <div class="footer-block footer-contact-block">
@@ -134,12 +138,13 @@ function buildFooter() {
           <dl class="footer-contact">
             <div><dt>Adresse</dt><dd><address>1 Place du Vieux Pays<br>94880 Noiseau, France</address></dd></div>
             <div><dt>Téléphone</dt><dd><a href="${companyPhoneHref}">${companyPhoneDisplay}</a></dd></div>
+            <div><dt>Mobile</dt><dd><a href="${companyMobileHref}">${companyMobileDisplay}</a></dd></div>
             <div><dt>E-mail</dt><dd><a href="mailto:${companyEmail}">${companyEmail}</a></dd></div>
           </dl>
         </div>
       </div>
       <div class="container footer-bottom">
-        <span>&copy; <span id="year"></span> ADAZ RENOV. Tous droits réservés.</span>
+        <span>&copy; <span id="year"></span> ADAZRENOV. Tous droits réservés.</span>
         <div class="footer-legal">
           <a href="mentions-legales.html">Mentions légales</a>
           <a href="politique-confidentialite.html">Politique de confidentialité</a>
@@ -2198,7 +2203,7 @@ function setupAiChatbot() {
     {
       keywords: ["paris", "france", "zone", "intervention", "ville", "deplacement"],
       answer:
-        "Nous intervenons principalement en Ile-de-France. Envoyez votre ville/commune et je vous confirme rapidement la disponibilite.",
+        "Nous intervenons dans toute l’Île-de-France. Pour les chantiers d’envergure, des déplacements dans toute la France sont possibles après étude du projet. Indiquez la commune et les travaux souhaités pour préparer votre échange avec notre équipe.",
     },
     {
       keywords: ["contact", "telephone", "mail", "email", "numero"],
@@ -4168,7 +4173,7 @@ function setupGlobalAdazaiWidget() {
       {
         question: "Où intervenez-vous ?",
         links: [{ label: "Contacter notre équipe", href: "/contact" }],
-        answer: "Notre entreprise est située à Noiseau, dans le Val-de-Marne. Nous intervenons principalement à Paris et en Île-de-France. Pour un chantier dans une autre ville, contactez notre équipe afin de vérifier notre disponibilité.",
+        answer: "Notre entreprise est située à Noiseau, dans le Val-de-Marne. Nous intervenons dans toute l’Île-de-France, dans ses huit départements. Pour les chantiers d’envergure, des déplacements dans toute la France sont possibles après étude du projet. Indiquez la commune du chantier et les travaux souhaités pour en discuter avec notre équipe.",
       },
       {
         question: "Comment estimer mes travaux ?",

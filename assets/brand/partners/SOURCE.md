@@ -1,0 +1,1 @@
+Logo assets extracted without modification from page 7 of the ADAZ RENOV company presentation supplied by the site owner. The website displays individual marks using CSS clipping of the original artwork. Brand names and logos belong to their respective owners.

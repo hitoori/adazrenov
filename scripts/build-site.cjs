@@ -3,15 +3,15 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { transform } = require('esbuild');
 const { createRuntime, prerender, structuredData, compileWidget, compilePage } = require('./site-build-runtime.cjs');
+const { DOMAIN, canonicalUrl, allowsIndexing, createSitemap, createHeaders } = require('./site-policy.cjs');
 
 const { buildSearchIndex } = require('./site-search-index.cjs');
 const { buildAssistantKnowledge } = require('./assistant-knowledge.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUTPUT = path.join(ROOT, 'dist');
-const DOMAIN = 'https://adazrenov.fr';
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
-const STATIC_FILES = ['ai-config.js', 'robots.txt', '404.html', 'favicon.ico', 'favicon.png'];
+const STATIC_FILES = ['ai-config.js', 'robots.txt', '_redirects', '404.html', 'favicon.ico', 'favicon.png'];
 const LOCAL_FONT = 'assets/fonts/manrope-latin.e310b55a7fd9.woff2';
 
 function publicRoute(name) {
@@ -25,18 +25,6 @@ function normalizeLinks(source) {
 
 function fingerprint(content) {
   return crypto.createHash('sha256').update(content).digest('hex').slice(0, 12);
-}
-
-function canonicalUrl(page) {
-  return DOMAIN + (page === 'index.html' ? '/' : '/' + page.replace(/\.html$/, ''));
-}
-
-function allowsIndexing(source) {
-  return ![...source.matchAll(/<meta\b[^>]*>/gi)].some(([tag]) => {
-    if (!/\bname\s*=\s*["'](?:robots|googlebot)["']/i.test(tag)) return false;
-    const content = tag.match(/\bcontent\s*=\s*["']([^"']*)["']/i)?.[1] || '';
-    return /\b(?:noindex|none)\b/i.test(content);
-  });
 }
 
 function replaceMedia(source, media) {
@@ -62,11 +50,14 @@ function optimizeHtml(html, page, metadata, icons, cssFile, jsFile) {
   html = normalizeLinks(html);
   html = html.replace(/href="styles\.css(?:\?[^"]*)?"/, `href="${cssFile}"`)
     .replace(/src="script\.js(?:\?[^"]*)?"/, `src="${jsFile}"`);
-  html = html.replace(/<link\b[^>]*rel="(?:icon|apple-touch-icon)"[^>]*>/g, tag => {
-    if (tag.includes('apple-touch-icon')) return setAttribute(tag, 'href', '/' + icons['apple-touch-icon.png']);
-    return setAttribute(setAttribute(tag, 'href', '/favicon.png'), 'sizes', '180x180');
-  });
-  html = html.replace('</head>', '<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">\n</head>');
+  // Keep stable, crawlable favicon URLs and declare the files' actual dimensions.
+  html = html.replace(/<link\b[^>]*rel="(?:icon|shortcut icon|apple-touch-icon)"[^>]*>\s*/g, '');
+  html = html.replace('</head>', [
+    '<link rel="icon" type="image/png" sizes="180x180" href="/favicon.png">',
+    '<link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/favicon.ico">',
+    `<link rel="apple-touch-icon" sizes="180x180" href="/${icons['apple-touch-icon.png']}">`,
+    '</head>',
+  ].join('\n'));
   html = html.replace(/<link\b[^>]*href="https:\/\/fonts\.(?:googleapis|gstatic)\.com[^\"]*"[^>]*>\s*/g, '');
   html = html.replace('</head>', `<link rel="preload" href="${LOCAL_FONT}" as="font" type="font/woff2" crossorigin>\n</head>`);
 
@@ -78,6 +69,34 @@ function optimizeHtml(html, page, metadata, icons, cssFile, jsFile) {
     const value = attribute(tag, 'content');
     return setAttribute(tag, 'content', value?.startsWith('assets/') ? `${DOMAIN}/${value.split('?')[0]}` : value);
   });
+  if (!html.includes('property="og:site_name"')) {
+    html = html.replace('</head>', '<meta property="og:site_name" content="ADAZ RENOV">\n</head>');
+  }
+  if (html.includes('property="og:image"') && !html.includes('property="og:image:alt"')) {
+    html = html.replace('</head>', '<meta property="og:image:alt" content="Logo ADAZ RENOV, rénovation et menuiserie">\n</head>');
+  }
+  const socialImage = attribute(html.match(/<meta\b[^>]*property="og:image"[^>]*>/)?.[0] || '', 'content');
+  if (socialImage) {
+    const imageInfo = metadata.get(socialImage.replace(`${DOMAIN}/`, ''));
+    const socialTags = [
+      ['name', 'twitter:card', 'summary'],
+      ...['title', 'description', 'image', 'image:alt'].map(field => {
+        const tag = html.match(new RegExp(`<meta\\b[^>]*property="og:${field}"[^>]*>`))?.[0];
+        return ['name', `twitter:${field}`, attribute(tag || '', 'content')];
+      }),
+      ['property', 'og:image:width', imageInfo?.width],
+      ['property', 'og:image:height', imageInfo?.height],
+    ];
+    for (const [type, name, value] of socialTags) {
+      if (value && !html.includes(`${type}="${name}"`)) html = html.replace('</head>', `<meta ${type}="${name}" content="${value}">\n</head>`);
+    }
+  }
+  if (allowsIndexing(html)) {
+    html = html.replace(/<meta\b(?=[^>]*name="robots")([^>]*)>/i, tag => {
+      const content = attribute(tag, 'content') || 'index, follow';
+      return setAttribute(tag, 'content', /max-image-preview:/i.test(content) ? content : `${content}, max-image-preview:large`);
+    });
+  }
 
   html = html.replace(/<img\b[^>]*>/g, tag => {
     const src = attribute(tag, 'src');
@@ -206,22 +225,9 @@ async function build() {
     await fs.copyFile(source, destination);
   }
 
-  const headers = [
-    '/*', '  X-Content-Type-Options: nosniff', '  Referrer-Policy: strict-origin-when-cross-origin', '',
-    '/assets/optimized/*', '  Cache-Control: public, max-age=31536000, immutable', '',
-    '/assets/runtime/*', '  Cache-Control: public, max-age=31536000, immutable', '',
-    '/assets/fonts/*', '  Cache-Control: public, max-age=31536000, immutable', '',
-    '/styles.*.css', '  Cache-Control: public, max-age=31536000, immutable', '',
-    '/ai-config.js', '  Cache-Control: no-cache', '',
-    '/.well-known/security.txt', '  Content-Type: text/plain; charset=utf-8', '  Cache-Control: public, max-age=3600', '',
-    'https://:project.pages.dev/*', '  X-Robots-Tag: noindex', '',
-    'https://:version.:project.pages.dev/*', '  X-Robots-Tag: noindex', '',
-  ].join('\n');
-  await fs.writeFile(path.join(OUTPUT, '_headers'), headers);
+  await fs.writeFile(path.join(OUTPUT, '_headers'), createHeaders());
   const sitemapPages = pages.filter(page => allowsIndexing(pageSources.get(page)));
-  const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    sitemapPages.map(page => `  <url><loc>${canonicalUrl(page)}</loc></url>`).join('\n') + '\n</urlset>\n';
-  await fs.writeFile(path.join(OUTPUT, 'sitemap.xml'), sitemap);
+  await fs.writeFile(path.join(OUTPUT, 'sitemap.xml'), createSitemap(sitemapPages));
 
   const files = await listFiles(OUTPUT);
   const stats = await Promise.all(files.map(file => fs.stat(file)));

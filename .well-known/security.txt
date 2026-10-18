@@ -1,3 +1,5 @@
+# Contact pour signaler une vulnérabilité de sécurité du site.
+# Coordonnées vérifiées le 2026-10-19 ; à revoir avant la date d'expiration.
 Contact: mailto:adazrenov@gmail.com
 Expires: 2027-10-13T23:59:59Z
 Preferred-Languages: fr
