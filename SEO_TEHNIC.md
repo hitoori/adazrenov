@@ -1,8 +1,9 @@
 # Verificare SEO tehnic și pregătire pentru publicare
 
 Data verificării: 19 octombrie 2026. Domeniu: https://adazrenov.fr/.
-Modificările descrise mai jos sunt pregătite în proiectul local și în `dist`.
-Nu au fost publicate pe domeniul live în această etapă.
+Raportul documentează verificările efectuate înainte de publicare. Versiunea a
+fost apoi publicată pe domeniul live; confirmările, metadatele efective și
+acțiunile din Google Search Console sunt consemnate în [PUBLICARE.md](PUBLICARE.md).
 
 ## Ce am verificat și ajustat
 
@@ -103,6 +104,9 @@ fonturi locale, resurse cu hash și cache, JavaScript separat pe pagini și asis
 Vitals: conectarea CrUX din GSC Wizard nu are cheia API configurată.
 
 ## Pași după publicare și priorități de conținut
+
+Lista de mai jos este planul inițial. Acțiunile efectuate și starea lor actuală
+sunt documentate în [PUBLICARE.md](PUBLICARE.md).
 
 1. Publicarea versiunii pregătite din `dist`, apoi verificarea antetelor pe domeniul
    public, a formularului cu Turnstile și a livrării unei cereri controlate.
