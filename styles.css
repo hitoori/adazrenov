@@ -2325,6 +2325,10 @@ body[data-page="services"] #service-fenetres .media-top img {
   object-position: center 42%;
 }
 
+body[data-page="services"] #service-isolation-placo .media-top img {
+  object-position: center 38%;
+}
+
 body[data-page="services"] #service-maconnerie .media-top::after,
 body[data-page="services"] #service-fenetres .media-top::after,
 body[data-page="services"] #service-isolation-placo .media-top::after {
@@ -9198,40 +9202,6 @@ body[data-page="ai"] .ai-project-summary .ai-summary-list div { padding-block: 8
   .home-supplier-brand .home-brand-mark { max-width: 460px; margin-inline: auto; }
   .home-supplier-copy { margin: 0 20px; padding: 20px 0 24px; border-left: 0; border-top: 1px solid var(--supplier-accent); text-align: center; }
   .home-supplier-copy h3 { font-size: clamp(1.35rem, 5vw, 2rem); }
-}
-
-/* Isolation and plasterboard service: full-width introduction and scope of work. */
-.isolation-service { padding-top: 0; }
-.isolation-service-card { height: auto; overflow: hidden; scroll-margin-top: 100px; }
-.isolation-service-intro { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
-.isolation-service-photo { min-height: 400px; aspect-ratio: auto; }
-.isolation-service-photo img { position: absolute; inset: 0; display: block; object-position: center 42%; }
-.isolation-service-copy { padding: clamp(24px, 3.4vw, 44px); }
-.isolation-service-copy h3 { margin: 12px 0 22px; color: var(--primary); font-size: clamp(1.65rem, 2.5vw, 2.25rem); line-height: 1.2; letter-spacing: -.025em; }
-.isolation-service-copy h4 { margin: 0 0 12px; color: var(--text); font-size: 1.0625rem; line-height: 1.5; }
-.isolation-service-copy p { font-size: .9375rem; line-height: 1.8; }
-.isolation-service-copy p + p { margin-top: 14px; }
-.isolation-service-content { padding: clamp(24px, 3.4vw, 40px); border-top: 1px solid var(--border); }
-.isolation-service-content h4 { margin: 0 0 20px; color: var(--primary); font-size: 1.25rem; line-height: 1.4; }
-.isolation-service-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-.isolation-service-offers section { min-width: 0; padding: 18px 20px; border-left: 2px solid var(--accent); background: var(--surface-alt); }
-.isolation-service-offers h5 { margin: 0 0 12px; color: var(--primary); font-size: 1rem; line-height: 1.5; }
-.isolation-service-content ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: .875rem; line-height: 1.75; }
-.isolation-service-content li + li { margin-top: 7px; }
-.isolation-service-content li::marker { color: var(--primary); }
-.isolation-service-bottom { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 40px; margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--border); }
-.isolation-service-cta p { font-size: .9375rem; line-height: 1.75; }
-.isolation-service-cta p + p { margin-top: 12px; }
-.isolation-service-cta .button { max-width: 100%; margin: 20px 0 16px; text-align: center; }
-.isolation-service-cta .isolation-service-note { font-size: .8125rem; line-height: 1.7; }
-@media (max-width: 960px) {
-  .isolation-service-intro { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
-  .isolation-service-offers { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .isolation-service-bottom { gap: 28px; }
-}
-@media (max-width: 700px) {
-  .isolation-service-intro, .isolation-service-bottom { grid-template-columns: minmax(0, 1fr); }
-  .isolation-service-photo { min-height: 0; aspect-ratio: 4 / 3; }
 }
 
 /* Services: intervention area and practical project information. */
