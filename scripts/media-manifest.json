@@ -1487,6 +1487,23 @@
           "width": 960
         }
       ]
+    },
+    "assets/services/covers/service-isolation-placo.png": {
+      "path": "assets/optimized/services/covers/service-isolation-placo.32ad13a178aa.webp",
+      "width": 1161,
+      "height": 1355,
+      "originalBytes": 2715845,
+      "bytes": 187934,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-isolation-placo.32ad13a178aa-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-isolation-placo.32ad13a178aa-960w.webp",
+          "width": 960
+        }
+      ]
     }
   },
   "icons": {

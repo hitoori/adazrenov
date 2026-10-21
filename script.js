@@ -131,6 +131,7 @@ function buildFooter() {
             <li><a href="services.html#service-electricite">Installation électrique</a></li>
             <li><a href="services.html#service-maconnerie">Travaux de maçonnerie</a></li>
             <li><a href="services.html#service-peinture">Peinture et enduits</a></li>
+            <li><a href="services.html#service-isolation-placo">Isolation &amp; Placo</a></li>
           </ul>
         </div>
         <div class="footer-block footer-contact-block">
@@ -1631,6 +1632,11 @@ function setupContactForm() {
   const feedback = document.querySelector("#contact-success");
 
   if (!form || !feedback) return;
+  const requestedProject = new URLSearchParams(window.location.search).get("projet");
+  const project = form.elements.subject;
+  if (requestedProject && Array.from(project.options).some(option => option.value === requestedProject)) {
+    project.value = requestedProject;
+  }
   setupContactProjectPicker(form);
   const protection = setupContactProtection(form);
   const phone = form.elements.phone;
