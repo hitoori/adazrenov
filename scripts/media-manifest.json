@@ -1472,18 +1472,18 @@
       ]
     },
     "assets/services/covers/service-maconnerie-chantier.png": {
-      "path": "assets/optimized/services/covers/service-maconnerie-chantier.381a68c21087.webp",
-      "width": 1594,
-      "height": 1068,
-      "originalBytes": 3054513,
-      "bytes": 190278,
+      "path": "assets/optimized/services/covers/service-maconnerie-chantier.dc21e90cdaf8.webp",
+      "width": 1536,
+      "height": 1024,
+      "originalBytes": 2580741,
+      "bytes": 211074,
       "variants": [
         {
-          "path": "assets/optimized/services/covers/service-maconnerie-chantier.381a68c21087-480w.webp",
+          "path": "assets/optimized/services/covers/service-maconnerie-chantier.dc21e90cdaf8-480w.webp",
           "width": 480
         },
         {
-          "path": "assets/optimized/services/covers/service-maconnerie-chantier.381a68c21087-960w.webp",
+          "path": "assets/optimized/services/covers/service-maconnerie-chantier.dc21e90cdaf8-960w.webp",
           "width": 960
         }
       ]

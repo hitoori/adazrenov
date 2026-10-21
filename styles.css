@@ -2300,6 +2300,14 @@ body[data-page="services"] .project-card .media-top::after {
   z-index: 1;
 }
 
+body[data-page="services"] #service-maconnerie .media-top img {
+  object-position: 52% center;
+}
+
+body[data-page="services"] #service-maconnerie .media-top::after {
+  background: none;
+}
+
 .product-card:hover .media-top img,
 .image-frame:hover img {
   transform: scale(1.04);
