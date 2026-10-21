@@ -13,6 +13,8 @@ const OUTPUT = path.join(ROOT, 'dist');
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const STATIC_FILES = ['ai-config.js', 'robots.txt', '_redirects', '404.html', 'favicon.ico', 'favicon.png'];
 const LOCAL_FONT = 'assets/fonts/manrope-latin.e310b55a7fd9.woff2';
+// Stable PNG URLs used by transactional emails, which are rendered on the Worker.
+const EMAIL_ASSETS = ['logo', 'instagram', 'tiktok', 'facebook'].map(name => `assets/email/v1/${name}.png`);
 
 function publicRoute(name) {
   return name === 'index' ? '/' : '/' + name;
@@ -207,7 +209,7 @@ async function build() {
     await fs.writeFile(path.join(OUTPUT, page), html);
   }
 
-  const assets = new Set([...Object.values(manifest.icons), 'assets/fonts/OFL-Manrope.txt']);
+  const assets = new Set([...Object.values(manifest.icons), 'assets/fonts/OFL-Manrope.txt', ...EMAIL_ASSETS]);
   for (const record of Object.values(manifest.media)) {
     assets.add(record.path);
     for (const variant of record.variants || []) assets.add(variant.path);

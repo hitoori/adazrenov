@@ -71,25 +71,20 @@
               Indiquez les travaux souhaités et la commune du chantier en Île-de-France. Pour un chantier d’envergure ailleurs en France, précisez le lieu et le périmètre du projet.
             </p>
 
-            <div id="contact-success" class="success-card" hidden>
-              <strong>Message envoyé !</strong>
-              Merci pour votre demande. Nous vous contacterons très prochainement.
-            </div>
-
             <form id="contact-form">
               <div hidden aria-hidden="true"><label>Site web<input name="website" type="text" autocomplete="off" tabindex="-1"></label></div>
               <div class="form-grid">
                 <div class="field">
                   <label for="name">Nom complet *</label>
-                  <input id="name" name="name" type="text" placeholder="Jean Dupont" required>
+                  <input id="name" name="name" type="text" placeholder="Jean Dupont" maxlength="200" required>
                 </div>
                 <div class="field">
                   <label for="phone">Téléphone *</label>
-                  <input id="phone" name="phone" type="tel" placeholder="Votre numéro" required>
+                  <input id="phone" name="phone" type="tel" placeholder="Votre numéro" maxlength="40" required>
                 </div>
                 <div class="field">
                   <label for="email">E-mail *</label>
-                  <input id="email" name="email" type="email" placeholder="vous@exemple.fr" required>
+                  <input id="email" name="email" type="email" placeholder="vous@exemple.fr" maxlength="254" required>
                 </div>
                 <div class="field">
                   <label for="subject">Type de projet *</label>
@@ -108,7 +103,7 @@
                 </div>
                 <div class="field full">
                   <label for="message">Votre demande *</label>
-                  <textarea id="message" name="message" rows="6" placeholder="Travaux souhaités, ville du chantier, période envisagée…" required></textarea>
+                  <textarea id="message" name="message" rows="6" placeholder="Travaux souhaités, ville du chantier, période envisagée…" maxlength="10000" required></textarea>
                 </div>
               </div>
               <label class="contact-privacy-consent" for="contact-privacy-consent">
@@ -120,6 +115,7 @@
               <div class="contact-form-actions">
                 <button class="button" type="submit">Envoyer ma demande</button>
               </div>
+              <div id="contact-success" class="contact-feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></div>
               <p class="form-footnote">
                 Les informations transmises servent à traiter votre demande et à vous recontacter.
                 <a href="politique-confidentialite.html">Consultez notre politique de confidentialité.</a>

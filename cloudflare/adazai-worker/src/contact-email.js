@@ -1,4 +1,4 @@
-import { renderContactEmail } from './email-template.js';
+import { renderContactEmail, renderConfirmationEmail } from './email-template.js';
 import { verifyContactToken } from './contact-protection.js';
 
 const EMAIL = /^[^\s<>@,;]+@[^\s<>@,;]+\.[^\s<>@,;]+$/;
@@ -11,7 +11,7 @@ function field(body, key, max, required = true, multiline = false) {
   return value.trim();
 }
 
-function makeEmail(body) {
+function readContact(body) {
   const email = field(body, 'email', 254);
   if (!EMAIL.test(email)) throw new Error('invalid');
   const phone = field(body, 'phone', 40);
@@ -19,13 +19,35 @@ function makeEmail(body) {
   const name = field(body, 'name', 200);
   const service = field(body, 'subject', 200);
   const message = field(body, 'message', 10000, true, true);
+  return { name, email, phone, service, message };
+}
+
+function companyRecipients(value) {
+  if (typeof value !== 'string') return [];
+  const recipients = value.split(',').map(address => address.trim());
+  if (!recipients.length || recipients.length > 50 || recipients.some(address => !EMAIL.test(address))) return [];
+  return [...new Map(recipients.map(address => [address.toLowerCase(), address])).values()];
+}
+
+function makeEmails(contact, env, recipients) {
+  const { name, email, phone, service, message } = contact;
   const title = 'Nouvelle demande de devis';
-  return {
+  const summary = `Nom : ${name}\nTéléphone : ${phone}\nE-mail : ${email}\nProjet : ${service}\n\nVotre message :\n${message}`;
+  return [{
+    from: env.RESEND_FROM,
+    to: recipients,
     subject: `ADAZ RENOV — ${title} : ${name}`,
     reply_to: email,
-    text: `${title}\n\nÀ traiter : appeler le client pour préciser sa demande.\n\nNom : ${name}\nTéléphone : ${phone}\nE-mail : ${email}\nTravaux : ${service}\n\nDemande du client :\n${message}`,
-    html: renderContactEmail({ title, name, email, phone, service, message }),
-  };
+    text: `${title}\n\nÀ rappeler sous 24 heures pour faire le point sur les travaux.\n\n${summary}\n\nADAZ RENOV · adazrenov.fr`,
+    html: renderContactEmail(contact),
+  }, {
+    from: env.RESEND_FROM,
+    to: [email],
+    subject: 'Nous avons reçu votre demande — ADAZ RENOV',
+    reply_to: 'adazrenov@gmail.com',
+    text: `Bonjour ${name},\n\nNous avons bien reçu votre demande. Un membre de notre équipe vous appellera au ${phone} dans un délai maximum de 24 heures pour parler de votre projet et répondre à vos questions.\n\nÀ bientôt,\nL’équipe ADAZ RENOV\n\nVotre demande\n${summary}\n\nVous préférez nous appeler ?\nFixe : 01 86 04 74 68\nMobile : 06 52 31 72 88\nDu lundi au vendredi, de 9 h à 17 h.\n\nADAZ RENOV · Rénovation & construction\n1 Place du Vieux Pays, 94880 Noiseau\nadazrenov.fr · adazrenov@gmail.com\nInstagram : https://www.instagram.com/adaz_renov\nTikTok : https://www.tiktok.com/@adaz_renov\nFacebook : https://www.facebook.com/profile.php?id=61562185566929\nConfidentialité : https://adazrenov.fr/politique-confidentialite`,
+    html: renderConfirmationEmail(contact),
+  }];
 }
 
 // Mail bodies go directly to Resend. Only anti-abuse counters are stored in D1.
@@ -38,11 +60,12 @@ export async function handleContactEmail(request, env, headers, { json, getClien
     try { body = JSON.parse(raw); } catch { return json({ error: 'Demande invalide.' }, 400, headers); }
     if (!body || typeof body !== 'object' || Array.isArray(body)) return json({ error: 'Demande invalide.' }, 400, headers);
     if (body.website) return json({ ok: true }, 200, headers);
-    let email;
-    try { email = makeEmail(body); }
+    let contact;
+    try { contact = readContact(body); }
     catch { return json({ error: 'Vérifiez les informations du formulaire.' }, 400, headers); }
     if (!UUID.test(body.requestId || '')) return json({ error: 'Demande invalide.' }, 400, headers);
-    if (!env.RESEND_API_KEY || !env.DB || !env.RESEND_FROM || !EMAIL.test(env.CONTACT_TO || '')) return json({ error: 'L’envoi est momentanément indisponible.' }, 503, headers);
+    const recipients = companyRecipients(env.CONTACT_TO);
+    if (!env.RESEND_API_KEY || !env.DB || !env.RESEND_FROM || !recipients.length) return json({ error: 'L’envoi est momentanément indisponible.' }, 503, headers);
     const clientKey = await getClientKey(request);
     const burst = await allowRequest(env.DB, `mail-burst:${clientKey}`, 3, 10 * 60000);
     const daily = await allowRequest(env.DB, `mail-client:${clientKey}`, 10, 24 * 3600000);
@@ -56,15 +79,17 @@ export async function handleContactEmail(request, env, headers, { json, getClien
     if (verificationStatus !== 200) return json({ error: verificationStatus === 400
       ? 'La vérification de sécurité a expiré ou n’a pas abouti. Réessayez.'
       : 'La vérification de sécurité est momentanément indisponible. Réessayez ou appelez-nous.' }, verificationStatus, headers);
-    const response = await fetch('https://api.resend.com/emails', {
+    // Keep staff notification and customer confirmation in one idempotent request.
+    const response = await fetch('https://api.resend.com/emails/batch', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `adaz-form-${body.requestId}` },
-      body: JSON.stringify({ from: env.RESEND_FROM, to: [env.CONTACT_TO], ...email }),
+      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `adaz-contact-v2-${body.requestId}` },
+      body: JSON.stringify(makeEmails(contact, env, recipients)),
       signal: AbortSignal.timeout(15000)
     });
     const result = await response.json().catch(() => null);
     // Never return or log provider errors, credentials or the customer's content.
-    if (!response.ok || !result?.id) return json({ error: 'Votre demande n’a pas pu être transmise. Réessayez ou contactez-nous directement.' }, 503, headers);
+    if (!response.ok || !Array.isArray(result?.data) || result.data.length !== 2
+      || result.data.some(email => typeof email?.id !== 'string' || !email.id)) return json({ error: 'Votre demande n’a pas pu être transmise. Réessayez ou contactez-nous directement.' }, 503, headers);
     return json({ ok: true }, 200, headers);
   } catch {
     return json({ error: 'L’envoi est momentanément indisponible.' }, 503, headers);

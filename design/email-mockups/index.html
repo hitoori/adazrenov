@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADAZ RENOV — Machete email</title>
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <style>
+    @font-face{font-family:Manrope;src:url(assets/manrope.woff2) format('woff2');font-weight:200 800;font-display:swap}
+    *{box-sizing:border-box}body{margin:0;background:#e9eef3;color:#152033;font-family:Manrope,Arial,sans-serif}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible{outline:3px solid #d4af7a;outline-offset:4px}
+    .topbar{background:#fff;border-bottom:1px solid #d9e1e9}.topbar-inner{max-width:1420px;margin:auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.brand img{width:36px;height:41px}.brand strong{display:block;font-size:16px;letter-spacing:-.4px}.brand small{display:block;color:#647089;font-size:10px;letter-spacing:1px;margin-top:3px}.status{font-size:11px;color:#647089;background:#f3f6f9;padding:7px 11px;border-radius:6px}
+    main{max-width:1420px;margin:auto;padding:32px}.intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}.eyebrow{font-size:10px;letter-spacing:1.8px;font-weight:800;color:#65738a;text-transform:uppercase;margin:0 0 10px}h1{font-size:30px;line-height:1.25;letter-spacing:-1px;margin:0 0 10px}.description{font-size:13px;color:#647089;line-height:1.8;max-width:680px;margin:0}.view-controls{display:flex;gap:4px;padding:4px;border:1px solid #ced8e2;border-radius:9px;background:#dfe6ee;flex-shrink:0}.view-controls button{border:0;border-radius:6px;background:transparent;padding:8px 14px;color:#647089;font-size:12px;font-weight:700}.view-controls button[aria-pressed=true]{background:#fff;color:#1e3a5f;box-shadow:0 2px 4px #1428400c}
+    .recipient-controls{display:none}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}.preview{min-width:0}.preview-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.preview-label h2{font-size:14px;margin:0}.preview-label span{font-size:10px;color:#647089}.preview-label a{color:#1e3a5f;text-underline-offset:3px}.mail-window{border:1px solid #cfd9e3;border-radius:12px;background:#fff;overflow:hidden;box-shadow:0 12px 28px -22px #14284055}.mail-meta{padding:16px 21px;border-bottom:1px solid #e0e6ec;font-family:Arial,sans-serif}.subject{margin:0 0 11px;font-size:14px;font-weight:700;line-height:1.4;color:#142840}.sender{display:flex;align-items:center;gap:9px;font-size:11px;color:#647089;line-height:1.6}.avatar{width:26px;height:26px;display:grid;place-items:center;background:#edf2f7;color:#1e3a5f;border-radius:50%;font-size:9px;font-weight:700;flex-shrink:0}.sender strong{color:#152033}.stage{background:#e5ebf1;display:flex;justify-content:center;overflow:hidden}iframe{display:block;width:100%;border:0;height:1590px;background:#eef2f6}.gallery[data-device=mobile] iframe{max-width:375px}.gallery[data-device=mobile] .stage{padding:18px 0}.note{font-size:11px;color:#647089;line-height:1.8;margin:20px 0 0;text-align:center}.note strong{color:#1e3a5f}
+    @media(max-width:1000px){.gallery{grid-template-columns:minmax(0,1fr);max-width:720px;margin:auto}.recipient-controls{display:flex;gap:8px;margin-bottom:20px}.recipient-controls button{flex:1;border:1px solid #ccd7e1;border-radius:8px;padding:12px;color:#647089;background:transparent;font-size:12px;font-weight:700}.recipient-controls button[aria-pressed=true]{background:#1e3a5f;border-color:#1e3a5f;color:#fff}.gallery[data-active=client] #team-preview,.gallery[data-active=team] #client-preview{display:none}.intro{align-items:start}.view-controls{align-self:end}}
+    @media(max-width:600px){.topbar-inner{padding:14px 18px}.brand strong{font-size:14px}.status{font-size:9px;padding:6px 8px}main{padding:24px 12px}.intro{display:block;padding:0 6px;margin-bottom:20px}h1{font-size:26px}.description{font-size:12px;line-height:1.8}.view-controls{display:none}.recipient-controls{margin-bottom:18px}.preview-label{padding:0 5px}.preview-label span{font-size:9px}.mail-meta{padding:16px}.subject{font-size:13px}.sender{font-size:10px}.mail-window{border-radius:10px}.gallery[data-device=mobile] .stage{padding:0}.note{text-align:left;padding:0 6px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner"><div class="brand"><img src="assets/logo.png" alt=""><div><strong>ADAZ RENOV</strong><small>MACHETE EMAIL</small></div></div><span class="status">Propunere de design · v2</span></div></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">De la prima cerere, aceeași identitate</p><h1>Un mesaj clar, de la prima cerere.</h1><p class="description">Texte mai directe, contacte în două coloane și Instagram, TikTok, Facebook. Două machete în franceză, cu date demonstrative.</p></div><div class="view-controls" aria-label="Dimensiunea machetelor"><button type="button" data-device="desktop" aria-pressed="true">Desktop</button><button type="button" data-device="mobile" aria-pressed="false">Mobil · 375 px</button></div></div>
+    <nav class="recipient-controls" aria-label="Alege destinatarul"><button type="button" data-recipient="client" aria-pressed="true">Email client</button><button type="button" data-recipient="team" aria-pressed="false">Email echipă</button></nav>
+    <div class="gallery" data-device="desktop" data-active="client">
+      <section class="preview" id="client-preview" aria-labelledby="client-heading"><div class="preview-label"><h2 id="client-heading">Client · Confirmare</h2><span><a href="client.html" target="_blank" rel="noopener">Deschide separat ↗</a></span></div><div class="mail-window"><div class="mail-meta"><p class="subject">Nous avons reçu votre demande — ADAZ RENOV</p><div class="sender"><span class="avatar">AR</span><div><strong>ADAZ RENOV</strong><br>Către: Camille Martin · client demonstrativ</div></div></div><div class="stage"><iframe src="client.html" title="Machetă email de confirmare pentru client"></iframe></div></div></section>
+      <section class="preview" id="team-preview" aria-labelledby="team-heading"><div class="preview-label"><h2 id="team-heading">Echipă · Cerere nouă</h2><span><a href="equipe.html" target="_blank" rel="noopener">Deschide separat ↗</a></span></div><div class="mail-window"><div class="mail-meta"><p class="subject">Nouvelle demande de devis — Camille Martin</p><div class="sender"><span class="avatar">AR</span><div><strong>ADAZ RENOV · Formulaire Contact</strong><br>Către: echipa ADAZ RENOV · destinația configurată</div></div></div><div class="stage"><iframe src="equipe.html" title="Machetă notificare pentru echipa ADAZ RENOV"></iframe></div></div></section>
+    </div>
+    <p class="note"><strong>Previzualizare.</strong> Aceleași șabloane sunt folosite la trimitere. Datele sunt demonstrative; această pagină nu trimite emailuri.</p>
+    <p class="note">Compară cu designul anterior: <a href="previous/client.html" target="_blank" rel="noopener">Client</a> · <a href="previous/equipe.html" target="_blank" rel="noopener">Echipă</a>.</p>
+  </main>
+  <script>
+    const gallery = document.querySelector('.gallery');
+    document.querySelectorAll('[data-recipient]').forEach(button => button.addEventListener('click', () => {
+      gallery.dataset.active = button.dataset.recipient;
+      document.querySelectorAll('[data-recipient]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      resizeFrames();
+    }));
+    document.querySelectorAll('button[data-device]').forEach(button => button.addEventListener('click', () => {
+      gallery.dataset.device = button.dataset.device;
+      document.querySelectorAll('button[data-device]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      requestAnimationFrame(resizeFrames);
+    }));
+    function resizeFrames() {
+      document.querySelectorAll('iframe').forEach(frame => {
+        if (frame.getBoundingClientRect().width && frame.contentDocument?.body) frame.style.height = frame.contentDocument.documentElement.scrollHeight + 'px';
+      });
+    }
+    document.querySelectorAll('iframe').forEach(frame => frame.addEventListener('load', () => {
+      const observer = new ResizeObserver(() => {
+        if (frame.getBoundingClientRect().width) frame.style.height = frame.contentDocument.body.scrollHeight + 'px';
+      });
+      observer.observe(frame.contentDocument.body);
+      resizeFrames();
+    }));
+    window.addEventListener('resize', resizeFrames);
+  </script>
+</body>
+</html>

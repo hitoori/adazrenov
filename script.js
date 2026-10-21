@@ -1628,14 +1628,35 @@ function setupContactProtection(form) {
 
 function setupContactForm() {
   const form = document.querySelector("#contact-form");
-  const success = document.querySelector("#contact-success");
+  const feedback = document.querySelector("#contact-success");
 
-  if (!form || !success) return;
+  if (!form || !feedback) return;
   setupContactProjectPicker(form);
   const protection = setupContactProtection(form);
+  const phone = form.elements.phone;
+  const validatePhone = () => {
+    const value = phone.value.trim();
+    const valid = !value || (/^[+\d().\s-]{6,40}$/.test(value) && value.replace(/\D/g, "").length >= 6);
+    phone.setCustomValidity(valid ? "" : "Indiquez un numéro de téléphone valide, avec au moins 6 chiffres.");
+  };
+  phone.addEventListener("input", validatePhone);
+
+  const showFeedback = (state, title, message, detail = "") => {
+    const icon = state === "success" ? '<path d="m6 12 4 4 8-8"/>'
+      : state === "error" ? '<path d="m8 8 8 8m0-8-8 8"/>'
+      : '<path d="M12 11v6m0-10v.1"/>';
+    feedback.dataset.state = state;
+    feedback.setAttribute("role", state === "error" ? "alert" : "status");
+    feedback.setAttribute("aria-live", state === "error" ? "assertive" : "polite");
+    feedback.innerHTML = `<span class="contact-feedback-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></span><div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(message)}</p>${detail ? `<p class="contact-feedback-detail">${escapeHtml(detail)}</p>` : ""}</div>`;
+    feedback.hidden = false;
+    feedback.focus({ preventScroll: true });
+    feedback.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
+  };
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    validatePhone();
     if (!form.reportValidity()) return;
     const submitButton = form.querySelector('button[type="submit"]');
     const originalLabel = submitButton?.textContent || "Envoyer ma demande";
@@ -1653,41 +1674,32 @@ function setupContactForm() {
     };
 
     if (!apiUrl) {
-      success.innerHTML = "<strong>Envoi indisponible</strong> Appelez-nous ou écrivez à adazrenov@gmail.com.";
-      success.hidden = false;
-      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      showFeedback("error", "Votre demande n’a pas été envoyée.", "Appelez-nous ou écrivez à adazrenov@gmail.com.");
       return;
     }
     const turnstileToken = protection.getToken();
     if (!turnstileToken) {
-      success.innerHTML = "<strong>Vérification de sécurité</strong> Attendez la fin de la vérification. Si elle reste indisponible, rechargez la page ou appelez-nous.";
-      success.hidden = false;
-      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      showFeedback("info", "La vérification est encore en cours.", "Patientez quelques instants, puis envoyez votre demande. Si le problème persiste, rechargez la page ou appelez-nous.");
       return;
     }
 
     if (submitButton) {
       submitButton.disabled = true;
-      submitButton.textContent = "Envoi...";
+      submitButton.textContent = "Envoi en cours…";
     }
+    feedback.hidden = true;
+    form.setAttribute("aria-busy", "true");
 
     try {
       await submitAdazForm(form, apiUrl, payload, turnstileToken);
 
       form.reset();
-      success.innerHTML = "<strong>Demande envoyée !</strong> Merci. Notre équipe vous recontactera pour faire le point sur vos travaux.";
-      success.hidden = false;
-      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
-
-      window.setTimeout(() => {
-        success.hidden = true;
-      }, 4500);
+      showFeedback("success", "Votre demande a bien été envoyée.", `Un e-mail de confirmation va vous être adressé à ${payload.email}.`, "Notre équipe vous rappellera sous 24 heures. À bientôt !");
     } catch (error) {
       console.warn("Contact submit failed.", error);
-      success.innerHTML = `<strong>Envoi indisponible</strong> ${escapeHtml(error.message || "Merci de nous appeler ou de nous écrire directement à adazrenov@gmail.com.")}`;
-      success.hidden = false;
-      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      showFeedback("error", "Votre demande n’a pas été envoyée.", error.message || "Appelez-nous ou écrivez directement à adazrenov@gmail.com.", "Vos informations sont conservées dans le formulaire. Vous pouvez réessayer.");
     } finally {
+      form.removeAttribute("aria-busy");
       protection.reset();
       if (submitButton) {
         submitButton.disabled = false;

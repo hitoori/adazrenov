@@ -85,9 +85,9 @@ Referințe oficiale:
 Workerul acceptă doar `POST /contact` pentru e-mailuri. `POST /booking` este
 dezactivat și returnează 404. Assistant nu trimite cereri prin e-mail.
 Expeditorul `RESEND_FROM`
-și destinatarul `CONTACT_TO` sunt configurate numai pe server; destinatarul
-curent este `octavian.chiticgd@gmail.com`. Pentru schimbarea lui, actualizează
-`CONTACT_TO` în `wrangler.jsonc` și republică workerul. `RESEND_API_KEY` trebuie
+și destinatarii `CONTACT_TO` sunt configurați numai pe server. Lista separată
+prin virgulă este `octavian.chiticgd@gmail.com,adazrenov@gmail.com`. Pentru
+modificarea ei, actualizează `CONTACT_TO` în `wrangler.jsonc` și republică Workerul. `RESEND_API_KEY` trebuie
 salvat ca Secret Cloudflare, cu drepturi Resend « Sending access » limitate la
 `adazrenov.fr`. Domeniul trebuie să fie verificat de Resend înaintea activării.
 
@@ -96,15 +96,33 @@ salvat ca Secret Cloudflare, cu drepturi Resend « Sending access » limitate la
 pentru contact. Configurația de trimitere a Assistant este dezactivată.
 Un eșec Resend nu trimite datele automat unui alt furnizor.
 
-E-mailurile merg doar la firmă; clientul nu primește o confirmare automată.
-Adresa clientului este folosită ca `reply_to`. Conținutul formularului nu este arhivat în D1; ajunge în Resend și în căsuța destinatarului.
+Fiecare formular valid trimite un lot de două mesaje prin `POST /emails/batch`:
+
+- notificarea internă către ambele adrese ale firmei, cu `reply_to` setat la client;
+- confirmarea separată către client, cu `reply_to: adazrenov@gmail.com` și promisiunea unui apel în maximum 24 de ore.
+
+Clientul nu vede destinatarii interni. Adresele din payload nu pot schimba
+expeditorul, destinatarii firmei sau brandingul. Răspunsul de succes este întors
+numai când Resend returnează identificatori pentru ambele mesaje. Acceptarea
+Resend nu garantează livrarea în Inbox; respingerile și filtrarea spam se urmăresc
+în Resend. Nu se arhivează conținutul formularului în D1.
+
+`src/email-template.js` conține designul aprobat: antet comun, datele cererii,
+contactele sub mesaj și subsolul compact cu rețelele sociale. Imaginile PNG sunt
+publicate din `assets/email/v1/` pe Pages, înaintea Workerului. Previzualizarea
+locală din `design/email-mockups/` importă aceleași funcții; se regenerează cu
+`node design/email-mockups/generate.mjs` din rădăcina proiectului.
 Limitele sunt separate de chat: 3 cereri/10 minute și 10/24 ore per IP,
 50/24 ore pentru toate formularele. Un câmp ascuns blochează spamul simplu.
 Turnstile verifică formularul Contact înainte de apelul Resend. Resend primește un identificator
-unic pentru a evita dublarea aceleiași cereri la reluarea după o eroare de rețea.
+unic `adaz-contact-v2-<requestId>` pentru întregul lot, pentru a evita dublarea
+mesajelor la reluarea după o eroare de rețea. Resend păstrează cheia 24 de ore.
+Limitele numără formularele; fiecare cerere produce trei copii livrate (două
+către firmă și una către client), care consumă cota de trimitere Resend.
 Testele simulează serviciul; nu trimit e-mailuri reale.
 
-Documentație: https://resend.com/docs/api-reference/emails/send-email
+Documentație: https://resend.com/docs/api-reference/emails/send-batch-emails
+și https://resend.com/docs/dashboard/emails/idempotency-keys
 
 ### Verificarea Turnstile
 
