@@ -1437,23 +1437,6 @@
         }
       ]
     },
-    "assets/services/covers/service-maconnerie-cover.webp": {
-      "path": "assets/optimized/services/covers/service-maconnerie-cover.9ad3c87f00e1.webp",
-      "width": 1600,
-      "height": 1200,
-      "originalBytes": 310290,
-      "bytes": 243214,
-      "variants": [
-        {
-          "path": "assets/optimized/services/covers/service-maconnerie-cover.9ad3c87f00e1-480w.webp",
-          "width": 480
-        },
-        {
-          "path": "assets/optimized/services/covers/service-maconnerie-cover.9ad3c87f00e1-960w.webp",
-          "width": 960
-        }
-      ]
-    },
     "assets/services/covers/service-peinture-decoration-cover.webp": {
       "path": "assets/optimized/services/covers/service-peinture-decoration-cover.8d21e07f23c0.webp",
       "width": 1600,
@@ -1484,6 +1467,23 @@
         },
         {
           "path": "assets/optimized/services/covers/service-salle-de-bain-cover.0f9ceb494487-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-maconnerie-chantier.png": {
+      "path": "assets/optimized/services/covers/service-maconnerie-chantier.381a68c21087.webp",
+      "width": 1594,
+      "height": 1068,
+      "originalBytes": 3054513,
+      "bytes": 190278,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-maconnerie-chantier.381a68c21087-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-maconnerie-chantier.381a68c21087-960w.webp",
           "width": 960
         }
       ]
