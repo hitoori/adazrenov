@@ -1386,23 +1386,6 @@
       "originalBytes": 6142906,
       "bytes": 6013621
     },
-    "assets/services/covers/service-fenetres-cover.webp": {
-      "path": "assets/optimized/services/covers/service-fenetres-cover.43ed41dad90a.webp",
-      "width": 1600,
-      "height": 1200,
-      "originalBytes": 138342,
-      "bytes": 102386,
-      "variants": [
-        {
-          "path": "assets/optimized/services/covers/service-fenetres-cover.43ed41dad90a-480w.webp",
-          "width": 480
-        },
-        {
-          "path": "assets/optimized/services/covers/service-fenetres-cover.43ed41dad90a-960w.webp",
-          "width": 960
-        }
-      ]
-    },
     "assets/services/covers/service-installation-electrique-cover.webp": {
       "path": "assets/optimized/services/covers/service-installation-electrique-cover.8005b0f2a2cf.webp",
       "width": 1600,
@@ -1484,6 +1467,23 @@
         },
         {
           "path": "assets/optimized/services/covers/service-maconnerie-chantier.dc21e90cdaf8-960w.webp",
+          "width": 960
+        }
+      ]
+    },
+    "assets/services/covers/service-fenetres-installation.png": {
+      "path": "assets/optimized/services/covers/service-fenetres-installation.400bd47b1efb.webp",
+      "width": 1086,
+      "height": 1448,
+      "originalBytes": 2453549,
+      "bytes": 153324,
+      "variants": [
+        {
+          "path": "assets/optimized/services/covers/service-fenetres-installation.400bd47b1efb-480w.webp",
+          "width": 480
+        },
+        {
+          "path": "assets/optimized/services/covers/service-fenetres-installation.400bd47b1efb-960w.webp",
           "width": 960
         }
       ]
