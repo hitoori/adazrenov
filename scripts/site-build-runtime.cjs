@@ -125,6 +125,7 @@ async function compilePage(runtime, loader, page, widgetFile, replacements) {
   if (page === 'projets.html') calls.push('setupFilters()');
   if (['produits.html', 'projets.html', 'contact.html'].includes(page)) calls.push('setupSearchTarget()');
   if (page === 'contact.html') calls.push('setupContactForm()');
+  if (page === 'services.html') calls.push('setupServiceDetails()', 'setupServicePracticalLayout()');
   if (page === 'ia-travaux.html') calls.push(
     'setupAiToolsNavigation()', 'setupAiPhotoAnalyzer()', 'setupAiMaterialAdvisor()', 'setupAiChatbot()',
     'setupAiEstimator()', 'setupAiConceptIdeator()', 'setupAiRoadmapPlanner()', 'setupAiBookingPlanner()',

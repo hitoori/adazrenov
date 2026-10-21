@@ -4771,6 +4771,89 @@ function setupSiteShell() {
   }
 }
 
+function setupServicePracticalLayout() {
+  const info = document.querySelector('.services-project-info');
+  const list = info?.querySelector('.services-info-list');
+  if (!list) return;
+  const desktop = window.matchMedia('(min-width: 801px)');
+  let frame = 0;
+  let measuredWidth = 0;
+
+  // Reserve the largest accordion state so changing questions never moves the footer.
+  function measure() {
+    frame = 0;
+    measuredWidth = list.getBoundingClientRect().width;
+    if (!desktop.matches) {
+      list.style.removeProperty('--services-info-height');
+      return;
+    }
+    const copy = list.cloneNode(true);
+    copy.classList.add('services-info-measure');
+    copy.style.removeProperty('--services-info-height');
+    copy.style.width = `${measuredWidth}px`;
+    copy.setAttribute('aria-hidden', 'true');
+    copy.inert = true;
+    copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+    const items = [...copy.querySelectorAll('details')];
+    items.forEach(item => { item.removeAttribute('name'); item.open = false; });
+    info.append(copy);
+    let height = copy.getBoundingClientRect().height;
+    items.forEach(item => {
+      item.open = true;
+      height = Math.max(height, copy.getBoundingClientRect().height);
+      item.open = false;
+    });
+    copy.remove();
+    list.style.setProperty('--services-info-height', `${Math.ceil(height)}px`);
+  }
+  function schedule() {
+    if (!frame) frame = requestAnimationFrame(measure);
+  }
+  new ResizeObserver(() => {
+    if (Math.abs(list.getBoundingClientRect().width - measuredWidth) > .5) schedule();
+  }).observe(list);
+  new MutationObserver(schedule).observe(list, { childList: true, characterData: true, subtree: true });
+  desktop.addEventListener('change', schedule);
+  document.fonts.ready.then(schedule);
+  measure();
+}
+
+function setupServiceDetails() {
+  const dialogs = document.querySelectorAll('.service-detail-dialog');
+  if (!dialogs.length) return;
+  const triggers = document.querySelectorAll('[data-service-details]');
+  let opener = null;
+
+  triggers.forEach(button => button.addEventListener('click', () => {
+    const dialog = document.getElementById(button.dataset.serviceDetails);
+    if (!dialog || dialog.open) return;
+    opener = button;
+    dialog.showModal();
+    document.body.classList.add('service-detail-open');
+    dialog.querySelector('.service-detail-scroll').scrollTop = 0;
+    dialog.querySelector('h2').focus({ preventScroll: true });
+  }));
+
+  dialogs.forEach(dialog => {
+    dialog.querySelector('[data-service-close]').addEventListener('click', () => dialog.close());
+    let backdropPress = false;
+    const outside = event => {
+      const bounds = dialog.getBoundingClientRect();
+      return event.target === dialog && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom);
+    };
+    dialog.addEventListener('pointerdown', event => { backdropPress = outside(event); });
+    dialog.addEventListener('click', event => {
+      if (backdropPress && outside(event)) dialog.close();
+      backdropPress = false;
+    });
+    dialog.addEventListener('close', () => {
+      document.body.classList.remove('service-detail-open');
+      if (opener?.isConnected) opener.focus({ preventScroll: true });
+      opener = null;
+    });
+  });
+}
+
 function setupProductCatalogue() {
   const roots = document.querySelectorAll("#door-products, #window-products, #shutter-products");
   if (!roots.length) return;
@@ -4808,6 +4891,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupReveal();
   setupProjectVideoPreviews();
   setupProjectVideoModal();
+  setupServiceDetails();
+  setupServicePracticalLayout();
   setupAiToolsNavigation();
   setupAiPhotoAnalyzer();
   setupAiMaterialAdvisor();
